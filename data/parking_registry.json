@@ -1,0 +1,146 @@
+{
+  "miami-100 se 2nd st": {
+    "parking_notes": "Attached 10-story garage, entrance on SE 1st St. Valet & visitor self-parking (Clearance 6'8\").",
+    "security_notes": "Main lobby check-in desk on 11th floor sky lobby (accessible from ground floor elevators). Photo ID or Florida Bar card required."
+  },
+  "miami-200 s biscayne blvd": {
+    "parking_notes": "Attached 15-story parking annex, 1,150 spaces, entrance on SE 3rd Ave. 15-min loading zone on SE 2nd St.",
+    "security_notes": "Ground floor security turnstiles. Register with security concierge for elevator visitor pass."
+  },
+  "miami-701 brickell ave": {
+    "parking_notes": "Subterranean multi-level garage with visitor self-parking, vehicle entry on SE 7th St.",
+    "security_notes": "Lobby security desk requires check-in. Escort or tenant call-up for floors above mezzanine."
+  },
+  "miami-1111 brickell ave": {
+    "parking_notes": "Multi-level garage attached to tower, entrance on SE 11th St. Valet drop at porte-cochere.",
+    "security_notes": "Security desk on main floor. Keycard turnstiles for elevator banks."
+  },
+  "miami-333 se 2nd ave": {
+    "parking_notes": "Direct garage access on SE 3rd St. Visitor parking on levels 2-6.",
+    "security_notes": "Main lobby reception. Visitor badges issued upon ID verification."
+  },
+  "miami-1221 brickell ave": {
+    "parking_notes": "Covered parking garage, entrance on Coral Way / SE 12th St. Visitor parking marked.",
+    "security_notes": "Lobby security desk. Photo ID required for badge issuance."
+  },
+  "miami-801 brickell ave": {
+    "parking_notes": "Attached multi-level parking deck, vehicle entry on Brickell Bay Dr.",
+    "security_notes": "Lobby concierge check-in required. Fast-track for credentialed legal couriers."
+  },
+  "miami-1450 brickell ave": {
+    "parking_notes": "Attached 14-story LEED parking deck, entrance on SE 14th Ln. Visitor spaces on levels 2-3.",
+    "security_notes": "State-of-the-art security turnstiles in main lobby. Visitor badge required."
+  },
+  "miami-600 brickell ave": {
+    "parking_notes": "Underground parking garage, entrance on SE 7th St. Dedicated courier loading bays.",
+    "security_notes": "24/7 security reception desk. High security elevator bank."
+  },
+  "miami-80 sw 8th st": {
+    "parking_notes": "Covered garage attached to Brickell City Centre, multiple entrances on 8th St and 7th St.",
+    "security_notes": "Office lobby reception on level 2. Check-in required."
+  },
+  "miami-9130 s dadeland blvd": {
+    "parking_notes": "Two Datran Center covered garage, entrance on Datran Blvd. 15-min drop spaces near entrance.",
+    "security_notes": "Lobby security guard desk on ground floor. Sign-in required."
+  },
+  "coral gables-1 alhambra plaza": {
+    "parking_notes": "Attached multi-level garage, entrance on Alhambra Circle. Visitor self-parking on 2nd level.",
+    "security_notes": "Lobby concierge station. Penthouse and upper floors require security badge."
+  },
+  "coral gables-2525 ponce de leon blvd": {
+    "parking_notes": "Attached parking garage with direct building access, entrance on Ponce de Leon.",
+    "security_notes": "Concierge check-in desk in atrium."
+  },
+  "coral gables-255 alhambra circle": {
+    "parking_notes": "Covered parking structure, entrance on Galiano St. Metered street parking available.",
+    "security_notes": "Lobby security reception. Visitor pass issued."
+  },
+  "fort lauderdale-110 se 6th st": {
+    "parking_notes": "Attached 6-story parking structure with covered skybridge. Entrance on SE 6th St (Clearance 6'8\").",
+    "security_notes": "Lobby security check-in required. Visitor badge required before elevator bank."
+  },
+  "fort lauderdale-200 e las olas blvd": {
+    "parking_notes": "Covered multi-level garage with direct covered walkway. Entrance on SE 2nd Ave.",
+    "security_notes": "Lobby desk check-in. Tenants require courier notification for direct suite deliveries."
+  },
+  "fort lauderdale-350 e las olas blvd": {
+    "parking_notes": "Adjacent parking garage, entrance on SE 3rd Ave. Metered street parking available on Las Olas.",
+    "security_notes": "Lobby concierge desk check-in."
+  },
+  "fort lauderdale-401 e las olas blvd": {
+    "parking_notes": "Bank of America Plaza multi-deck garage, entrance on SE 4th Ave.",
+    "security_notes": "Main lobby security check-in desk. ID required."
+  },
+  "fort lauderdale-100 se 3rd ave": {
+    "parking_notes": "One Financial Plaza parking garage, entrance on SE 1st St. Valet and visitor spaces.",
+    "security_notes": "Main floor security checkpoint. Badge required for upper floors."
+  },
+  "fort lauderdale-500 e broward blvd": {
+    "parking_notes": "Attached parking structure, entrance on SE 5th Ave. Surface visitor parking available.",
+    "security_notes": "Lobby security desk. Courier sign-in required."
+  },
+  "fort lauderdale-1515 ne 26th st": {
+    "parking_notes": "On-site surface parking lot with designated law firm visitor spots. Free parking.",
+    "security_notes": "Direct exterior suite entrances and central reception lobby."
+  },
+  "west palm beach-515 n flagler dr": {
+    "parking_notes": "Attached 8-story parking garage, entrance on 5th St. Commercial delivery loading zone at rear.",
+    "security_notes": "Main lobby security check-in. Elevator banks monitored by concierge."
+  },
+  "west palm beach-777 s flagler dr": {
+    "parking_notes": "Covered garage with valet and self-parking, entrance on Chase Ave.",
+    "security_notes": "Dual-tower lobby security desk. Visitor badge required."
+  },
+  "west palm beach-505 s flagler dr": {
+    "parking_notes": "Flagler Center multi-level garage, entrance on Lakeview Ave. Visitor parking on level 2.",
+    "security_notes": "Lobby security station. Escort required for sensitive floors."
+  },
+  "west palm beach-222 lakeview ave": {
+    "parking_notes": "Espírito Santo Plaza garage, entrance on S Olive Ave. Short-term courier spaces.",
+    "security_notes": "Lobby concierge check-in."
+  },
+  "tampa-100 n tampa st": {
+    "parking_notes": "Attached 8-story parking garage, entrance on Whiting St. Visitor parking on levels 2-4.",
+    "security_notes": "Main lobby security desk on 1st floor. Visitor sign-in required."
+  },
+  "tampa-100 e kennedy blvd": {
+    "parking_notes": "Directly connected multi-level parking garage, entrance on Tampa St.",
+    "security_notes": "Security turnstiles on lobby level. Visitor registration required."
+  },
+  "tampa-201 n franklin st": {
+    "parking_notes": "Connected parking garage via enclosed skybridge, entrance on Whiting St.",
+    "security_notes": "24/7 security desk on main concourse level."
+  },
+  "tampa-401 e jackson st": {
+    "parking_notes": "Attached parking deck with visitor spaces, entrance on Florida Ave.",
+    "security_notes": "Lobby check-in required. Visitor badge issued."
+  },
+  "orlando-390 n orange ave": {
+    "parking_notes": "Attached multi-level parking garage, entrance on Livingston St. Short-term meter parking on Orange Ave.",
+    "security_notes": "Elevator lobby check-in desk. ID required."
+  },
+  "orlando-200 s orange ave": {
+    "parking_notes": "Attached multi-deck garage with direct atrium access, entrance on Church St.",
+    "security_notes": "Main atrium concierge desk. Visitor pass issued."
+  },
+  "orlando-250 s orange ave": {
+    "parking_notes": "City Center covered garage, entrance on South St. Visitor parking on level 1.",
+    "security_notes": "Lobby security station. Check-in required."
+  },
+  "orlando-300 s orange ave": {
+    "parking_notes": "Covered garage with visitor spaces, entrance on Jackson St.",
+    "security_notes": "Concierge check-in at main elevators."
+  },
+  "jacksonville-50 n laura st": {
+    "parking_notes": "Connected parking garage, entrance on Forsyth St. Surface parking lot across street.",
+    "security_notes": "Lobby security guard desk. Sign-in log for courier deliveries."
+  },
+  "jacksonville-1 independent dr": {
+    "parking_notes": "Multi-level garage on Bay St with covered walkway. Visitor parking available.",
+    "security_notes": "Ground floor security station. Direct elevator access after clearance."
+  },
+  "boca raton-225 ne mizner blvd": {
+    "parking_notes": "Mizner Park parking garage, complimentary visitor parking on all levels.",
+    "security_notes": "Office lobby reception on ground floor."
+  }
+}

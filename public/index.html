@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRIS: Trial Revenue Intelligence by Lit&amp;More</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <!-- Left Sidebar (Artifact Layout) -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-monogram">T</div>
+      <div>
+        <div class="brand-text">TRIS</div>
+        <div class="brand-sub">Lit&amp;More Intelligence</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-label">Main</div>
+      <div class="nav-item" data-page="overview" onclick="navigateToPage('overview')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Overview</span>
+      </div>
+      <div class="nav-item" data-page="outreach" onclick="navigateToPage('outreach')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Outreach Queue</span>
+        <span class="nav-badge nav-badge-wine" id="sidebarBadgeOutreach">3,426</span>
+      </div>
+      <div class="nav-item" data-page="largematters" onclick="navigateToPage('largematters')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4 2 8L12 17l-6.5 4 2-8L2 9h7z"/></svg>
+        <span>Large Matters</span>
+        <span class="nav-badge nav-badge-wine" id="sidebarBadgeLargeMatters">330</span>
+      </div>
+      <div class="nav-item" data-page="behavior" onclick="navigateToPage('behavior')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+        <span>Trial Tendency</span>
+      </div>
+      <div class="nav-item active" data-page="deliveries" onclick="navigateToPage('deliveries')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Deliveries</span>
+        <span class="nav-badge nav-badge-wine" id="sidebarBadgeDeliveries">962</span>
+      </div>
+
+      <!-- Expandable More Views (Matching TRIS) -->
+      <div class="nav-more-toggle" onclick="toggleNavMore()">
+        <svg id="navMoreChevron" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="transition:transform 0.15s"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>More views</span>
+      </div>
+      <div id="navMoreSection" style="display:none">
+        <div class="nav-item" data-page="forecast" onclick="navigateToPage('forecast')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Revenue Forecast</span>
+        </div>
+        <div class="nav-item" data-page="geo" onclick="navigateToPage('geo')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Geographic</span>
+        </div>
+        <div class="nav-item" data-page="courts" onclick="navigateToPage('courts')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21V11h6v10"/></svg>
+          <span>Courts</span>
+        </div>
+        <div class="nav-item" data-page="attorneys" onclick="navigateToPage('attorneys')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Attorneys</span>
+        </div>
+        <div class="nav-item" data-page="firms" onclick="navigateToPage('firms')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+          <span>Law Firms</span>
+        </div>
+        <div class="nav-item" data-page="relationships" onclick="navigateToPage('relationships')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 7l8 10M16 7l-4 10M8 7h8"/></svg>
+          <span>Relationships</span>
+        </div>
+        <div class="nav-item" data-page="trials" onclick="navigateToPage('trials')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Trials</span>
+        </div>
+        <div class="nav-item" data-page="patterns" onclick="navigateToPage('patterns')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
+          <span>Pattern Intelligence</span>
+          <span class="nav-badge nav-badge-blue" id="navPatternsBadge">AI</span>
+        </div>
+        <div class="nav-item" data-page="sales" onclick="navigateToPage('sales')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+          <span>Sales Intelligence</span>
+        </div>
+      </div>
+
+      <div class="nav-label" style="margin-top:14px;">Operations</div>
+      <div class="nav-item" data-page="admin" onclick="navigateToPage('admin')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Admin Ingestion</span>
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--status-emerald);margin-left:auto;"></span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">LM</div>
+      <div>
+        <div class="user-name">Lit&amp;More Team</div>
+        <div class="user-role">Trial Intelligence</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View Area -->
+  <main class="main">
+    <!-- Topbar (Artifact Style, Clean) -->
+    <header class="topbar">
+      <div>
+        <div class="page-title" id="topTitle">Deliveries</div>
+        <div class="page-crumbs" id="topCrumbs">Deliveries / Operations / Hand-Delivery Routing</div>
+      </div>
+      <span class="live-status-pill">
+        <span class="dot"></span>
+        <span>Live · Pipeline Connected</span>
+      </span>
+
+      <div class="search">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="globalSearchInput" placeholder="Search firms, attorneys, courts…" oninput="handleGlobalSearch(this.value)">
+        <span class="kbd">⌘K</span>
+      </div>
+
+      <button class="icon-btn" title="Filters" onclick="openDrill(activePage)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      </button>
+
+      <button class="btn-export" onclick="exportActiveCsv()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+    </header>
+
+    <div class="content">
+
+      <!-- ================= 1. DELIVERIES (The Exact View in User Screenshot) ================= -->
+      <section class="page active" id="page-deliveries">
+        <div class="page-head">
+          <div>
+            <h1 class="h1">Deliveries</h1>
+            <p class="subtitle">
+              Buildings → Clusters → Rules → Run. Park once, deliver many.
+              <span style="display:inline-block;margin-left:8px;padding:2px 8px;background:rgba(255,255,255,0.06);border-radius:6px;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;font-weight:700;">Phase 1 · Buildings + rules</span>
+            </p>
+          </div>
+          <!-- 5 Sub-Tabs (Matching TRIS) -->
+          <div class="page-actions" style="display:flex;gap:6px;align-items:center">
+            <span class="filter-chip" data-dtab="buildings" onclick="setDeliveriesSubtab('buildings')">Buildings</span>
+            <span class="filter-chip active" data-dtab="clusters" onclick="setDeliveriesSubtab('clusters')">Clusters</span>
+            <span class="filter-chip" data-dtab="runbuilder" onclick="setDeliveriesSubtab('runbuilder')">Run Builder</span>
+            <span class="filter-chip" data-dtab="runs" onclick="setDeliveriesSubtab('runs')">Run History</span>
+            <span class="filter-chip" data-dtab="holds" onclick="setDeliveriesSubtab('holds')">Holds</span>
+          </div>
+        </div>
+
+        <!-- 4 Top KPI Cards (from Screenshot) -->
+        <div class="kpi-grid">
+          <div class="kpi" onclick="openDrill('deliveries')">
+            <div class="kpi-label">
+              <span>Buildings</span>
+              <span class="kpi-chevron">›</span>
+            </div>
+            <div class="kpi-value" id="kpiDelivBuildings" style="color:var(--text-white);">0</div>
+            <div class="kpi-sub" id="kpiDelivBuildingsSub">across 0 cities</div>
+          </div>
+
+          <div class="kpi" onclick="openDrill('outreach')">
+            <div class="kpi-label">
+              <span>Eligible Drops</span>
+              <span class="kpi-chevron">›</span>
+            </div>
+            <div class="kpi-value" id="kpiDelivDrops" style="color:var(--status-amber);">0</div>
+            <div class="kpi-sub" id="kpiDelivDropsSub">0 total across all statuses</div>
+          </div>
+
+          <div class="kpi" onclick="openDrill('deliveries')">
+            <div class="kpi-label">
+              <span>Top Density</span>
+              <span class="kpi-chevron">›</span>
+            </div>
+            <div class="kpi-value" id="kpiDelivDensity" style="color:var(--status-amber);">0 drops</div>
+            <div class="kpi-sub" id="kpiDelivDensitySub">Awaiting docket ingestion</div>
+          </div>
+
+          <div class="kpi" onclick="openDrill('unassigned')">
+            <div class="kpi-label">
+              <span>Data Holds</span>
+              <span class="kpi-chevron">›</span>
+            </div>
+            <div class="kpi-value" id="kpiDelivHolds" style="color:var(--status-crimson);">0</div>
+            <div class="kpi-sub">need verification before routing</div>
+          </div>
+        </div>
+
+        <!-- Subtab Content: Clusters (Active View with Geospatial Dark Map) -->
+        <div id="dsub-clusters">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Practical Clusters &amp; Geospatial Routing</div>
+                <div class="card-sub" id="clustersSummarySub">0 clusters · Auto-geocoded on docket ingestion · walk-friendly = ≥3 buildings within 0.5 km</div>
+              </div>
+            </div>
+
+            <!-- Split Container: Left Clusters List, Right Interactive Dark Map -->
+            <div class="clusters-split-container">
+              <div id="clustersCardContainer" class="clusters-list-column"></div>
+              <div class="clusters-map-column">
+                <div class="map-toolbar">
+                  <div class="map-title-wrap">
+                    <span class="map-venue-label" id="mapActiveCityLabel">Florida Venues</span>
+                    <span class="map-stats-chip" id="mapPinCountBadge">0 Buildings</span>
+                    <span class="map-stats-chip" id="mapTotalDropsBadge" style="background:rgba(220,38,38,0.18);border-color:rgba(220,38,38,0.35);color:#FCA5A5;">0 Drops</span>
+                  </div>
+                  <div class="map-actions">
+                    <select id="mapCityFilter" class="filter-chip" onchange="filterMapByCity(this.value)" style="height:30px;padding:2px 10px;font-size:11.5px;">
+                      <option value="ALL">All Metro Areas</option>
+                    </select>
+                    <select id="mapDensityFilter" class="filter-chip" onchange="filterMapByDensity(this.value)" style="height:30px;padding:2px 10px;font-size:11.5px;">
+                      <option value="ALL">All Stops</option>
+                      <option value="MULTI">Multi-Drop Hubs (2+ Drops)</option>
+                      <option value="MEGA">Mega Hubs (5+ Drops)</option>
+                      <option value="CLIENT">Client Buildings</option>
+                    </select>
+                    <button class="btn-map-reset" onclick="resetClusterMapView()" title="Reset zoom and center Florida">Fit All Pins</button>
+                  </div>
+                </div>
+                <!-- Clean Map Legend Strip -->
+                <div class="map-legend-bar">
+                  <div class="legend-item">
+                    <span class="legend-dot legend-mega"></span>
+                    <span>Mega Hub (5+ drops)</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot legend-multi"></span>
+                    <span>Multi-Drop (2-4 drops)</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot legend-single"></span>
+                    <span>Single Stop (1 drop)</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot legend-client">★</span>
+                    <span>Active Client Tenant</span>
+                  </div>
+                </div>
+                <div id="clusterMap"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subtab Content: Buildings -->
+        <div id="dsub-buildings" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Commercial Office Building Directory</div><div class="card-sub">Every unique physical building ranked by eligible drops</div></div>
+              <input type="text" class="search-input" placeholder="Filter buildings..." oninput="filterBuildingsTable(this.value)" style="background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text-white);font-size:12px;">
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Building Name</th><th>Address &amp; City</th><th>Eligible Drops</th><th>Total Counsel</th><th>Firms</th><th>Parking &amp; Access Notes</th></tr>
+                </thead>
+                <tbody id="buildingsDirectoryTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subtab Content: Run Builder -->
+        <div id="dsub-runbuilder" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Daily Run Sheet Builder</div><div class="card-sub">Rules applied automatically: R1 Firm limit (max 2/day), R2 Building limit, R4 Deadline priority</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;">
+              <div><label class="nav-label" style="padding:0 0 6px 0;">Run Date</label><input id="runFieldDate" type="date" value="2026-09-17" style="background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text-white);width:100%;"></div>
+              <div style="position:relative;">
+                <label class="nav-label" style="padding:0 0 6px 0;">Target Cities (Multi-Pick)</label>
+                <div class="multi-select-container" id="runCityMultiSelect">
+                  <div class="multi-select-trigger" id="runCityTrigger" onclick="toggleRunCityDropdown()">
+                    <div class="multi-select-badges" id="runCityBadges">
+                      <span class="multi-select-placeholder">All Florida Cities</span>
+                    </div>
+                    <span class="multi-select-chevron">▼</span>
+                  </div>
+                  <div class="multi-select-dropdown" id="runCityDropdown">
+                    <div class="multi-select-search-wrap">
+                      <input type="text" class="multi-select-search-input" id="runCitySearchInput" placeholder="Search Florida cities..." oninput="filterRunCityList(this.value)">
+                    </div>
+                    <div class="multi-select-actions">
+                      <span id="runCityCountInfo">0 selected</span>
+                      <div style="display:flex;gap:8px;">
+                        <button type="button" class="multi-select-action-btn" onclick="selectAllRunCities()">Select All</button>
+                        <button type="button" class="multi-select-action-btn" onclick="clearAllRunCities()">Clear</button>
+                      </div>
+                    </div>
+                    <div class="multi-select-list" id="runCityList"></div>
+                  </div>
+                </div>
+                <select id="runFieldCity" style="display:none;"></select>
+              </div>
+              <div><label class="nav-label" style="padding:0 0 6px 0;">Max Stops</label><input id="runFieldStops" type="number" value="12" style="background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text-white);width:100%;"></div>
+              <div style="display:flex;align-items:flex-end;"><button class="btn-export" style="width:100%;justify-content:center;height:38px;" onclick="generateRunSheet()">Generate Run Sheet</button></div>
+            </div>
+            <div id="generatedRunResult"></div>
+          </div>
+        </div>
+
+        <!-- Subtab Content: Run History -->
+        <div id="dsub-runs" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Run History</div><div class="card-sub">Log of completed and dispatched hand-delivery runs</div></div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Run ID</th><th>Date</th><th>City</th><th>Stops</th><th>Drops</th><th>Status</th></tr></thead>
+                <tbody id="runHistoryTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subtab Content: Holds -->
+        <div id="dsub-holds" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Data Holds</div><div class="card-sub">Drops that cannot be routed until address or attorney data is verified</div></div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Attorney</th><th>Firm</th><th>Address</th><th>Matter Docket</th><th>Hold Reason</th><th>Action</th></tr></thead>
+                <tbody id="holdsTableTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. OVERVIEW (Page 5 in PDF) ================= -->
+      <section class="page" id="page-overview">
+        <div class="page-head">
+          <div>
+            <h1 class="h1">Executive Overview</h1>
+            <p class="subtitle">Default landing surface. Four KPIs aligned to this-week attorney rows plus a data-coverage diagnostic.</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi" onclick="openDrill('outreach')">
+            <div class="kpi-label"><span>Attorney Contacts</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-value" id="kpiOverviewContacts">0</div>
+            <div class="kpi-sub" id="kpiOverviewContactsSub">Total tracked across all windows</div>
+          </div>
+          <div class="kpi" onclick="openDrill('trials')">
+            <div class="kpi-label"><span>Trials This Week</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-value" id="kpiOverviewTrials" style="color:var(--status-amber);">0</div>
+            <div class="kpi-sub">Trial date within ≤ 7 days</div>
+          </div>
+          <div class="kpi" onclick="openDrill('unassigned')">
+            <div class="kpi-label"><span>Unassigned This Week</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-value" id="kpiOverviewUnassigned" style="color:var(--status-crimson);">0</div>
+            <div class="kpi-sub">Urgent targets with no HubSpot owner</div>
+          </div>
+          <div class="kpi" onclick="openDrill('outreach')">
+            <div class="kpi-label"><span>Revenue This Week</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-value" id="kpiOverviewRevenue" style="color:var(--status-emerald);">$0</div>
+            <div class="kpi-sub" id="kpiOverviewRevenueSub">Expected revenue across week trials</div>
+          </div>
+        </div>
+
+        <!-- Coverage Diagnostic (from PDF Page 5) -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Coverage Diagnostic</div><div class="card-sub">Data health monitoring across current active litigation targets</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+            <div style="padding:12px;background:var(--bg-dark-3);border-radius:8px;">
+              <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;">Email Coverage</div>
+              <div style="font-size:20px;font-weight:700;color:var(--text-white);margin-top:4px;" id="kpiCoverageEmailPct">0%</div>
+              <div style="font-size:11px;color:var(--status-emerald);" id="kpiCoverageEmailCount">0 with direct email</div>
+            </div>
+            <div style="padding:12px;background:var(--bg-dark-3);border-radius:8px;">
+              <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;">Telephone Coverage</div>
+              <div style="font-size:20px;font-weight:700;color:var(--text-white);margin-top:4px;" id="kpiCoveragePhonePct">0%</div>
+              <div style="font-size:11px;color:var(--status-emerald);" id="kpiCoveragePhoneCount">0 verified numbers</div>
+            </div>
+            <div style="padding:12px;background:var(--bg-dark-3);border-radius:8px;">
+              <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;">Firm City Mapped</div>
+              <div style="font-size:20px;font-weight:700;color:var(--text-white);margin-top:4px;" id="kpiCoverageCityPct">0%</div>
+              <div style="font-size:11px;color:var(--status-emerald);" id="kpiCoverageCityCount">0 physical locations</div>
+            </div>
+            <div style="padding:12px;background:var(--bg-dark-3);border-radius:8px;">
+              <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;">HubSpot Assigned</div>
+              <div style="font-size:20px;font-weight:700;color:var(--text-white);margin-top:4px;" id="kpiCoverageAssignPct">0%</div>
+              <div style="font-size:11px;color:var(--status-amber);" id="kpiCoverageAssignCount">0 unassigned leads</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ready to Work CTA -->
+        <div class="card" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,var(--wine-soft) 0%,rgba(0,0,0,0.2) 100%);border-color:var(--border-wine);">
+          <div>
+            <div style="font-size:10.5px;color:#FCA5A5;text-transform:uppercase;font-weight:700;letter-spacing:0.5px;">Ready to Work</div>
+            <div style="font-size:18px;font-weight:700;color:var(--text-white);margin-top:2px;">Open the Outreach Queue</div>
+            <div style="font-size:12.5px;color:var(--text-muted);margin-top:2px;">Attorneys sorted by priority · one-click CSV export by city, state, or assignment</div>
+          </div>
+          <button class="btn-export" onclick="navigateToPage('outreach')">Go to Outreach Queue →</button>
+        </div>
+      </section>
+
+      <!-- ================= 3. OUTREACH QUEUE (Page 6-7 in PDF) ================= -->
+      <section class="page" id="page-outreach">
+        <div class="page-head">
+          <div>
+            <h1 class="h1">Outreach Queue</h1>
+            <p class="subtitle">The daily working queue for the outreach team. Filtered by urgency and venue locality.</p>
+          </div>
+          <!-- Window Toggles (PDF Page 6) -->
+          <div class="page-actions" id="outreachHeaderActions" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <div id="outreachWindowBar" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <span class="nav-label" style="padding:0 4px;">Window</span>
+              <span class="filter-chip" data-window="7" onclick="setWindowFilter(7)">7d <span class="badge-count" id="badgeWindow7">(0)</span></span>
+              <span class="filter-chip" data-window="15" onclick="setWindowFilter(15)">15d <span class="badge-count" id="badgeWindow15">(0)</span></span>
+              <span class="filter-chip" data-window="30" onclick="setWindowFilter(30)">30d <span class="badge-count" id="badgeWindow30">(0)</span></span>
+              <span class="filter-chip" data-window="60" onclick="setWindowFilter(60)">60d <span class="badge-count" id="badgeWindow60">(0)</span></span>
+              <span class="filter-chip active" data-window="90" onclick="setWindowFilter(90)">90d <span class="badge-count" id="badgeWindow90">(0)</span></span>
+              <span class="filter-chip" data-window="all" onclick="setWindowFilter('all')">All <span class="badge-count" id="badgeWindowAll">(0)</span></span>
+              <div style="display:inline-flex;align-items:center;gap:4px;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;margin-left:2px;">
+                <span style="font-size:11px;color:var(--text-muted);font-weight:600;">Custom:</span>
+                <input type="number" id="customDaysInput" min="1" max="999" placeholder="Days" oninput="setCustomWindowFilter(this.value)" onchange="setCustomWindowFilter(this.value)" style="width:48px;background:transparent;border:none;color:var(--text-white);font-size:11.5px;font-family:var(--font-mono);outline:none;font-weight:700;">
+                <span style="font-size:11px;color:var(--text-muted);">d</span>
+              </div>
+            </div>
+            <span id="outreachWindowTotalBadge" class="filter-chip" style="background:rgba(95,21,25,0.45);border-color:var(--brand-crimson);color:var(--text-white);font-weight:700;padding:5px 12px;border-radius:20px;">
+              Showing 0 matters
+            </span>
+          </div>
+        </div>
+
+        <!-- Party Side Toggles, Assignment, & Lifecycle Tabs -->
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+          <!-- Dual-Sided Party Toggle -->
+          <div class="pill-tabs">
+            <span class="nav-label" style="padding:4px 6px;align-self:center;">Target Side</span>
+            <button class="pill-tab active" data-side="all" onclick="setOutreachSide('all')">All Sides (2x Targets)</button>
+            <button class="pill-tab" data-side="Plaintiff" onclick="setOutreachSide('Plaintiff')">Plaintiff (PLTF)</button>
+            <button class="pill-tab" data-side="Defense" onclick="setOutreachSide('Defense')">Defense (DEF)</button>
+          </div>
+
+          <!-- CRM Assignment Filter (Assigned vs Unassigned) -->
+          <div class="pill-tabs">
+            <span class="nav-label" style="padding:4px 6px;align-self:center;">CRM Assignment</span>
+            <button class="pill-tab active" data-assign="all" onclick="setAssignmentFilter('all')">All Leads (<span id="assignCountAll">3,426</span>)</button>
+            <button class="pill-tab" data-assign="unassigned" onclick="setAssignmentFilter('unassigned')">Unassigned (<span id="assignCountUnassigned">2,798</span>)</button>
+            <button class="pill-tab" data-assign="assigned" onclick="setAssignmentFilter('assigned')">Assigned (<span id="assignCountAssigned">628</span>)</button>
+          </div>
+
+          <!-- Lifecycle Active vs Historical Toggle -->
+          <div class="pill-tabs">
+            <span class="nav-label" style="padding:4px 6px;align-self:center;">Lifecycle</span>
+            <button class="pill-tab active" data-lifecycle="active" onclick="setLifecycleFilter('active')">Active Upcoming</button>
+            <button class="pill-tab" data-lifecycle="historical" onclick="setLifecycleFilter('historical')">
+              Historical Archive (<span id="historicalCountBadge">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- TRIS Segment Outreach Tabs Strip -->
+        <div class="outreach-tabs">
+          <div class="outreach-tab active" data-ocat="local" data-outreach-tab="local" onclick="setOutreachCategory('local')" title="Local Match: Counsel office is located in the same city as the trial court.">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Local Match <span class="tab-count" id="tabCountLocal">0</span>
+          </div>
+          <div class="outreach-tab" data-ocat="oot" data-outreach-tab="oot" onclick="setOutreachCategory('oot')" title="Out-of-Town (OOT): Counsel is based in another Florida city and traveling into this trial venue. Prime candidate for remote trial site courier and exhibit support.">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            Out-of-Town <span class="tab-count" id="tabCountOot">0</span>
+          </div>
+          <div class="outreach-tab" data-ocat="oos" data-outreach-tab="oos" onclick="setOutreachCategory('oos')" title="Out-of-State (OOS): Counsel office is outside Florida and traveling into the state for trial. High urgency for temporary hotel war rooms, rush trial binder printing, and exhibit delivery.">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Out of State <span class="tab-count" id="tabCountOos">0</span>
+          </div>
+          <div class="outreach-tab" data-ocat="warroom" data-outreach-tab="warroom" onclick="setOutreachCategory('warroom')" title="Traveling War Rooms: Out-of-Town and Out-of-State counsel within 14 days of trial operating out of temporary hotel war rooms. Full Locality priority boost active.">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Traveling War Rooms <span class="tab-count" id="tabCountWarRoom">0</span>
+          </div>
+          <div class="outreach-tab" data-ocat="all" data-outreach-tab="all" onclick="setOutreachCategory('all')" title="All Queued: View all matters across all localities and venues.">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            All Queued <span class="tab-count" id="tabCountAll">0</span>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <select id="outreachCityFilter" class="filter-chip" onchange="setOutreachCityFilter(this.value)">
+              <option value="ALL">All Trial Cities</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="btn-export" onclick="exportActiveCsv()" title="Export current filtered queue to CSV">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" style="margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0;overflow:hidden;position:relative;">
+          <!-- Top Horizontal Scrollbar -->
+          <div class="table-top-scroll" id="outreachTopScroll">
+            <div class="table-top-scroll-inner"></div>
+          </div>
+          <div class="table-wrap" id="outreachTableWrap">
+            <table class="data-table" id="outreachTable">
+              <thead>
+                <tr><th>Side</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm Address</th><th>Firm City</th><th>Trial City</th><th>Days</th><th>Trial Date</th><th>Status</th><th>Owner</th><th>Docket</th><th>Phone</th><th>Email</th></tr>
+              </thead>
+              <tbody id="outreachMainTbody"></tbody>
+            </table>
+          </div>
+          <!-- Outreach Pagination Footer -->
+          <div id="outreachPagination" style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--border);background:var(--bg-card);font-size:12px;">
+            <div id="outreachPaginationInfo" style="color:var(--text-muted);font-size:12px;font-family:var(--font-mono);">
+              Showing 0 - 0 of 0 matters
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="filter-chip" id="outreachPrevPageBtn" onclick="changeOutreachPage(-1)" style="padding:4px 12px;font-size:12px;font-weight:600;">‹ Prev</button>
+              <span id="outreachPageNumber" style="font-weight:600;color:var(--text-white);padding:0 8px;font-size:12px;font-family:var(--font-mono);">Page 1 of 1</span>
+              <button class="filter-chip" id="outreachNextPageBtn" onclick="changeOutreachPage(1)" style="padding:4px 12px;font-size:12px;font-weight:600;">Next ›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. LARGE MATTERS (Page 8-9 in PDF) ================= -->
+      <section class="page" id="page-largematters">
+        <div class="page-head">
+          <div>
+            <h1 class="h1">Large Matters</h1>
+            <p class="subtitle">Filtered view of high-EAR cases · follow action recommendation strictly.</p>
+          </div>
+          <div class="page-actions" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;margin-right:2px">Action Horizon</span>
+            <span class="filter-chip active" data-lm-window="immediate" onclick="setLmWindow('immediate')">Immediate <span class="badge-count" id="badgeLmImmediate">(0)</span></span>
+            <span class="filter-chip" data-lm-window="30" onclick="setLmWindow('30')">30d <span class="badge-count" id="badgeLm30">(0)</span></span>
+            <span class="filter-chip" data-lm-window="60" onclick="setLmWindow('60')">60d <span class="badge-count" id="badgeLm60">(0)</span></span>
+            <span class="filter-chip" data-lm-window="all" onclick="setLmWindow('all')">All <span class="badge-count" id="badgeLmAll">(0)</span></span>
+            <div style="display:inline-flex;align-items:center;gap:4px;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;margin-left:2px;">
+              <span style="font-size:11px;color:var(--text-muted);font-weight:600;">Custom:</span>
+              <input type="number" id="customLmDaysInput" min="1" max="999" placeholder="Days" oninput="setCustomLmWindow(this.value)" onchange="setCustomLmWindow(this.value)" style="width:48px;background:transparent;border:none;color:var(--text-white);font-size:11.5px;font-family:var(--font-mono);outline:none;font-weight:700;">
+              <span style="font-size:11px;color:var(--text-muted);">d</span>
+            </div>
+            <button class="outreach-download" onclick="exportLargeMatters()" style="padding:6px 14px;font-size:12px;margin-left:8px" title="Export currently filtered Large Matters to CSV">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Working Filters Bar -->
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+          <input type="text" id="largeMattersSearchInput" placeholder="Filter large matters..." oninput="filterLargeMatters(this.value)" style="background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text-white);font-size:12px;min-width:220px;">
+          <select id="largeMattersCityFilter" class="filter-chip" onchange="filterLargeMattersCity(this.value)">
+            <option value="ALL">All Cities</option>
+            <option value="Miami">Miami</option>
+            <option value="Fort Lauderdale">Fort Lauderdale</option>
+            <option value="West Palm Beach">West Palm Beach</option>
+            <option value="Tampa">Tampa</option>
+            <option value="Orlando">Orlando</option>
+          </select>
+          <select id="largeMattersAssignFilter" class="filter-chip" onchange="filterLargeMattersAssign(this.value)">
+            <option value="ALL">All Assignments</option>
+            <option value="unassigned">Unassigned Only</option>
+            <option value="assigned">Assigned Only</option>
+          </select>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi" id="kpiCardLargeAll" onclick="clickLargeKpi('all')" title="View all large & complex matters">
+            <div class="kpi-label"><span>Large Matters</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-value" id="kpiLargeCount">0</div>
+            <div class="kpi-sub">≥ $100k full / complex</div>
+          </div>
+          <div class="kpi" id="kpiCardLargePipeline" onclick="clickLargeKpi('pipeline')" title="Sort by highest cumulative case revenue">
+            <div class="kpi-label"><span>Addressable Pipeline</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-value" id="kpiLargePipeline" style="color:var(--status-emerald);">$0</div>
+            <div class="kpi-sub">cumulative full value</div>
+          </div>
+          <div class="kpi" id="kpiCardLargeUrgent" onclick="clickLargeKpi('urgent')" title="Filter to urgent upcoming trials (≤60 days)">
+            <div class="kpi-label"><span>Urgent Window (≤60d)</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-value" id="kpiLargeUrgent" style="color:var(--status-crimson);">0</div>
+            <div class="kpi-sub">prep window active</div>
+          </div>
+          <div class="kpi" id="kpiCardLargeUnassigned" onclick="clickLargeKpi('unassigned')" title="Filter to unassigned high-value opportunities">
+            <div class="kpi-label"><span>Unassigned High-Value</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-value" id="kpiLargeUnassigned" style="color:var(--status-amber);">0</div>
+            <div class="kpi-sub">needs white-glove rep</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0;overflow:hidden;position:relative;">
+          <!-- Top Horizontal Scrollbar -->
+          <div class="table-top-scroll" id="largeMattersTopScroll">
+            <div class="table-top-scroll-inner"></div>
+          </div>
+          <div class="table-wrap" id="largeMattersTableWrap">
+            <table class="data-table" id="largeMattersTable">
+              <thead>
+                <tr><th>Priority</th><th>Recommended Action</th><th>Trial Date</th><th>Days</th><th>Attorney</th><th>Firm</th><th>Matter Caption</th><th>Docket</th><th>Court</th><th>Est. Revenue</th><th>Owner</th><th>Status</th></tr>
+              </thead>
+              <tbody id="largeMattersTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. TRIAL TENDENCY (Page 10-11 in PDF) ================= -->
+      <section class="page" id="page-behavior">
+        <div class="page-head">
+          <div>
+            <h1 class="h1">Trial Tendency</h1>
+            <p class="subtitle">Firms, attorneys, and judges ranked by how often their cases actually go to trial vs. settling.</p>
+          </div>
+          <div class="page-actions" style="display:flex;gap:6px;align-items:center">
+            <span class="filter-chip active" data-behavior-tab="firms" onclick="setBehaviorTab('firms')">Firms</span>
+            <span class="filter-chip" data-behavior-tab="attorneys" onclick="setBehaviorTab('attorneys')">Attorneys</span>
+            <span class="filter-chip" data-behavior-tab="judges" onclick="setBehaviorTab('judges')">Judges</span>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi" onclick="openBehaviorKpiDrill(1)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel1">Entities Ranked</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal1">124</div><div class="kpi-sub" id="kpiBehaviorSub1">≥ 3 closed cases</div></div>
+          <div class="kpi" onclick="openBehaviorKpiDrill(2)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel2">Avg Trial Rate</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal2" style="color:var(--status-amber);">18.4%</div><div class="kpi-sub" id="kpiBehaviorSub2">across ranked set</div></div>
+          <div class="kpi" onclick="openBehaviorKpiDrill(3)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel3">High-Trial Targets</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal3" style="color:var(--status-emerald);">38</div><div class="kpi-sub" id="kpiBehaviorSub3">trial pct ≥ 25%</div></div>
+          <div class="kpi" onclick="openBehaviorKpiDrill(4)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel4">Historical Dispositions</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal4" style="font-size:22px;color:var(--text-white);">0</div><div class="kpi-sub" id="kpiBehaviorSub4">Verified courtroom outcomes</div></div>
+        </div>
+
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead id="behaviorThead">
+                <tr><th>Entity Name</th><th>Closed Matters</th><th>Trial %</th><th>Trials</th><th>Settled %</th><th>Dismissed %</th></tr>
+              </thead>
+              <tbody id="behaviorTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. ADMIN INGESTION ================= -->
+      <section class="page" id="page-admin">
+        <div class="page-head">
+          <div>
+            <h1 class="h1">Admin Ingestion Console</h1>
+            <p class="subtitle">Automated file parsing, FNS law firm standardization, and court docket intake.</p>
+          </div>
+          <div class="page-actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span id="adminStorageBadge" style="font-size:11px;padding:6px 12px;border-radius:6px;background:rgba(16,185,129,0.12);color:#34D399;border:1px solid rgba(16,185,129,0.3);font-weight:600;display:inline-flex;align-items:center;gap:6px;" title="Database Persistence Engine">
+              <span style="width:7px;height:7px;border-radius:50%;background:#10B981;display:inline-block;"></span>
+              PostgreSQL Primary + Local Backup
+            </span>
+            <button class="filter-chip" style="background:rgba(59,130,246,0.15);color:#93C5FD;border-color:rgba(59,130,246,0.35);cursor:pointer;padding:8px 16px;display:flex;align-items:center;gap:6px;font-weight:600;" onclick="openWeightsControlModal()" title="Configure Key Variables and Heat Map weighting engine">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v18M3 9l9-6 9 6M6 14l-3 4h6l-3-4zM18 14l-3 4h6l-3-4z"/></svg>
+              Key Variables Engine
+            </button>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi-label">Active Delivery Files</div><div class="kpi-value" id="adminFilesCount">0</div><div class="kpi-sub">Processed this cycle</div></div>
+          <div class="kpi"><div class="kpi-label">Normalization Rate</div><div class="kpi-value" id="adminQuality">100.0%</div><div class="kpi-sub">Clean parsing rate</div></div>
+          <div class="kpi"><div class="kpi-label">Litigation Matters</div><div class="kpi-value" id="adminCasesCount">0</div><div class="kpi-sub">Active dockets</div></div>
+          <div class="kpi"><div class="kpi-label">Counsel Entities Mapped</div><div class="kpi-value" id="adminCounselCount">0</div><div class="kpi-sub">Canonical FNS records</div></div>
+        </div>
+
+        <!-- Drag & Drop Upload Zone (No technical buttons) -->
+        <div class="dropzone" id="dropzoneBox" onclick="document.getElementById('fileUploadInput').click()">
+          <input type="file" id="fileUploadInput" style="display:none" accept=".csv,.xlsx,.txt" onchange="handleFileSelected(this.files)">
+          <div class="dropzone-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div class="dropzone-title">Drop Court Docket or Appearance Matrix (.xlsx, .csv)</div>
+          <div class="dropzone-sub">Files are automatically parsed, normalized, and integrated into the priority engine.</div>
+        </div>
+
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>File Name</th><th>Import Date</th><th>Source Type</th><th>Total Rows</th><th>Clean Rows</th><th>Status</th><th style="text-align:right;">Action</th></tr></thead>
+              <tbody id="adminLogsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+<!-- === MORE VIEW: forecast === -->
+<section class="page" id="page-forecast">
+
+      <div class="page-head">
+        <div>
+          <h1 class="h1">Revenue Forecast</h1>
+          <p class="subtitle">Directional projections with confidence placeholders. Statistical bands enabled once historical track record matures.</p>
+        </div>
+        <div class="page-actions">
+          <span class="filter-chip" data-filter="forecast_window:30">30d</span>
+          <span class="filter-chip active" data-filter="forecast_window:90">90d</span>
+          <span class="filter-chip" data-filter="forecast_window:365">12mo</span>
+          <span class="filter-chip" data-filter="forecast_window:730">24mo</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid cols-4" id="forecastKpis"></div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+          <div><div class="card-title">Forecast vs. Actual  -  Rolling 12 Months</div><div class="card-sub">Bands show P10 / P50 / P90 directional confidence</div></div>
+        </div>
+        <div class="canvas-wrap lg"><canvas id="forecastChart"></canvas></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Revenue by Region</div><div class="card-sub">Florida circuits · current quarter</div></div></div>
+          <div class="canvas-wrap sm"><canvas id="regionChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Monthly Cadence</div><div class="card-sub">Trial print rate by month</div></div></div>
+          <div class="canvas-wrap sm"><canvas id="monthlyChart"></canvas></div>
+        </div>
+      </div>
+    
+</section>
+
+<!-- === MORE VIEW: geo === -->
+<section class="page" id="page-geo">
+
+      <div class="page-head">
+        <div>
+          <h1 class="h1">Geographic Intelligence</h1>
+          <p class="subtitle">Florida judicial circuits ranked by Heat Map Intensity (Revenue Opportunity × Trial Density).</p>
+        </div>
+        <div class="page-actions">
+          <span class="filter-chip active">Heat Map Intensity</span>
+          <span class="filter-chip">District Revenue</span>
+          <span class="filter-chip">Trial Density</span>
+        </div>
+      </div>
+
+      <div id="geoKpis" class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Top 5 Cities  -  Next 90 Days</div><div class="card-sub">Ranked by upcoming trial count · click a city to see its trials</div></div></div>
+          <div id="topCitiesRank" style="max-height:380px;overflow-y:auto"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Upcoming Trial Calendar  -  Top Cities</div><div class="card-sub">90 day forward window</div></div></div>
+          <div class="canvas-wrap"><canvas id="upcomingChart"></canvas></div>
+        </div>
+      </div>
+    
+</section>
+
+<!-- === MORE VIEW: courts === -->
+<section class="page" id="page-courts">
+
+      <div class="page-head">
+        <div><h1 class="h1">Court Intelligence</h1><p class="subtitle">Courthouse rankings, trial density, and judge activity across active circuits.</p></div>
+        <div class="page-actions">
+          <span class="filter-chip active">All Courts</span>
+          <span class="filter-chip">Circuit</span>
+          <span class="filter-chip">County</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid cols-4" id="courtsKpis"><!-- populated by renderCourts -->
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Courthouse Rankings</div><div class="card-sub">Court Opportunity = Active + Upcoming + Target Firms</div></div></div>
+          <div style="max-height:420px;overflow-y:auto">
+            <table class="data-table">
+              <thead><tr><th>Court</th><th>Circuit</th><th style="text-align:right">Active</th><th style="text-align:right">Upcoming</th><th style="text-align:right">Density</th><th style="text-align:right">Opp Score</th></tr></thead>
+              <tbody id="courtsTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Top Judges by Trial Activity</div><div class="card-sub">By active + scheduled trial count</div></div></div>
+          <div id="judgesList" style="max-height:420px;overflow-y:auto"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-header"><div><div class="card-title">Court Activity Heatmap  -  Last 90 Days</div><div class="card-sub">Daily docket events by top 8 courts</div></div></div>
+        <div id="courtHeatmap" style="margin-top:10px"></div>
+      </div>
+    
+</section>
+
+<!-- === MORE VIEW: attorneys === -->
+<section class="page" id="page-attorneys">
+
+      <div class="page-head">
+        <div><h1 class="h1">Attorney Intelligence</h1><p class="subtitle">Top performers by Influence Score · active trials · upcoming docket.</p></div>
+        <div class="page-actions">
+          <span class="filter-chip active">Influence Score</span>
+          <span class="filter-chip">Active Trials</span>
+          <span class="filter-chip">Geographic Reach</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid cols-4" id="attorneysKpis"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Top 25 Attorneys</div><div class="card-sub">By Influence Score</div></div></div>
+          <div style="max-height:420px;overflow-y:auto">
+            <table class="data-table">
+              <thead><tr><th>#</th><th>Attorney</th><th>Firm</th><th style="text-align:right">Trials</th><th style="text-align:right">Districts</th><th style="text-align:right">Score</th></tr></thead>
+              <tbody id="attorneysTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Influence Distribution</div><div class="card-sub" id="attyHistSub">Across tracked attorneys</div></div></div>
+          <div class="canvas-wrap"><canvas id="attorneyHist"></canvas></div>
+          <div style="margin-top:14px">
+            <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:8px">Component breakdown (Top 25 avg)</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Active Trial Score (40%)</span><span>87.2</span></div><div class="meter"><div class="meter-fill" style="width:87%"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Appearance Score (30%)</span><span>76.8</span></div><div class="meter"><div class="meter-fill blue" style="width:77%"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Relationship Score (20%)</span><span>68.1</span></div><div class="meter"><div class="meter-fill green" style="width:68%"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Geographic Score (10%)</span><span>54.9</span></div><div class="meter"><div class="meter-fill purple" style="width:55%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+</section>
+
+<!-- === MORE VIEW: firms === -->
+<section class="page" id="page-firms">
+
+      <div class="page-head">
+        <div><h1 class="h1">Law Firm Intelligence</h1><p class="subtitle">Firm rankings by Firm Influence Score and revenue contribution.</p></div>
+        <div class="page-actions">
+          <span class="filter-chip active">Firm Influence</span>
+          <span class="filter-chip">Revenue</span>
+          <span class="filter-chip">Geographic Reach</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid cols-4" id="firmsKpis"></div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div><div class="card-title">Top 20 Firms</div><div class="card-sub">By Firm Influence Score = Active Trials (40%) + Unique Attorneys (30%) + Geographic Reach (30%)</div></div></div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Firm</th><th style="text-align:right">Active Trials</th><th style="text-align:right">Attorneys</th><th style="text-align:right">Districts</th><th style="text-align:right">Revenue Opp</th><th style="text-align:right">Influence</th></tr></thead>
+          <tbody id="firmsTable"></tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Revenue Contribution</div><div class="card-sub">Top 10 firms · 90d projection</div></div></div>
+          <div class="canvas-wrap"><canvas id="firmRevChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Geographic Reach Matrix</div><div class="card-sub">Top 8 firms × top 8 districts</div></div></div>
+          <div id="reachMatrix" style="margin-top:8px"></div>
+        </div>
+      </div>
+    
+</section>
+
+<!-- === MORE VIEW: relationships === -->
+<section class="page" id="page-relationships">
+
+      <div class="page-head">
+        <div><h1 class="h1">Relationship Intelligence</h1><p class="subtitle">Hidden influence networks · attorney ↔ firm ↔ judge ↔ district.</p></div>
+        <div class="page-actions">
+          <span class="filter-chip active" data-filter="rel_kind:all">All Views</span>
+          <span class="filter-chip" data-filter="rel_kind:teams">Co-Counsel</span>
+          <span class="filter-chip" data-filter="rel_kind:atty_judge">Atty ↔ Judge</span>
+          <span class="filter-chip" data-filter="rel_kind:atty_firm">Atty ↔ Firm</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid cols-4" id="relationshipsKpis"></div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+          <div><div class="card-title">Influence Network</div><div class="card-sub">Force-directed graph · node size = influence · edge weight = relationship strength</div></div>
+          <div style="display:flex;gap:14px;font-size:11.5px;color:var(--text-2)">
+            <span><span class="legend-dot" style="background:#FF6B1A;border-radius:50%"></span> Attorney</span>
+            <span><span class="legend-dot" style="background:#3B82F6;border-radius:50%"></span> Firm</span>
+            <span><span class="legend-dot" style="background:#A855F7;border-radius:50%"></span> Judge</span>
+            <span><span class="legend-dot" style="background:#22C55E;border-radius:50%"></span> District</span>
+          </div>
+        </div>
+        <div class="network-wrap">
+          <svg class="net-svg" viewBox="0 0 900 500" id="netSvg"></svg>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Strongest Trial Teams</div><div class="card-sub">Co-counsel  -  attorneys jointly representing the same client, ranked by shared cases</div></div></div>
+          <div id="teamsList"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Top Attorney-Judge Pairs</div><div class="card-sub">By appearance count</div></div></div>
+          <div id="ajPairsList"></div>
+        </div>
+      </div>
+    
+</section>
+
+<!-- === MORE VIEW: trials === -->
+<section class="page" id="page-trials">
+
+      <div class="page-head">
+        <div><h1 class="h1">Trial Intelligence</h1><p class="subtitle">Upcoming trial docket with urgency, print likelihood, and settlement / continuance probabilities.</p></div>
+        <div class="page-actions">
+          <span class="filter-chip active" data-filter="trials_window:60">Next 60d</span>
+          <span class="filter-chip" data-filter="trials_window:90">Next 90d</span>
+          <span class="filter-chip" data-filter="trials_window:all">All upcoming</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid cols-4" id="trialsKpis"></div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+          <div><div class="card-title">Upcoming Trial Docket</div><div class="card-sub">Scored by Outreach Priority  -  sorted by Trial Urgency × Revenue Opportunity × Firm Influence</div></div>
+          <div style="display:flex;gap:6px">
+            <span class="filter-chip active" data-filter="docket:all">All</span>
+            <span class="filter-chip" data-filter="docket:urgency80">High Urgency</span>
+            <span class="filter-chip" data-filter="docket:print70">Will Print (≥70)</span>
+          </div>
+        </div>
+        <div style="max-height:340px;overflow-y:auto;border-radius:10px;border:1px solid var(--border);background:var(--bg-2)">
+          <table class="data-table" style="border:none">
+            <thead style="position:sticky;top:0;background:var(--bg-2);z-index:1"><tr><th>Case</th><th>Court</th><th>Trial Date</th><th style="text-align:right">Urgency</th><th style="text-align:right">Print %</th><th style="text-align:right">Settle %</th><th style="text-align:right">Cont %</th><th style="text-align:right">$ Opp</th></tr></thead>
+            <tbody id="trialsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-header">
+          <div><div class="card-title">Trials by Month</div><div class="card-sub">Upcoming trial docket grouped by scheduled month  -  expired trials drop off automatically</div></div>
+        </div>
+        <div class="canvas-wrap"><canvas id="monthlyTrials"></canvas></div>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Trial Volume  -  Next 12 Weeks</div><div class="card-sub">Scheduled vs. expected to print</div></div></div>
+          <div class="canvas-wrap"><canvas id="weeklyTrials"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">SPC-Lite vs CPD-Lite</div><div class="card-sub">Trial outcome risk by case type</div></div></div>
+          <div class="canvas-wrap"><canvas id="riskScatter"></canvas></div>
+        </div>
+      </div>
+    
+</section>
+
+<!-- === MORE VIEW: patterns === -->
+<section class="page" id="page-patterns">
+
+      <div class="page-head">
+        <div>
+          <h1 class="h1">Pattern Intelligence <span style="font-size:11px;font-weight:600;padding:3px 8px;background:rgba(59,130,246,0.16);color:#93C5FD;border-radius:6px;vertical-align:middle;margin-left:6px">AI</span></h1>
+          <p class="subtitle">The strategic brain  -  hidden relationships, emerging patterns, and future opportunities discovered from every record in the pipeline.</p>
+        </div>
+        <div class="page-actions">
+          <input id="patternsSearch" type="text" placeholder="Search attorney, firm, judge, court…" style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:12.5px;width:280px" oninput="renderPatterns()">
+        </div>
+      </div>
+      <!-- KPIs -->
+      <div id="patternsKpis" class="kpi-grid" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px"></div>
+      <!-- AI Insight Center -->
+      <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg, rgba(59,130,246,0.06), rgba(255,107,26,0.04));border:1px solid rgba(59,130,246,0.20)">
+        <div class="card-header">
+          <div><div class="card-title"><span style="color:#93C5FD">◆</span> AI Insight Center</div><div class="card-sub" id="patternsInsightSub">Live analysis · every insight is evidence-backed and clickable</div></div>
+        </div>
+        <div id="patternsInsights" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;padding:4px"></div>
+      </div>
+      <!-- 2-column: Top opportunities + Emerging trends -->
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Top Opportunity Rankings</div><div class="card-sub">Scored by frequency × revenue × recency · click any row to explore</div></div></div>
+          <div id="patternsTopOpps" style="max-height:420px;overflow-y:auto"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Emerging Trends</div><div class="card-sub">Directional changes across cities · attorneys · practice areas</div></div></div>
+          <div id="patternsTrends" style="max-height:420px;overflow-y:auto"></div>
+        </div>
+      </div>
+      <!-- Pattern categories: 5 clickable cards -->
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="card clickable" onclick="openDrill('pat_attorneys')" style="cursor:pointer">
+          <div class="card-header"><div><div class="card-title">👤 Attorney Intelligence</div><div class="card-sub" id="patAttorneySub">Trial volume · repeat teams · preferred judges · geographic reach</div></div></div>
+          <div id="patAttorneyMini" style="padding:0 16px 12px"></div>
+        </div>
+        <div class="card clickable" onclick="openDrill('pat_firms')" style="cursor:pointer">
+          <div class="card-header"><div><div class="card-title">🏢 Firm Intelligence</div><div class="card-sub" id="patFirmSub">Active trials · revenue potential · geographic expansion · practice areas</div></div></div>
+          <div id="patFirmMini" style="padding:0 16px 12px"></div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="card clickable" onclick="openDrill('pat_judges')" style="cursor:pointer">
+          <div class="card-header"><div><div class="card-title">⚖ Judge Intelligence</div><div class="card-sub" id="patJudgeSub">Active caseload · common case types · frequently-appearing counsel</div></div></div>
+          <div id="patJudgeMini" style="padding:0 16px 12px"></div>
+        </div>
+        <div class="card clickable" onclick="openDrill('pat_geo')" style="cursor:pointer">
+          <div class="card-header"><div><div class="card-title">📍 Geographic Intelligence</div><div class="card-sub" id="patGeoSub">Highest-activity cities · districts · opportunity density</div></div></div>
+          <div id="patGeoMini" style="padding:0 16px 12px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title clickable" onclick="openDrill('pat_cases')" style="cursor:pointer">📋 Case Intelligence</div><div class="card-sub" id="patCaseSub">Case type distribution · plaintiff/defendant trends · revenue by category</div></div></div>
+        <div id="patCaseMini" style="padding:0 16px 12px"></div>
+      </div>
+    
+</section>
+
+<!-- === MORE VIEW: sales === -->
+<section class="page" id="page-sales">
+
+      <div class="page-head">
+        <div><h1 class="h1">Sales Intelligence</h1><p class="subtitle">Outreach prioritization, engagement health, and pipeline conversion.</p></div>
+        <div class="page-actions">
+          <span class="filter-chip active" data-filter="sales_scope:all">All accounts</span>
+          <span class="filter-chip" data-filter="sales_scope:lm">Top 50 firms</span>
+          <span class="filter-chip" data-filter="sales_scope:mine">My book</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid cols-4" id="salesKpis"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Outreach Priority Queue</div><div class="card-sub">(Trial Urgency × 40%) + (Revenue Opp × 40%) + (Firm Influence × 20%)</div></div></div>
+          <div id="priorityList"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Pipeline Funnel</div><div class="card-sub">Stage-by-stage conversion</div></div></div>
+          <div id="funnel"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Engagement Mix  -  30d</div><div class="card-sub">Emails + Calls + Cookie drops + UPS</div></div></div>
+          <div class="canvas-wrap"><canvas id="engChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Conversion by Channel</div><div class="card-sub">Closed / Total opportunities</div></div></div>
+          <div class="canvas-wrap"><canvas id="convChart"></canvas></div>
+        </div>
+      </div>
+    
+</section>
+
+    </div>
+  </main>
+
+  <!-- ================= UNIVERSAL GRANULAR DRILL-DOWN DRAWER (LEVEL 2 & 3) ================= -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrill(event)">
+    <div class="drawer-content" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <div class="drawer-title" id="drawerTitle">Granular Drill-Down</div>
+          <div class="drawer-sub" id="drawerSub">Complete underlying records with multi-dimensional filtering.</div>
+        </div>
+        <button class="close-btn" onclick="closeDrill()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="drawer-toolbar">
+        <div class="search" style="margin-left:0;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="drawerSearchInput" placeholder="Filter rows..." oninput="filterDrawerRows(this.value)">
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="display:inline-flex;align-items:center;gap:4px;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;">
+            <span style="font-size:11px;color:var(--text-muted);font-weight:600;">Max Days:</span>
+            <input type="number" id="drawerDaysInput" min="1" max="999" placeholder="All" oninput="filterDrawerDays(this.value)" onchange="filterDrawerDays(this.value)" style="width:44px;background:transparent;border:none;color:var(--text-white);font-size:11.5px;font-family:var(--font-mono);outline:none;font-weight:700;">
+            <span style="font-size:11px;color:var(--text-muted);">d</span>
+          </div>
+          <select id="drawerCityFilter" class="filter-chip" onchange="filterDrawerCity(this.value)">
+            <option value="ALL">All Cities</option>
+            <option value="Miami">Miami</option>
+            <option value="Fort Lauderdale">Fort Lauderdale</option>
+            <option value="West Palm Beach">West Palm Beach</option>
+            <option value="Tampa">Tampa</option>
+            <option value="Orlando">Orlando</option>
+          </select>
+          <select id="drawerAssignFilter" class="filter-chip" onchange="filterDrawerAssign(this.value)">
+            <option value="ALL">All Ownership</option>
+            <option value="UNASSIGNED">Unassigned Leads</option>
+            <option value="ASSIGNED">Assigned to Rep</option>
+          </select>
+          <button class="btn-export" onclick="exportActiveCsv()">Export Filtered CSV</button>
+        </div>
+      </div>
+      <div class="drawer-body" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
+        <!-- Top Horizontal Scrollbar -->
+        <div class="table-top-scroll" id="drawerTopScroll">
+          <div class="table-top-scroll-inner"></div>
+        </div>
+        <div class="table-wrap" id="drawerTableWrap" style="flex:1;">
+          <table class="data-table" id="drawerTable">
+            <thead id="drawerTableHead"></thead>
+            <tbody id="drawerTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LEVEL 3: COMPREHENSIVE CASE / COUNSEL DOSSIER ================= -->
+  <div class="modal-backdrop" id="dossierModal" onclick="closeDossier(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <div class="tag-anchor" id="dossierBadge" style="margin-bottom:6px;">CIVIL ACTION</div>
+          <h2 class="h1" id="dossierTitle" style="font-size:18px;">Alvarez v. Carnival Corporation</h2>
+          <div class="subtitle" id="dossierSub">Docket #1:24-cv-21490 · S.D. Fla. (Miami)</div>
+        </div>
+        <button class="close-btn" onclick="closeDossier()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="dossierContent"></div>
+    </div>
+  </div>
+
+  <!-- ================= BUILDING OUTREACH DOSSIER MODAL (ALL ATTORNEYS + CSV DOWNLOAD) ================= -->
+  <div class="modal-backdrop" id="buildingDossierModal" onclick="closeBuildingDossier(event)">
+    <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 1180px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span class="tag-anchor" style="background: rgba(139,30,36,0.2); color: #FCA5A5; border-color: rgba(139,30,36,0.4);">COMMERCIAL OFFICE BUILDING</span>
+            <span id="bldgModalWalkBadge" style="display: none;" class="tag-anchor">🚶 Walkable Hub</span>
+          </div>
+          <h2 class="h1" id="bldgModalName" style="font-size: 20px; margin-bottom: 2px;">Building Name</h2>
+          <div class="subtitle" id="bldgModalAddress" style="color: var(--text-muted); font-size: 12.5px;">Building Address</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="btn-export" id="bldgExportCsvBtn" style="display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--wine-soft); border: 1px solid var(--border-wine); color: #FFFFFF;" onclick="downloadBuildingCsv()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Building Outreach CSV
+          </button>
+          <button class="close-btn" onclick="closeBuildingDossier()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Building Metadata & Logistics Bar -->
+      <div id="bldgModalMetaBar" style="display: grid; grid-template-columns: 140px 140px 1.4fr 1fr; gap: 14px; padding: 12px 16px; background: var(--bg-dark-3); border-bottom: 1px solid var(--border); font-size: 12px; align-items: start;">
+        <div>
+          <span style="color: var(--text-muted); display: block; font-size: 11px;">Total Eligible Drops</span>
+          <strong id="bldgModalDrops" style="font-size: 14px; color: var(--text-white);">0 Drops</strong>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); display: block; font-size: 11px;">Unique Law Firms</span>
+          <strong id="bldgModalFirms" style="font-size: 14px; color: var(--text-white);">0 Firms</strong>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color: var(--text-muted); font-size: 11px;">🚗 Parking &amp; Facility Logistics</span>
+            <button class="btn-export" style="font-size: 10px; padding: 2px 7px; margin-left: 6px;" onclick="toggleBuildingAccessEdit()">✏️ Edit</button>
+          </div>
+          <div id="bldgModalParking" style="color: #E2E8F0; font-size: 11.5px; line-height: 1.4; margin-top: 3px;">Standard garage parking</div>
+          <div id="bldgModalFacilitySource" style="color: #34D399; font-size: 10px; margin-top: 3px;">● OpenStreetMap Geospatial Verified</div>
+        </div>
+        <div>
+          <span style="color: var(--text-muted); display: block; font-size: 11px;">🛡️ Lobby Security &amp; Access</span>
+          <div id="bldgModalSecurity" style="color: #CBD5E1; font-size: 11.5px; line-height: 1.4; margin-top: 3px;">Standard lobby check-in</div>
+          <div id="bldgModalWalkDesc" style="color: #F87171; font-size: 10px; margin-top: 3px;">🚶 Single Building Stop</div>
+        </div>
+      </div>
+
+      <!-- Inline Building Access Editor (Hidden by default) -->
+      <div id="bldgAccessEditBox" style="display: none; padding: 12px 16px; background: #181824; border-bottom: 1px solid var(--border-wine);">
+        <div style="font-size: 12px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px;">✏️ Update Courier Parking &amp; Building Access Instructions</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Parking Notes / Garage Entrance / Loading Zone</label>
+            <textarea id="editBldgParkingInput" rows="2" style="width: 100%; background: var(--bg-dark-3); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: #FFFFFF; font-size: 12px; resize: vertical;"></textarea>
+          </div>
+          <div>
+            <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Security Notes / Lobby Check-in / Turnstiles</label>
+            <textarea id="editBldgSecurityInput" rows="2" style="width: 100%; background: var(--bg-dark-3); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: #FFFFFF; font-size: 12px; resize: vertical;"></textarea>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+          <button class="btn-export" style="background: transparent; color: var(--text-muted);" onclick="toggleBuildingAccessEdit(false)">Cancel</button>
+          <button class="btn-export" style="background: var(--status-crimson); color: #FFFFFF;" onclick="saveBuildingAccessNotes()">Save Courier Logistics</button>
+        </div>
+      </div>
+
+      <!-- Table Toolbar (Filter & Count) -->
+      <div style="padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; background: #13131A; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <input type="text" id="bldgSearchInput" placeholder="Filter attorneys, firms, dockets..." oninput="filterBuildingTableRows(this.value)" style="background: var(--bg-dark-3); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; color: var(--text-white); font-size: 12px; width: 220px;">
+          <div class="pill-tabs" style="margin:0;">
+            <button class="pill-tab active" id="bldgTabActive" onclick="setBuildingLifecycle('active')">Active Upcoming (<span id="bldgActiveCount">0</span>)</button>
+            <button class="pill-tab" id="bldgTabHist" onclick="setBuildingLifecycle('historical')">Historical Archive (<span id="bldgHistCount">0</span>)</button>
+            <button class="pill-tab" id="bldgTabAll" onclick="setBuildingLifecycle('all')">All (<span id="bldgAllCount">0</span>)</button>
+          </div>
+          <span id="bldgRowCount" style="font-size: 11.5px; color: var(--text-muted);">Showing 0 counsel rows</span>
+        </div>
+        <div style="font-size: 11.5px; color: var(--text-muted);">
+          <span style="color: var(--wine-bright);">●</span> Click any row to view case dossier
+        </div>
+      </div>
+
+      <!-- Scrollable Table Container -->
+      <div style="flex: 1; overflow-y: auto; overflow-x: auto; max-height: 520px; padding: 0;">
+        <table class="data-table" id="bldgAttorneysTable" style="width: 100%; min-width: 1150px; border-collapse: collapse;">
+          <thead style="position: sticky; top: 0; background: #0E0E14; z-index: 2;">
+            <tr>
+              <th>Attorney</th>
+              <th>Firm</th>
+              <th>Side</th>
+              <th>Matter &amp; Docket #</th>
+              <th>Trial Date</th>
+              <th>Direct Phone</th>
+              <th>Direct Email</th>
+              <th>Assigned Rep</th>
+              <th>CRM Status</th>
+              <th>Conflict Check</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bldgAttorneysTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Cookie Drop Feedback & Conversion Loop -->
+  <div id="dropFeedbackModal" class="modal-backdrop" onclick="closeDropFeedbackModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="background:#13131A;border:1px solid var(--border-wine);border-radius:12px;width:100%;max-width:580px;padding:20px;box-shadow:0 20px 40px rgba(0,0,0,0.6);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px;">
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#FFF;">🔥 Feed Cookie-Drop Feedback into Heat Map</div>
+          <div style="font-size:11.5px;color:var(--text-muted);">Record runner drop outcomes to update attorney responsiveness &amp; priority weighting</div>
+        </div>
+        <button class="icon-btn" onclick="closeDropFeedbackModal()">✕</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Target Matter / Attorney</label>
+          <select id="feedbackCaseSelect" style="width:100%;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px;color:#FFF;font-size:12px;"></select>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Contact Reason Selected</label>
+            <select id="feedbackReasonSelect" style="width:100%;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px;color:#FFF;font-size:12px;">
+              <option value="Pre-Trial Exhibit Mounting">Pre-Trial Exhibit Mounting</option>
+              <option value="Trial Binders & Mounting">Trial Binders &amp; Mounting</option>
+              <option value="3D LiDAR Scan & Animation">3D LiDAR Scan &amp; Animation</option>
+              <option value="War Room Equipment & Support">War Room Equipment &amp; Support</option>
+              <option value="Deposition Printing & OCR">Deposition Printing &amp; OCR</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Outcome / Stage Conversion</label>
+            <select id="feedbackOutcomeSelect" style="width:100%;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px;color:#FFF;font-size:12px;">
+              <option value="Meeting Scheduled">Meeting Scheduled</option>
+              <option value="Proposal Quote Accepted">Proposal Quote Accepted</option>
+              <option value="Binder Opportunity Booked">Binder Opportunity Booked (Won)</option>
+              <option value="Settled Prior to Trial">Settled Prior to Trial</option>
+              <option value="Case Verdict / Concluded">Case Verdict / Concluded</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Potential Binder Value ($)</label>
+            <input type="number" id="feedbackValueInput" placeholder="e.g. 12500" style="width:100%;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px;color:#FFF;font-size:12px;">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Runner / Account Rep</label>
+            <input type="text" id="feedbackRepInput" placeholder="e.g. Sarah Jenkins" style="width:100%;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px;color:#FFF;font-size:12px;">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Feedback Notes</label>
+          <textarea id="feedbackNotesInput" rows="3" placeholder="Attorney requested 3D exhibit mounting quote for trial starting next month..." style="width:100%;background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px;color:#FFF;font-size:12px;resize:vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;border-top:1px solid var(--border);padding-top:12px;">
+        <button class="btn-export" style="background:transparent;color:var(--text-muted);" onclick="closeDropFeedbackModal()">Cancel</button>
+        <button class="btn-export" style="background:var(--brand-crimson);color:#FFF;font-weight:700;" onclick="submitDropFeedback()">Log Feedback &amp; Recalculate Heat Map</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Key Variables & Weighting Control Panel -->
+  <div id="weightsControlModal" class="modal-backdrop" onclick="closeWeightsControlModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="background:#13131A;border:1px solid var(--border-wine);border-radius:12px;width:100%;max-width:620px;padding:20px;box-shadow:0 20px 40px rgba(0,0,0,0.6);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px;">
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#FFF;">⚖️ Key Variables Weighting Engine</div>
+          <div style="font-size:11.5px;color:var(--text-muted);">Rearrange, prioritize, or re-weight geography, case type, urgency, and revenue live</div>
+        </div>
+        <button class="icon-btn" onclick="closeWeightsControlModal()">✕</button>
+      </div>
+
+      <!-- Presets bar -->
+      <div style="margin-bottom:16px;padding:10px;background:var(--bg-dark-3);border-radius:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Quick Strategy Presets:</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="filter-chip" onclick="applyWeightsPreset('courier')">📦 Courier Drops Focus</button>
+          <button class="filter-chip" onclick="applyWeightsPreset('binders')">💼 High-Value Binders</button>
+          <button class="filter-chip active" onclick="applyWeightsPreset('default')">⚖️ TRIS Balanced Default</button>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+            <span style="font-weight:600;color:#FFF;">📍 Geography / Locality Weight</span>
+            <span style="color:var(--status-emerald);font-weight:700;" id="valWeightGeo">20 pts</span>
+          </div>
+          <input type="range" id="sliderWeightGeo" min="0" max="50" value="20" oninput="updateWeightsLive()" style="width:100%;accent-color:var(--status-emerald);">
+          <div style="font-size:10.5px;color:var(--text-muted);">Prioritizes local Florida court venue matches over out-of-town counsel</div>
+        </div>
+
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+            <span style="font-weight:600;color:#FFF;">📋 Case Type / NOS Exhibit Intensity</span>
+            <span style="color:var(--status-amber);font-weight:700;" id="valWeightNOS">15 pts</span>
+          </div>
+          <input type="range" id="sliderWeightNOS" min="0" max="50" value="15" oninput="updateWeightsLive()" style="width:100%;accent-color:var(--status-amber);">
+          <div style="font-size:10.5px;color:var(--text-muted);">Prioritizes high exhibit intensity matters (Patent 830, Malpractice 362, RICO 470)</div>
+        </div>
+
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+            <span style="font-weight:600;color:#FFF;">⏳ Urgency (Days to Trial)</span>
+            <span style="color:var(--status-crimson);font-weight:700;" id="valWeightUrgency">30 pts</span>
+          </div>
+          <input type="range" id="sliderWeightUrgency" min="0" max="50" value="30" oninput="updateWeightsLive()" style="width:100%;accent-color:var(--status-crimson);">
+          <div style="font-size:10.5px;color:var(--text-muted);">Prioritizes trials starting within the 30 to 90-day calendar call window</div>
+        </div>
+
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+            <span style="font-weight:600;color:#FFF;">💰 Estimated Revenue (EAR Value)</span>
+            <span style="color:#60A5FA;font-weight:700;" id="valWeightRevenue">25 pts</span>
+          </div>
+          <input type="range" id="sliderWeightRevenue" min="0" max="50" value="25" oninput="updateWeightsLive()" style="width:100%;accent-color:#60A5FA;">
+          <div style="font-size:10.5px;color:var(--text-muted);">Prioritizes high expected addressable revenue ($500k+ EAR matters)</div>
+        </div>
+
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+            <span style="font-weight:600;color:#FFF;">⚡ Engagement &amp; Cookie Drop Conversion Bonus</span>
+            <span style="color:#C084FC;font-weight:700;" id="valWeightEngagement">15 pts</span>
+          </div>
+          <input type="range" id="sliderWeightEngagement" min="0" max="50" value="15" oninput="updateWeightsLive()" style="width:100%;accent-color:#C084FC;">
+          <div style="font-size:10.5px;color:var(--text-muted);">Grants score bonus to attorneys who converted prior cookie drops into binder deals</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;border-top:1px solid var(--border);padding-top:12px;">
+        <div style="font-size:11px;color:var(--text-muted);" id="weightsTotalSumLabel">Total Max Score Potential: 105 pts</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-export" style="background:transparent;color:var(--text-muted);" onclick="closeWeightsControlModal()">Cancel</button>
+          <button class="btn-export" style="background:var(--brand-crimson);color:#FFF;font-weight:700;" onclick="saveWeightsAndRecalculate()">Apply Weights &amp; Re-Rank Heat Map</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

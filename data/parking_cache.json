@@ -1,0 +1,2887 @@
+{
+  "miami-100 se 2nd st miami fl": {
+    "parking_notes": "Attached 10-story garage on SE 1st St. Clearance 6ft 8in. 15-min courier bay available.",
+    "security_notes": "Sky lobby on 11th floor. Courier badge pass issued at desk with ID.",
+    "facility_source": "Courier Field Override"
+  },
+  "port st lucie-11978 sw aventino dr port st lucie port st lucie fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-2550 s bayshore dr miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "alpharetta ga-love consumer law 2500 northwinds pkwy 30009 alpharetta alpharetta ga ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach-4420 beacon circle west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "new york ny-270 madison ave 8th new york ny ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-7951 sw 186 st cutler bay miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "coral gables-4343 w st coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-3350 buschwood park dr tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "birmingham al-1901 6th ave n bi birmingham al al": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "palmetto bay-15715 s dixie hwy palmetto bay palmetto bay fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach-3318 forest hill blvd west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "delray beach-601 heritage dr 33458 jupiter delray beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "coral gables-attn daniel mena 2525 ponce de leon blvd coral gables fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-400 n pine island rd plantation fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-1620 w oakland park blvd fort lauderdale fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-dispute resolution team drt 201 e las olas blvd ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-7765 sw 87 ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-900 west platt st tampa fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "pompano beach-1937 east atlantic blvd pompano beach pompano beach fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "hialeah-7900 nw 155 st hialeah fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-401 east las olas blvd ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "one biscayne tower su-2 south biscayne blvd one biscayne tower one biscayne tower su fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "palm beach gardens-2845 pga blvd palm beach gardens palm beach gardens fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "dallas tx-2323 ross ave dallas dallas tx tx": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miramar-14521 sw 35th st miramar miramar fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-4720 salisbury rd 247 04 jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "doral-3917 adra ave doral doral fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-98 se 7th st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-the four seasons office tower 1441 brickell ave miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "west palm beach-1080 breakers west way west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "west palm beach-931 village blvd west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-815 s main st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-55 e pine st orlando fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "delray beach-302 gulfstream blvd dania beach delray beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-1600 w commercial blvd fort lauderdale fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "duluth ga-4855 river green pkwy duluth duluth ga ga": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "boca raton-21301 powerline rd boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "culver city ca-6700 s centinela ave 2nd culver city culver city ca ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "alachua-13900 tech city circle alachua inactive alachua fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "coral gables-113 almeria ave 33134 coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "hollywood-3864 sheridan st hollywood hollywood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "atlanta ga-1180 peachtree st atlanta atlanta ga ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-7293 nw 2nd ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "boca raton-8903 glades rd boca raton fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "washington dc-1909 k st nw 12th washington washington dc dc": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "philadelphia pa-1 liberty place 1650 market st philadelphia philadelphia pa pa": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "englewood co-88 inverness circle east l107 englewood englewood co co": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-wells fargo center 333 se 2nd ave miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami beach-828 3rd st miami beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "coral gables-110 merrick way coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-1100 lee wagener blvd fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-1728 coral way miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Levante Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-1 ne 2 ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "suite c fo-1600 west state rd 84 suite c fo fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "hallandale beach ha-520 w hallandale beach blvd hallandale beach hallandale beach sta hallandale beach ha fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "palm beach gardens-13840 emerson st palm beach gardens palm beach gardens fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-civil division 500 east broward blvd fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami beach-1150 stillwater dr miami beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "hialeah-8004 nw 154 st hialeah fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "satellite beach-345 lynn ave satellite beach satellite beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "sarasota-200 s orange ave sarasota inactive sarasota fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "plano tx-7160 dallas pkwy plano plano tx tx": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-2811 ponce de leon blvd 10th coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "hollywood-2056 scott st bunk 4e hollywood hollywood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "coral gables-500 south dixie hwy coral gables fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-metro dade center 111 nw 1st st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "boca raton-2700 n military trail boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-15715 s dixie hwy miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-31 samana dr miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-30 sw 1st st apt 1813 miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "naples-2548 northbrooke plaza dr naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-450 e las olas ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-4500 s lejeune rd coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "davie-12555 orange dr 2nd davie davie fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "windermere-9100 conroy winde rd winde windermere fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "vero beach-5566 53rd ave vero beach vero beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-1515 north marion st tampa fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Marion Street Parking Facility) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-801 ne 167 st 2nd north miami beach miami fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-2883 executive park dr weston fort lauderdale fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "chicago il-70 west madison st 48th chicago chicago il il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-5400 south university dr davie fort lauderdale fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-1825 ponce de leon blvd coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "suite a ta-2124 west kennedy blvd suite a ta fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "vero beach-2651 20th st vero beach vero beach fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "west palm beach-3609 miramontes circle wellington inactive west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "atlanta ga-3475 piedmont rd atlanta atlanta ga ga": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "west palm beach-1218 the pointe dr west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "hollywood-vernis bowling of broward 5821 hollywood blvd hollywood hollywood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-9150 s dadeland blvd 33156 miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "boynton beach-658 manatee bay dr boynton beach boynton beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-3335 nw boca raton blvd boca raton fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "orlando-111 n magnolia ave orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "west chester oh-9050 centre pointe dr west che west chester oh oh": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-930 south state rd 7 plantation fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "new york ny-7 times square new york ny ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami beach-350 lincoln rd 2nd miami beach fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (16th and Collins) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-135 san lorenzo ave coral gables fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "boca raton-1200 n federal hwy 312 boca raton fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-150 w st miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "louisville ky-400 west market st louisville louisville ky ky": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-14 ne 1st ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-215 nw 24th st miami fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Commercial office building. Lobby reception check-in required.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "dania beach-760 ne 7th ave dania beach dania beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-2300 nw corporate blvd boca raton fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "palm beach gardens-3300 pga blvd palm beach gardens palm beach gardens fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-240 crandon blvd key biscayne miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "aventura-2999 ne 191st st aventura aventura fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-22829 marbella circle boca raton fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "clearwater-111 n belcher rd clearwater clearwater fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-8151 peters rd plantation fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "oviedo-400 fontana circle oviedo oviedo fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "pittsburgh pa-1133 penn ave 5th pittsburgh pittsburgh pa pa": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-3000 biscayne blvd miami fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "boca raton-4800 n federal hwy boca raton fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "boca raton-3010 n military trail boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-3044 sw 28th lane miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "chicago il-333 w wacker dr chicago chicago il il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "key west-138 142 simonton st key west key west fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach we-1919 no dr 2nd west palm beach we fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "trinity-11567 trinity blvd trinity trinity fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "hollywood-5821 hollywood blvd hollywood hollywood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-2500 n military trail boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach-444 w railroad ave west palm beach fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "orlando-121 s orange ave orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-schilling silvers pllc 1700 nw 64th st fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-7245 sw 87th ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-10631 n kendall dr miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-500 ne 4th st 2nd fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-3900 mary st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-100 ne 3rd ave fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-515 e las olas blvd ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "boston ma-53 state st boston boston ma ma": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "phoenix az-2325 e camelback rd phoenix phoenix az az": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-390 north orange ave orlando fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "mobile al-101 dauphin st mobile mobile al al": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-litigation 701 brickell ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "new orleans la-601 poydras st new orleans new orleans la la": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "palm beach gardens-11211 prosperity fa rd palm beach gardens palm beach gardens fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-255 s orange ave orlando fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-20200 w dixie hwy miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-302 knights run ave tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "hollywood ho-1982 2404 hollywood blvd hollywood hollywood sta hollywood ho fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-4343 west st coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-2 so biscayne blvd miami fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "oviedo-2572 west state rd 426 oviedo oviedo fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach-721 us hwy 1 north palm beach west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-9150 south dadeland blvd 14th miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-200 se 6th st fort lauderdale fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "altamonte springs-235 n westmonte dr altamonte springs inactive altamonte springs fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "charlotte nc-122 n mcdowell st charlotte charlotte nc nc": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-11601 biscayne blvd miami fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-1190 n state rd 7 apt 101 lauderhill fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-201 s orange ave orlando fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "cincinnati oh-1470 apple hill rd cincinnati cincinnati oh oh": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-attorney at law 66 west st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-1401 e broward blvd fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-2121 sw 3rd ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "parkland-9801 lakeview lane parkland parkland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "suite penthouse mi-9130 s dadeland blvd suite penthouse mi fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "boca raton-2385 executive center dr boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-6490 griffin rd 2nd davie fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-1108 ponce de leon blvd coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-401 nw 7th ave fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "boca raton-197 south federal hwy boca raton fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-44 west st 25th miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-2 s biscayne blvd one biscayne tower miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "aventura-20900 ne 30th ave 417 aventura aventura fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-1450 madruga ave coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-2525 sw 27th ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "winter park-941 w morse bvd winter park winter park fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral springs-11555 heron bay blvd coral springs coral springs fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-401 east jackson st 33rd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-1 e broward blvd fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-633 se 3rd ave fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-799 brickell plaza 9th miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-riverplace tower 1301 riverplace blvd jacksonville fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Stein Mart Building Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-1000 nw 57th ct miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "st petersburg-201 east kennedy blvd 33712 st petersburg fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "san diego ca-421 broadway pmb san diego san diego ca ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami mi-9130 s dadeland blvd miami mi fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "wauwatosa wi-8112 w bluemound rd wauwatosa wauwatosa wi wi": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-2455 east sunrise blvd fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Galleria Parking) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-201 sevilla ave coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "west palm beach-501 south dr west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-two datran center 9130 south dadeland blvd miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "boca raton-2745 ponce de leon blvd boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "ph co-3860 sw 8th st ph ph co fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "coral gables-320 miracle mile coral gables fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "ne su-1075 peachtree st ne atlanta ne su ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "delray beach-250 s central blvd jupiter delray beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "panama city beach-4408 delwood lane panama city beach panama city beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-c o elie anidjar esq 300 se 17th st fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-44 west st courthouse tower 25th miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "west palm beach-500 south australian ave west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "lutz-16524 pointe village dr lutz lutz fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "chicago il-200 w madison st chicago chicago il il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-2 miamicentral 700 nw 1st ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale fo-250 east las olas blvd fort lauderdale fo fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "deerfield beach-270 sw natura ave deerfield beach deerfield beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-1900 glades rd 301 boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-7825 baymeadows way jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "atlanta ga-1075 peachtree st ne atlanta atlanta ga ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-3250 mary st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-111 north magnolia ave orlando fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Seaside Plaza-Jackson Street Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort myers-2069 1st st fort myers fort myers fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "saint augustine-456 meadow ridge dr saint augustine saint augustine fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-708 e colonial dr orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orange park-2562 ridgecrest ave orange park orange park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-8350 nw 52nd terrace doral miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "gainesville-5251 nw 55th lane gainesville gainesville fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-400 west washington st orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "maitland-350 n lake destiny rd maitland maitland fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "orlando-3165 mccrory place orlando fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-hillsborough county p o box 1110 601 e kennedy blvd 27th tampa fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "orlando-9926 grande lakes blvd apt 133 orlando fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-401 east jackson st 33602 tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "sarasota-2222 s tamiami trail 2nd sarasota sarasota fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "melbourne-2655 boyd ave melbourne melbourne fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort myers-5220 summerlin commons blvd fort myers fort myers fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "winter park-1035 s semoran blvd winter park 407 673 5000 ext 225 winter park fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-625 w union st jacksonville fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "lakeland-2225 east edgewood dr lakeland lakeland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-500 n westshore blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-2502 n rocky point dr tampa fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york ny-640 5th ave 9th new york ny ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "clearwater-703 jones st clearwater clearwater fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "clearwater-p o box 4748 clearwater clearwater fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "st petersburg-plaza tower 111 2nd ave ne st petersburg st petersburg fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-100 north tampa st 33602 tampa fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Marion Street Parking Facility) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "bradenton-1767 lakewood ranch blvd pmb 161 bradenton bradenton fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-410 south ware blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-101 east kennedy blvd tampa fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "heath tx-457 laurence dr heath heath tx tx": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tallahassee-106 east college ave tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-1326 3rd st south jacksonville fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "orlando-orlando 111 n orange ave orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-201 e pine st po box 2928 orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "chicago il-2602 w diversey ave chicago chicago il il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-2309 s macdill ave tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "bonita springs-27200 riverview center blvd bonita springs bonita springs fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort myers-23 barkley circle 33907 fort myers fort myers fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tallahassee-215 s monroe st tallahassee tallahassee fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "maitland-151 southall lane maitland maitland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-6620 southpoint dr south jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort myers-5520 summerlin commons blvd fort myers fort myers fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-450 s orange ave orlando fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "naples-2150 goodlette frank rd naples naples fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "suite a or-1415 east robinson st suite a or fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "naples-2390 tamiami tr n naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-2455 e sunrise blvd ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-888 e las olas blvd ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tallahassee-2612 centennial place tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-730 dunlawton ave port orange jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "naples-litigation 6609 willow park dr naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-7999 north federal hwy boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "maitland-932 n maitland ave maitland maitland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "pinecrest-11767 s dixie hwy pinecrest pinecrest fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Metrorail Dadeland North Park and Ride) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "st petersburg-136 4th st north st petersburg st petersburg fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "coral gables-2600 s douglas rd coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "boca raton-925 s federal hwy 6th boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "doral-10950 nw 82nd st doral doral fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "lakeland-2567 ryland falls dr lakeland lakeland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "coral gables-220 alhambra circle coral gables fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-3339 w kennedy blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-315 e robinson orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-10 west adams st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-5210 belfort rd jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "mclean va-1765 greensboro station place mclean mclean va va": {
+    "parking_notes": "Attached / adjacent multi-level garage (Booz Allen Hamilton | HQ - Allen Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "naples-5811 pelican bay blvd naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tacoma wa-washington 861 s 40th st tacoma tacoma wa wa": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-p o box 2665 jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-300 se 17th st fort lauderdale fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-8950 sw 74th ct miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "pensacola-118 e garden st pensacola pensacola fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "blvd su-2124 w kennedy blvd blvd su fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "hollywood-4000 hollywood blvd hollywood hollywood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-5407 n ave tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-1101 brickell ave s po b miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "brooksville-8285 nuzum rd brooksville brooksville fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-450 e las olas blvd ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-8660 west st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "naples-9015 strada ct naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-4488 w boy scout blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "oviedo-7250 red bug lake rd oviedo oviedo fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-13043 west linebaugh ave tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "st augustine-2740 u s hwy 1 s st augustine st augustine fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "st petersburg-1901 dr m l king jr st n st petersburg st petersburg fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "deerfield beach-1400 e newport center dr deerfield beach deerfield beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-117 w duval jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "palm beach gardens-300 ave of the champions palm beach gardens palm beach gardens fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-515 e las olas blvd po b fort lauderdale fl": {
+    "parking_notes": "Dedicated surface parking lot (Las Olas Parking Shop & Dine) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "apt c ja-1120 cedar st apt c apt c ja fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "winter springs-tuskawilla office park 1306 town plaza ct winter springs winter springs fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "melbourne-525 e strawbridge ave melbourne melbourne fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "atlanta ga-1201 west peachtree st nw atlanta atlanta ga ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orange park-151 college dr orange park orange park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-12959 hunt club rd n jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "naples-3431 pine ridge rd naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-14694 fern hammock dr jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-13775 sw 145th ct miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-1 financial plaza 100 se 3rd ave fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "bonita springs-27300 riverview center blvd bonita springs bonita springs fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "suite c cl-304 s belcher rd clearwater suite c cl fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "flushing ny-41 25 kissena blvd flushing ny ny": {
+    "parking_notes": "Dedicated surface parking lot (百利停车场) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort myers-2110 1st st fort myers designation retained fort myers fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort myers-1411 bayview ct ft myers designation retained fort myers fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "winter park-1560 north orange ave winter park winter park fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Truist Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-328 2nd ave north jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "clermont-1390 n hancock rd cle clermont fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "pensacola-21 east garden st pensacola pensacola fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "burlington vt-30 elmwood ave p o box 1112 burlington burlington vt vt": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boston ma-20 city square boston boston ma ma": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "washington dc-1350 i st nw washington washington dc dc": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "bushnell-4602 cr 673 bushnell bushnell fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-16375 ne 18th ave north miami beach miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-724 rex hill trail orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-609 w horatio st tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-501 n magnolia ave orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-830 lucerne terrace orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-777 s harbour island blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-550 north reo st tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-1400 marsh landing pkwy jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-2250 sw 3rd ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "suite f ta-2011 w cleveland st suite f ta fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "winter haven-20 3rd st s w 33880 winter haven winter haven fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "irvine ca-18400 von ka ave irvine irvine ca ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "irvine ca-15615 alton pkwy irvine irvine ca ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-6277 dupont station ct east jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-8603 s dixie hwy pinecrest miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "hollywood fo-4000 hollywood blvd 555 south hollywood hollywood fo fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "maitland-901 n lake destiny rd maitland maitland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "ma bo-30 31 union wharf ma boston ma bo ma": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "salem ma-27 congress st salem salem ma ma": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-3201 griffin rd fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "deland-4th 1450 s woodland blvd deland deland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-1825 nw corporate blvd boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-1000 west cass st tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "ocoee-3424 meadow breeze loop ocoee ocoee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "clearwater-2727 ulmerton rd clearwater clearwater fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "virginia beach va-222 central park ave virginia beach virginia beach va va": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "memphis tn-1790 kirby pkwy memphis memphis tn tn": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "cape coral-118 sw 21st terrace cape coral cape coral fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "delray beach-7330 serrano terrace delray beach delray beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "sarasota-401 n cattlemen rd sarasota sarasota fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "lake mary-7025 co rd 46a lake mary lake mary fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-200 e robinson orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "naples-4850 tamiami trail n naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "suite a ta-2124 w kennedy blvd suite a ta fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tallahassee-905 east park ave tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "duluth ga-georgia 4855 river green pkwy duluth duluth ga ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach-470 columbia dr west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "brandon-713 providence trace circle apartment brandon brandon fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "clearwater-1001 s fort harrison ave clearwater clearwater fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-515 e las olas blvd fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-245 ne 14 st apt 3407 miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-501 e kennedy blvd 12th tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-4411 sunbeam rd jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "st petersburg-5453 central ave st petersburg st petersburg fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "naples-4501 tamiami trail n naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-1800 pembrook dr orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "two alliance ctr at-3560 lenox rd two alliance ctr atlanta two alliance ctr at ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-700 nw 1st ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "naples-4001 tamami trail n naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-2300 glades rd boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "birmingham al-420 20th st north bi birmingham al al": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "washington dc-1919 m st nw 8th washington washington dc dc": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "crawfordville-1016 lawhon mill rd crawfordville crawfordville fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tallahassee-113 s monroe st 1st tallahassee tallahassee fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "bonita springs-27299 riverview center blvd bonita springs inactive bonita springs fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-200 sw 1st ave fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tallahassee-2508 barrington cir tallahassee tallahassee fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "portsmouth nh-127 parrot ave portsmouth portsmouth nh nh": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "suite a ga-500 e university ave gainesville suite a ga fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "winter park-329 park ave north 2nd winter park winter park fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Truist Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "panama city-25 east 8th st panama city panama city fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tallahassee-906 n monroe st tallahassee tallahassee fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tallahassee-317 east park ave tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "san antonio tx-19031 ridgewood pkwy san antonio san antonio tx tx": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "panama city-220 mckenzie ave panama city panama city fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tallahassee-122 south calhoun st tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "birmingham al-400 20th st n bi birmingham al al": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "apopka-590 drage dr apopka apopka fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york ny-99 wall st new york ny ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "phoenix az-2415 e camelback rd phoenix phoenix az az": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-44 w courthouse tower 25th miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "midway-1080 commerce blvd midway sta midway fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "ocala-112 s pine ave ocala ocala fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "denver co-3000 lawrence st denver denver co co": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york ny-447 broadway 2nd new york ny ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-201 north franklin tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "ocala-35 se 1st ave ocala ocala fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tallahassee-city of tallahassee 300 s adams st box a 5 tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tallahassee-301 s bronough tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york ny-250 park ave 7th new york ny ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "pensacola-601 s palafox st pensacola pensacola fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-16057 tampa palms blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tallahassee-209 e brevard st tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-500 n westhore blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "panama city-314 magnolia ave 32401 po box 1470 panama city panama city fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-1005 n marion st tampa fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Marion Street Parking Facility) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "niceville-107 n partin dr niceville niceville fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-225 e robinson st orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "lombard il-2500 highland ave lombard lombard il il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "detroit mi-660 woodward ave detroit detroit mi mi": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "delray beach-6803 lake worth rd greenacres delray beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "gainesville-p o box 5757 gainesville gainesville fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-2125 biscayne blvd miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-40 nw 3rd st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tallahassee-pl 01 the capitol tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "gainesville-13900 tech city circle gainesville gainesville fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "naples-4th naples naples fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-1801 n military trail boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "gainesville-2814 sw 13th st gainesville gainesville fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-6022 san jose blvd jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-55 weston rd weston fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "longwood-1220 commerce park dr longwood longwood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-6867 southpoint dr n jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "st petersburg-4020 park st n saint petersburg st petersburg fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach-114 russlyn dr west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-1920 san marco blvd jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-brickell city tower 80 sw 8th st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "maitland-2300 maitland center pkwy maitland maitland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "pace-3671 misty woods cir pace pace fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-1837 hendricks ave jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-208 n laura st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-301 n fern creek ave orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-1608 e commercial blvd ft lauderdale fort lauderdale ft": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort myers-12331 towne lake dr fort myers fort myers fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fernandina beach-961687 gateway blvd fernandina beach fernandina beach fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-12276 san jose blvd jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "hollywood-5700 stirling rd hollywood hollywood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "saint augustine-2601 n ponce de leon blvd saint augustine saint augustine fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "coral gables-2020 salzedo st coral gables fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-233 e bay st jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-101 e adams st jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-261 ne 1st st miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Garage 3) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-1291 avondale ave jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "plantation-7901 sw 6th ct plantation plantation fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-1001 yamato rd boca raton fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "maitland-350 north lake destiny rd maitland maitland fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-5100 w kennedy blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "parkland-9801 lakeview ln parkland parkland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-4446 hendricks ave jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-1110 w commercial blvd fort lauderdale fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "lake city-582 w duval st lake city lake city fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "hollywood-the ups store 8570 stirling rd hollywood hollywood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-3599 university blvd jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "ponte vedra beach-22 players club villas rd ponte vedra beach ponte vedra beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-6144 gazebo park pl s jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-13590 sw 134th ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orange park-450 blanding blvd orange park orange park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "winter haven-20 3rd st sw winter haven winter haven fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-1443 san marco blvd jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-w 117 duval st jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "neptune beach-2210 blvd neptune beach neptune beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "daytona beach-940 beville rd daytona beach daytona beach fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-603 n market st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "lake mary-4300 w lake mary blvd pmb 349 lake mary lake mary fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-13400 sutton park dr s jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "pompano beach-1000 w mcnab rd pompano beach pompano beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-800 e cypress creek rd ft lauderdale fort lauderdale ft": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-6817 southpoint pkwy jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "st petersburg-360 central ave st petersburg st petersburg st": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-1326 3rd st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-3802 coconut palm dr tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orange park-637 blanding blvd orange park orange park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-regus 1221 brickell ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-644 cesery blvd jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "altamonte springs-491 montgomery pl altamonte springs altamonte springs fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-15211 nw 60th ave miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "coral gables-121 alhambra plz coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-4686 sunbeam rd jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "doral-8725 nw 18th ter doral doral fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "maitland-151 southhall ln maitland maitland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-13361 atlantic blvd jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "orange park-1543 kingsley ave orange park orange park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-galloway johnson tompkins burr 400 n ashley dr tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "st augustine-144 orchard ln st augustine st augustine st": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "jacksonville-3753 cardinal point dr jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-6816 southpoint pkwy building 1000 jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-1911 ashmore green dr jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "st augustine-4675 wolfe rd st augustine st augustine st": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-400 e duval st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "cocoa-1980 michigan ave cocoa cocoa fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "boca raton-40 se 5th st boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-210 e forsyth st jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "ponte vedra-259 senegal dr ponte vedra ponte vedra fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-6 e bay st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "daytona beach-309 oakridge blvd daytona beach daytona beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-8615 commodity cir orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "coconut grove-2601 s bayshore dr coconut grove coconut grove fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-1 n dale mabry hwy tampa fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tallahassee-3522 thomasville rd tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-3414 w bay to bay blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "deerfield beach-600 w hillsboro blvd suit 605 deerfield beach deerfield beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-1506 prudential dr jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "palatka-117 n 2nd st palatka palatka fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-328 2nd ave n jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "aventura-20801 biscayne blvd aventura aventura fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-424 e monroe st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orange park-165 wells rd orange park orange park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "stuart-1330 se federal hwy stuart stuart fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-2766 nw 62nd st miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "daytona beach-130 integra breeze ln daytona beach daytona beach fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-11767 s dixie hwy miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "davie-12555 orange dr davie davie fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-8486 northlake pkwy orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-barnes cohen p a 2747 art museum dr jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-1706 e 11th ave tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "riverview-10132 haverhill ridge dr riverview riverview fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "coral gables-2020 ponce de leon blvd ph 2 coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tallahassee-400 s monroe st tallahassee tallahassee fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach-501 s dr west palm beach fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Clematis Public Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "st petersburg-5150 central ave st petersburg st petersburg st": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "boca raton-1900 nw corporate blvd boca raton fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-2202 n west shore blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "riverview-4030 crescent park dr riverview riverview fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "merritt island-775 e merritt island cswy merritt island merritt island fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-8295 hedgewood dr jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-datran ii 9130 s dadeland blvd miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orange park-1534 kingsley ave orange park orange park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york ny-1 battery park plz new york ny ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-505 s magnolia ave tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "st petersburg-520 2nd ave s st petersburg st petersburg st": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "st petersburg-801 3rd st s st petersburg st petersburg st": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "jacksonville-303 n liberty st jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "homestead-16276 sw 291st st home homestead fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-10360 w state rd 84 fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-13500 sutton park dr s jacksonville fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "coral gables-copca 2655 s le jeune rd coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-22350 old dixie hwy miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-4921 memorial hwy tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-6080 bird rd miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-300 se 17 st fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-9155 south dadeland blvd miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "west palm beach-811 a north olive ave west palm beach fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "winter park-558 w new england ave winter park winter park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "aventura-2641 ne 207 st aventura aventura fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-800 se 3rd ave fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "hialeah-7900 oak lane hialeah fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-1800 se 10th ave ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "miami-1 biscayne tower two south biscayne blvd miami fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "orlando-117 e marks st orlando fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "winter park-1089 w morse blvd winter park winter park fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "palmetto-15750 sw 92nd ave palmetto bay palmetto fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-515 east las olas blvd suntrust center fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-2124 w kennedy tampa fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Commercial office building. Lobby reception check-in required.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tallahassee-820 e park ave building a tallahassee tallahassee fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "orlando-117 east marks st orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "boca raton-2300 glades rd east tower boca raton fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "venice-871 venetia bay blvd venice venice venice fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west palm beach-224 datura st west palm beach fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Banyan Public Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "palmetto-15715 s dixie hwy palmetto bay palmetto fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "miami-2 south biscayne blvd one biscayne tower miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-1600 west state rd 84 fort lauderdale fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "hallandale beach-520 w hallandale beach blvd hallandale beach hallandale beach sta hallandale beach fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tampa-2124 west kennedy blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "miami-80 sw 8 st penthouse miami fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Red Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "west palm beach-1919 no dr 2nd west palm beach fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "hollywood-1982 2404 hollywood blvd hollywood hollywood sta hollywood fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "coral gables-3860 sw 8th st ph coral gables fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "panama city-4408 delwood lane panama city beach panama city fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-250 east las olas blvd fort lauderdale fl": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "st augustine-456 meadow ridge dr saint augustine st augustine fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "orlando-1415 east robinson st orlando fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "tampa-2124 w kennedy blvd tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "jacksonville-1120 cedar st apt c jacksonville fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "clearwater-304 s belcher rd clearwater clearwater fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-2011 w cleveland st tampa fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "hollywood-4000 hollywood blvd 555 south hollywood hollywood fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "gainesville-500 e university ave gainesville gainesville fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "st augustine-2601 n ponce de leon blvd saint augustine st augustine fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "dade city-582 w duval st lake city dade city fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "ponte vedra-22 players club villas rd ponte vedra beach ponte vedra fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "columbus-10 w broad st columbus columbus fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "lakeland-555 12th st oakland lakeland fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  }
+}

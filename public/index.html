@@ -508,6 +508,13 @@
             <select id="outreachCityFilter" class="filter-chip" onchange="setOutreachCityFilter(this.value)">
               <option value="ALL">All Trial Cities</option>
             </select>
+            <select id="outreachOutcomeFilter" class="filter-chip" onchange="setOutreachOutcomeFilter(this.value)" style="display:none;">
+              <option value="ALL">All Case Outcomes</option>
+              <option value="Trial Verdict">Trial Verdict (⚖️)</option>
+              <option value="Settlement">Settlement (🤝)</option>
+              <option value="Dismissal">Dismissal (📄)</option>
+              <option value="Summary Judgment">Summary Judgment (📑)</option>
+            </select>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <button class="btn-export" onclick="exportActiveCsv()" title="Export current filtered queue to CSV">
@@ -524,7 +531,7 @@
           </div>
           <div class="table-wrap" id="outreachTableWrap">
             <table class="data-table" id="outreachTable">
-              <thead>
+              <thead id="outreachThead">
                 <tr><th>Side</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm Address</th><th>Firm City</th><th>Trial City</th><th>Days</th><th>Trial Date</th><th>Status</th><th>Owner</th><th>Docket</th><th>Phone</th><th>Email</th></tr>
               </thead>
               <tbody id="outreachMainTbody"></tbody>

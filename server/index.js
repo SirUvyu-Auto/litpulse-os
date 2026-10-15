@@ -120,7 +120,8 @@ function mapRowToCase(rowObj, idx) {
   const assignedTo = getVal('assignedto', 'assigned_to', 'contactowner', 'leadowner', 'dealowner', 'owner', 'salesrep', 'rep', 'repname') || '';
   const hubspotStatus = getVal('hubspotstatus', 'hubspot_status', 'leadstatus', 'pipelinestage', 'stage', 'dealstage', 'status', 'crmstatus') || '';
   const notes = getVal('notes', 'note', 'lastactivity', 'activity', 'comments', 'comment', 'recentnote', 'hubspotnotes') || '';
-  const caseStatus = getVal('casestatus', 'matterstatus', 'disposition', 'courtstatus', 'actionstatus') || '';
+  const caseStatus = getVal('casestatus', 'matterstatus', 'courtstatus', 'actionstatus') || '';
+  const outcome = getVal('outcome', 'caseoutcome', 'case_outcome', 'disposition', 'verdict', 'result', 'judgment') || '';
   const rawContactDate = getVal('lastcontactdate', 'lastcontact', 'contactdate', 'contactedat', 'lastvisit', 'visitdate', 'lasttouch', 'activitydate');
   const lastContactDate = parseTrialDate(rawContactDate) || '';
 
@@ -155,6 +156,7 @@ function mapRowToCase(rowObj, idx) {
     hubspot_status: hubspotStatus,
     notes: notes,
     case_status: caseStatus,
+    outcome: outcome || caseStatus,
     last_contact_date: lastContactDate,
 
     is_local: true
@@ -913,7 +915,7 @@ app.get('/api/export/csv', (req, res) => {
 
   // Standard Cases / Attorney Outreach Export
   const headers = [
-    'Target ID', 'Party Side', 'Case ID', 'Caption', 'Lead Attorney', 'Firm', 'Re-Hit Status', 'Date Contacted', 'Prior Matter', 'Firm Address', 'Firm City', 'Trial City', 'Court',
+    'Target ID', 'Party Side', 'Case ID', 'Caption', 'Lead Attorney', 'Firm', 'Case Outcome', 'Re-Hit Status', 'Date Contacted', 'Prior Matter', 'Firm Address', 'Firm City', 'Trial City', 'Court',
     'Division', 'Judge', 'Trial Date', 'Days Until', 'Priority Score', 'EAR ($)',
     'Trial Probability (%)', 'Direct Phone', 'Direct Email', 'Assigned To', 'CRM Status',
     'Notes'
@@ -928,6 +930,7 @@ app.get('/api/export/csv', (req, res) => {
       `"${(r.caption || '').replace(/"/g, '""')}"`,
       `"${(r.lead_attorney || '').replace(/"/g, '""')}"`,
       `"${(r.firm || '').replace(/"/g, '""')}"`,
+      `"${(r.outcome || '').replace(/"/g, '""')}"`,
       `"${r.is_rehit ? 'Yes' : 'No'}"`,
       `"${(r.rehit_date || '').replace(/"/g, '""')}"`,
       `"${(r.rehit_prior_matter || '').replace(/"/g, '""')}"`,

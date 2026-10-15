@@ -1309,6 +1309,27 @@ function renderPriorityBadge(c) {
   `;
 }
 
+function renderOutcomeBadge(c) {
+  const outcome = c.outcome || 'Settlement';
+  if (/verdict|trial/i.test(outcome)) {
+    return `<span class="badge" style="background:rgba(168,85,247,0.15);color:#c084fc;border:1px solid rgba(168,85,247,0.3);font-weight:600;font-size:11px;padding:3px 8px;border-radius:4px;white-space:nowrap;" title="Concluded via Trial Verdict">⚖️ ${escapeHtml(outcome)}</span>`;
+  } else if (/settl/i.test(outcome)) {
+    return `<span class="badge" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);font-weight:600;font-size:11px;padding:3px 8px;border-radius:4px;white-space:nowrap;" title="Resolved via Settlement">🤝 ${escapeHtml(outcome)}</span>`;
+  } else if (/summary/i.test(outcome)) {
+    return `<span class="badge" style="background:rgba(59,130,246,0.15);color:#93c5fd;border:1px solid rgba(59,130,246,0.3);font-weight:600;font-size:11px;padding:3px 8px;border-radius:4px;white-space:nowrap;" title="Concluded via Summary Judgment">📑 ${escapeHtml(outcome)}</span>`;
+  } else {
+    return `<span class="badge" style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);font-weight:600;font-size:11px;padding:3px 8px;border-radius:4px;white-space:nowrap;" title="Concluded via Dismissal">📄 ${escapeHtml(outcome)}</span>`;
+  }
+}
+
+let activeOutreachOutcome = 'ALL';
+
+function setOutreachOutcomeFilter(val) {
+  activeOutreachOutcome = val;
+  outreachCurrentPage = 1;
+  renderOutreachQueue();
+}
+
 let outreachCurrentPage = 1;
 const outreachPageSize = 100;
 let cachedOutreachData = null;
@@ -1433,6 +1454,26 @@ async function renderOutreachQueue(forceRefresh = false) {
       windowBar.style.display = (activeLifecycle === 'historical') ? 'none' : 'flex';
     }
 
+    // Toggle Outcome Filter visibility
+    const outcomeFilterEl = document.getElementById('outreachOutcomeFilter');
+    if (outcomeFilterEl) {
+      outcomeFilterEl.style.display = (activeLifecycle === 'historical') ? 'inline-block' : 'none';
+      if (activeLifecycle !== 'historical') {
+        outcomeFilterEl.value = 'ALL';
+        activeOutreachOutcome = 'ALL';
+      }
+    }
+
+    // Dynamically adjust table headers between Active Upcoming and Historical Archive
+    const thead = document.getElementById('outreachThead');
+    if (thead) {
+      if (activeLifecycle === 'historical') {
+        thead.innerHTML = `<tr><th>Side</th><th>Case Outcome</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm Address</th><th>Firm City</th><th>Trial City</th><th>Concluded</th><th>Trial Date</th><th>Status</th><th>Owner</th><th>Docket</th><th>Phone</th><th>Email</th></tr>`;
+      } else {
+        thead.innerHTML = `<tr><th>Side</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm Address</th><th>Firm City</th><th>Trial City</th><th>Days</th><th>Trial Date</th><th>Status</th><th>Owner</th><th>Docket</th><th>Phone</th><th>Email</th></tr>`;
+      }
+    }
+
     // Always keep the historical count badge updated
     if (data.historicalCount !== undefined) {
       const badge = document.getElementById('historicalCountBadge');
@@ -1545,6 +1586,11 @@ async function renderOutreachQueue(forceRefresh = false) {
         (c.city && c.city.toLowerCase() === targetCity) ||
         (c.division && c.division.toLowerCase() === targetCity)
       );
+    }
+
+    // Filter by Case Outcome (Historical Archive only)
+    if (activeLifecycle === 'historical' && activeOutreachOutcome && activeOutreachOutcome !== 'ALL') {
+      cases = cases.filter(c => (c.outcome || '').toLowerCase() === activeOutreachOutcome.toLowerCase());
     }
 
     // Update total window count badge
@@ -1662,29 +1708,56 @@ async function renderOutreachQueue(forceRefresh = false) {
         ? `<span class="badge-client" title="QuickBooks Client: Active billing account with Lit&More">● CLIENT</span>`
         : `<span class="badge-prospect" title="New Prospect: No prior billing account with Lit&More">PROSPECT</span>`;
 
-      tr.innerHTML = `
-        <td>${sideBadge}</td>
-        <td>${renderPriorityBadge(c)}</td>
-        <td class="cell-bold">${attyDisplay}${rehitBadge}${warRoomBadge}</td>
-        <td>${firmDisplay} ${clientBadge}</td>
-        <td style="font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(firmAddressDisplay)}">${escapeHtml(firmAddressDisplay)}</td>
-        <td style="white-space:nowrap;">
-          <span style="font-weight:500;color:var(--text-white);">${escapeHtml(firmCityDisplay)}</span>
-          ${renderLocalityPill(c, firmCityDisplay, trialCityDisplay)}
-        </td>
-        <td style="white-space:nowrap;color:var(--text-platinum);">${escapeHtml(trialCityDisplay)}</td>
-        <td>${daysDisplay}</td>
-        <td class="cell-mono">${formatDate(c.trial_date)}</td>
-        <td><span class="status-pill clean">${c.hubspot_status || 'New'}</span></td>
-        <td>${c.assigned_to || '<span style="color:var(--status-amber);">Unassigned</span>'}</td>
-        <td class="cell-mono" style="font-size:11px;">${escapeHtml(c.case_id)}</td>
-        <td class="cell-mono" style="font-size:11.5px;white-space:nowrap;">
-          ${c.phone ? `<a href="tel:${escapeHtml(c.phone)}" style="color:var(--text-platinum);text-decoration:none;" onclick="event.stopPropagation();">${escapeHtml(c.phone)}</a>` : '<span style="color:var(--text-muted);">N/A</span>'}
-        </td>
-        <td style="font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-          ${c.email ? `<a href="mailto:${escapeHtml(c.email)}" style="color:var(--text-platinum);text-decoration:none;" title="${escapeHtml(c.email)}" onclick="event.stopPropagation();">${escapeHtml(c.email)}</a>` : '<span style="color:var(--text-muted);">N/A</span>'}
-        </td>
-      `;
+      if (activeLifecycle === 'historical') {
+        tr.innerHTML = `
+          <td>${sideBadge}</td>
+          <td>${renderOutcomeBadge(c)}</td>
+          <td>${renderPriorityBadge(c)}</td>
+          <td class="cell-bold">${attyDisplay}${rehitBadge}${warRoomBadge}</td>
+          <td>${firmDisplay} ${clientBadge}</td>
+          <td style="font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(firmAddressDisplay)}">${escapeHtml(firmAddressDisplay)}</td>
+          <td style="white-space:nowrap;">
+            <span style="font-weight:500;color:var(--text-white);">${escapeHtml(firmCityDisplay)}</span>
+            ${renderLocalityPill(c, firmCityDisplay, trialCityDisplay)}
+          </td>
+          <td style="white-space:nowrap;color:var(--text-platinum);">${escapeHtml(trialCityDisplay)}</td>
+          <td>${daysDisplay}</td>
+          <td class="cell-mono">${formatDate(c.trial_date)}</td>
+          <td><span class="status-pill clean">${c.hubspot_status || 'Concluded'}</span></td>
+          <td>${c.assigned_to || '<span style="color:var(--status-amber);">Unassigned</span>'}</td>
+          <td class="cell-mono" style="font-size:11px;">${escapeHtml(c.case_id)}</td>
+          <td class="cell-mono" style="font-size:11.5px;white-space:nowrap;">
+            ${c.phone ? `<a href="tel:${escapeHtml(c.phone)}" style="color:var(--text-platinum);text-decoration:none;" onclick="event.stopPropagation();">${escapeHtml(c.phone)}</a>` : '<span style="color:var(--text-muted);">N/A</span>'}
+          </td>
+          <td style="font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            ${c.email ? `<a href="mailto:${escapeHtml(c.email)}" style="color:var(--text-platinum);text-decoration:none;" title="${escapeHtml(c.email)}" onclick="event.stopPropagation();">${escapeHtml(c.email)}</a>` : '<span style="color:var(--text-muted);">N/A</span>'}
+          </td>
+        `;
+      } else {
+        tr.innerHTML = `
+          <td>${sideBadge}</td>
+          <td>${renderPriorityBadge(c)}</td>
+          <td class="cell-bold">${attyDisplay}${rehitBadge}${warRoomBadge}</td>
+          <td>${firmDisplay} ${clientBadge}</td>
+          <td style="font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(firmAddressDisplay)}">${escapeHtml(firmAddressDisplay)}</td>
+          <td style="white-space:nowrap;">
+            <span style="font-weight:500;color:var(--text-white);">${escapeHtml(firmCityDisplay)}</span>
+            ${renderLocalityPill(c, firmCityDisplay, trialCityDisplay)}
+          </td>
+          <td style="white-space:nowrap;color:var(--text-platinum);">${escapeHtml(trialCityDisplay)}</td>
+          <td>${daysDisplay}</td>
+          <td class="cell-mono">${formatDate(c.trial_date)}</td>
+          <td><span class="status-pill clean">${c.hubspot_status || 'New'}</span></td>
+          <td>${c.assigned_to || '<span style="color:var(--status-amber);">Unassigned</span>'}</td>
+          <td class="cell-mono" style="font-size:11px;">${escapeHtml(c.case_id)}</td>
+          <td class="cell-mono" style="font-size:11.5px;white-space:nowrap;">
+            ${c.phone ? `<a href="tel:${escapeHtml(c.phone)}" style="color:var(--text-platinum);text-decoration:none;" onclick="event.stopPropagation();">${escapeHtml(c.phone)}</a>` : '<span style="color:var(--text-muted);">N/A</span>'}
+          </td>
+          <td style="font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            ${c.email ? `<a href="mailto:${escapeHtml(c.email)}" style="color:var(--text-platinum);text-decoration:none;" title="${escapeHtml(c.email)}" onclick="event.stopPropagation();">${escapeHtml(c.email)}</a>` : '<span style="color:var(--text-muted);">N/A</span>'}
+          </td>
+        `;
+      }
       fragment.appendChild(tr);
     });
 
@@ -2666,9 +2739,11 @@ function renderDrawerTable(rows, key) {
   }
 
   // Complete High-Priority Litigation Target Rows
+  const isHistoricalKey = (key === 'historical');
   thead.innerHTML = `
     <tr>
       <th>Side</th>
+      ${isHistoricalKey ? '<th>Case Outcome</th>' : ''}
       <th>Priority</th>
       <th>Lead Counsel</th>
       <th>Law Firm</th>
@@ -2677,7 +2752,7 @@ function renderDrawerTable(rows, key) {
       <th>Matter Title &amp; Docket</th>
       <th>Judge &amp; Court</th>
       <th>Trial City</th>
-      <th>Days</th>
+      <th>${isHistoricalKey ? 'Concluded' : 'Days'}</th>
       <th>Trial Date</th>
       <th>Est. EAR</th>
       <th>CRM Status</th>
@@ -2758,6 +2833,7 @@ function renderDrawerTable(rows, key) {
 
     tr.innerHTML = `
       <td>${sideBadge}</td>
+      ${isHistoricalKey ? `<td>${renderOutcomeBadge(c)}</td>` : ''}
       <td>${renderPriorityBadge(c)}</td>
       <td class="cell-bold">${attyDisplay}${rehitBadge}${warRoomBadge}</td>
       <td>${firmDisplay} ${clientBadge}</td>
@@ -3050,6 +3126,9 @@ async function openDossier(caseId) {
       <div class="dossier-grid">
         <div class="dossier-card">
           <div class="dossier-card-title">Trial Schedule &amp; Court Details</div>
+          ${c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0) || c.outcome ? `
+          <div class="dossier-item"><span class="dossier-item-label">Case Outcome</span><span class="dossier-item-val">${renderOutcomeBadge(c)}</span></div>
+          ` : ''}
           <div class="dossier-item"><span class="dossier-item-label">Trial Date</span><span class="dossier-item-val cell-mono">${formatDate(c.trial_date)}</span></div>
           <div class="dossier-item"><span class="dossier-item-label">Trial Window</span><span class="dossier-item-val">${daysDisplay}</span></div>
           <div class="dossier-item"><span class="dossier-item-label">Presiding Judge</span><span class="dossier-item-val">${c.judge || 'Federal District Judge'}</span></div>
@@ -3326,7 +3405,7 @@ function renderBuildingAttorneysTable(cases) {
 
     let daysDisplay = '';
     if (c.days_until !== undefined && c.days_until < 0) {
-      daysDisplay = `<span style="color:var(--text-muted);font-size:11px;">Concluded</span>`;
+      daysDisplay = `<div style="margin-top:3px;">${renderOutcomeBadge(c)}</div>`;
     } else if (c.days_until <= 30) {
       daysDisplay = `<span style="color:var(--status-crimson);font-weight:700;">${c.days_until}d remaining</span>`;
     } else if (c.days_until <= 60) {

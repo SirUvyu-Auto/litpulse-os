@@ -15,6 +15,7 @@ let clusterLeafletMap = null;
 let clusterMarkersGroup = null;
 let clusterMarkersMap = new Map();
 let clusterBoundsCache = null;
+let mapInitialBoundsFitted = false;
 let walkPolylineLayer = null;
 let activeMapCityFilter = 'ALL';
 let activeMapDensityFilter = 'ALL';
@@ -222,7 +223,7 @@ async function loadDeliveriesPage() {
     initRunCityMultiSelect(fullBuildingsCache);
 
     renderDeliveriesClusters(fullBuildingsCache);
-    renderClustersMap(fullBuildingsCache);
+    renderClustersMap(fullBuildingsCache, null, mapInitialBoundsFitted);
     renderDeliveriesDirectory(fullBuildingsCache);
     renderRunHistory(totalBuildings);
     renderHoldsTable(fullBuildingsCache);
@@ -237,31 +238,35 @@ function initClusterMap() {
   const mapContainer = document.getElementById('clusterMap');
   if (!mapContainer || !window.L) return;
 
-  // Initialize Leaflet map with Florida view
+  // Initialize Leaflet map with Florida view and maxZoom 19 for granular inspection
   clusterLeafletMap = L.map('clusterMap', {
     zoomControl: true,
-    attributionControl: false
+    attributionControl: false,
+    maxZoom: 19
   }).setView([26.7153, -80.0534], 7);
 
   // ESRI World Dark Gray Canvas (100% free, zero API key required, no watermarks)
+  // maxNativeZoom 16 allows Leaflet to smoothly interpolate and scale tiles up to zoom 19
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 16,
+    maxNativeZoom: 16,
+    maxZoom: 19,
     attribution: '&copy; Esri, DeLorme, NAVTEQ'
   }).addTo(clusterLeafletMap);
 
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 16,
+    maxNativeZoom: 16,
+    maxZoom: 19,
     attribution: ''
   }).addTo(clusterLeafletMap);
 
   // Dynamic Leaflet Marker Clustering Group
   if (typeof L.markerClusterGroup === 'function') {
     clusterMarkersGroup = L.markerClusterGroup({
-      maxClusterRadius: 45,
+      maxClusterRadius: 40,
       spiderfyOnMaxZoom: true,
+      spiderfyDistanceMultiplier: 1.6,
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
-      disableClusteringAtZoom: 16,
       iconCreateFunction: function(cluster) {
         const markers = cluster.getAllChildMarkers();
         let totalDrops = 0;
@@ -275,7 +280,7 @@ function initClusterMap() {
         });
         const bldgCount = markers.length;
 
-        // Clean size tiers & styling
+        // Clean size tiers and styling
         let tierClass = 'cluster-tier-mid';
         let size = 42;
         if (totalDrops >= 100 || bldgCount >= 50) {
@@ -298,6 +303,47 @@ function initClusterMap() {
           iconSize: [size, size],
           iconAnchor: [size / 2, size / 2]
         });
+      }
+    });
+
+    // Custom clusterclick handler: prevents zero-area bounds reset glitch and spiderfies co-located buildings cleanly
+    clusterMarkersGroup.on('clusterclick', function(cEvent) {
+      const cluster = cEvent.layer || cEvent.target;
+      if (!cluster) return;
+
+      if (typeof cluster.closeTooltip === 'function') {
+        cluster.closeTooltip();
+      }
+
+      const markers = cluster.getAllChildMarkers() || [];
+      const firstLatLng = markers[0]?.getLatLng();
+      const allCoLocated = firstLatLng && markers.every(m => {
+        const ll = m.getLatLng();
+        return Math.abs(ll.lat - firstLatLng.lat) < 0.0001 && Math.abs(ll.lng - firstLatLng.lng) < 0.0001;
+      });
+
+      const currentZoom = clusterLeafletMap.getZoom();
+
+      // If all buildings in this cluster are co-located (e.g. towers at the same corner or centroid), spiderfy them
+      if (allCoLocated || currentZoom >= 16) {
+        if (currentZoom < 16 && firstLatLng) {
+          clusterLeafletMap.setView(firstLatLng, 16, { animate: true });
+          setTimeout(() => {
+            if (cluster && typeof cluster.spiderfy === 'function') {
+              cluster.spiderfy();
+            }
+          }, 320);
+        } else {
+          cluster.spiderfy();
+        }
+      } else {
+        const b = cluster.getBounds();
+        if (b && typeof b.isValid === 'function' && b.isValid()) {
+          const targetZoom = Math.max(currentZoom + 1, clusterLeafletMap.getBoundsZoom(b, false, [40, 40]));
+          clusterLeafletMap.setView(cluster.getLatLng(), Math.min(18, targetZoom), { animate: true });
+        } else if (cluster.getLatLng) {
+          clusterLeafletMap.setView(cluster.getLatLng(), Math.min(18, currentZoom + 2), { animate: true });
+        }
       }
     });
 
@@ -384,7 +430,7 @@ function populateMapCityFilter(validBuildings) {
   });
 }
 
-function renderClustersMap(buildings, targetCity = null) {
+function renderClustersMap(buildings, targetCity = null, preserveView = false) {
   initClusterMap();
   if (!clusterLeafletMap || !clusterMarkersGroup) return;
 
@@ -527,6 +573,11 @@ function renderClustersMap(buildings, targetCity = null) {
     `;
 
     marker.bindPopup(popupHtml);
+    marker.on('click', () => {
+      if (typeof marker.closeTooltip === 'function') {
+        marker.closeTooltip();
+      }
+    });
     clusterMarkersGroup.addLayer(marker);
 
     clusterMarkersMap.set(b.building_id, { marker, data: b });
@@ -536,10 +587,15 @@ function renderClustersMap(buildings, targetCity = null) {
   if (latLngs.length > 0) {
     const bounds = L.latLngBounds(latLngs);
     clusterBoundsCache = bounds;
-    if (activeMapCityFilter !== 'ALL') {
+    if (!preserveView && !mapInitialBoundsFitted) {
+      if (activeMapCityFilter !== 'ALL') {
+        clusterLeafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+      } else if (!targetCity) {
+        clusterLeafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+      }
+      mapInitialBoundsFitted = true;
+    } else if (!preserveView && targetCity) {
       clusterLeafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
-    } else if (!targetCity) {
-      clusterLeafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
     }
   }
 
@@ -550,12 +606,13 @@ function renderClustersMap(buildings, targetCity = null) {
 
 function filterMapByCity(city) {
   activeMapCityFilter = city;
-  renderClustersMap(mapAllBuildingsCache);
+  mapInitialBoundsFitted = false;
+  renderClustersMap(mapAllBuildingsCache, city, false);
 }
 
 function filterMapByDensity(density) {
   activeMapDensityFilter = density;
-  renderClustersMap(mapAllBuildingsCache);
+  renderClustersMap(mapAllBuildingsCache, null, true);
 }
 
 function focusBuildingOnMap(buildingId, lat, lng) {
@@ -606,7 +663,8 @@ function resetClusterMapView() {
   const densitySelect = document.getElementById('mapDensityFilter');
   if (densitySelect) densitySelect.value = 'ALL';
 
-  renderClustersMap(mapAllBuildingsCache);
+  mapInitialBoundsFitted = false;
+  renderClustersMap(mapAllBuildingsCache, null, false);
 
   if (clusterBoundsCache && clusterBoundsCache.isValid()) {
     clusterLeafletMap.fitBounds(clusterBoundsCache, { padding: [40, 40], maxZoom: 14 });

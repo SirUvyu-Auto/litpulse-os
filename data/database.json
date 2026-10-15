@@ -14926,8 +14926,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Imported via Admin Ingestion dropzone.",
@@ -14950,7 +14950,9 @@
       "casetype_score": 8,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "2:25-cv-14210",
@@ -22341,8 +22343,8 @@
       "city": "Hollywood",
       "phone": "954-471-4392",
       "email": "lgigliotti@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Imported via Admin Ingestion dropzone.",
@@ -22365,7 +22367,9 @@
       "casetype_score": 8,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "2:25-cv-14198",
@@ -27377,8 +27381,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -27401,7 +27405,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-22525",
@@ -27610,8 +27616,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -27634,7 +27640,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "2:25-cv-14184",
@@ -31891,8 +31899,8 @@
       "city": "Hollywood",
       "phone": "954-471-4392",
       "email": "lgigliotti@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Impeachment Callouts, Expert Exhibits & Hot-Seat Tech",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -31915,7 +31923,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-22353",
@@ -39193,8 +39203,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -39217,7 +39227,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "2:25-cv-14150",
@@ -40358,8 +40370,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -40382,7 +40394,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "0:25-cv-60894",
@@ -44924,8 +44938,8 @@
       "city": "Aventura",
       "phone": "305-482-1475",
       "email": "julissejimenez@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -44948,7 +44962,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "9:25-cv-80515",
@@ -70420,8 +70436,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -70444,7 +70460,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-24381",
@@ -78878,8 +78896,8 @@
       "city": "Aventura",
       "phone": "305-482-1475",
       "email": "julissejimenez@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Imported via Admin Ingestion dropzone.",
@@ -78902,7 +78920,9 @@
       "casetype_score": 8,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-24203",
@@ -87878,8 +87898,8 @@
       "city": "Fort Lauderdale",
       "phone": "954-779-1700",
       "email": "sexlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Impeachment Callouts, Expert Exhibits & Hot-Seat Tech",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -87901,7 +87921,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-24033",
@@ -88283,8 +88305,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -88307,7 +88329,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-24006",
@@ -89453,8 +89477,8 @@
       "city": "Delray Beach",
       "phone": "561-455-0280",
       "email": "ntygar@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -89476,7 +89500,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "9:25-cv-81097",
@@ -102450,8 +102476,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -102474,7 +102500,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "9:25-cv-81023",
@@ -117910,8 +117938,8 @@
       "city": "Aventura",
       "phone": "305-482-1475",
       "email": "julissejimenez@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -117934,7 +117962,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-23376",
@@ -127845,8 +127875,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -127869,7 +127899,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-23116",
@@ -132652,8 +132684,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -132676,7 +132708,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-22982",
@@ -176900,8 +176934,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Impeachment Callouts, Expert Exhibits & Hot-Seat Tech",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -176924,7 +176958,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-25346",
@@ -202508,8 +202544,8 @@
       "city": "West Palm Beach",
       "phone": "561-844-3600",
       "email": "gaisaacs@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Impeachment Callouts, Expert Exhibits & Hot-Seat Tech",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -202531,7 +202567,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "0:25-cv-62105",
@@ -210492,8 +210530,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -210516,7 +210554,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-24700",
@@ -215258,8 +215298,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -215282,7 +215322,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:25-cv-24631",
@@ -225213,8 +225255,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Imported via Admin Ingestion dropzone.",
@@ -225237,7 +225279,9 @@
       "casetype_score": 8,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:26-cv-23333",
@@ -259053,8 +259097,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -259077,7 +259121,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:26-cv-21296",
@@ -262463,8 +262509,8 @@
       "city": "Coral Gables",
       "phone": "305-553-3464",
       "email": "agmlaw@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -262487,7 +262533,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "0:26-cv-60439",
@@ -287883,8 +287931,8 @@
       "city": "Aventura",
       "phone": "305-482-1475",
       "email": "julissejimenez@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -287907,7 +287955,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "1:26-cv-20099",
@@ -371536,8 +371586,8 @@
       "city": "Aventura",
       "phone": "305-482-1475",
       "email": "julissejimenez@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -371560,7 +371610,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "2:25-cv-00247",
@@ -384512,8 +384564,8 @@
       "city": "Hollywood",
       "phone": "954-471-4932",
       "email": "lgigliotti@bellsouth.net",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -384536,7 +384588,9 @@
       "casetype_score": 0,
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
-      "is_war_room": false
+      "is_war_room": false,
+      "hubspot_contact_id": "563991071432",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "6:25-cv-00380",

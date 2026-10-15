@@ -34,12 +34,12 @@
       <div class="nav-item" data-page="outreach" onclick="navigateToPage('outreach')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         <span>Outreach Queue</span>
-        <span class="nav-badge nav-badge-wine" id="sidebarBadgeOutreach">3,426</span>
+        <span class="nav-badge nav-badge-wine" id="sidebarBadgeOutreach">0</span>
       </div>
       <div class="nav-item" data-page="largematters" onclick="navigateToPage('largematters')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4 2 8L12 17l-6.5 4 2-8L2 9h7z"/></svg>
         <span>Large Matters</span>
-        <span class="nav-badge nav-badge-wine" id="sidebarBadgeLargeMatters">330</span>
+        <span class="nav-badge nav-badge-wine" id="sidebarBadgeLargeMatters">0</span>
       </div>
       <div class="nav-item" data-page="behavior" onclick="navigateToPage('behavior')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
@@ -48,7 +48,7 @@
       <div class="nav-item active" data-page="deliveries" onclick="navigateToPage('deliveries')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         <span>Deliveries</span>
-        <span class="nav-badge nav-badge-wine" id="sidebarBadgeDeliveries">962</span>
+        <span class="nav-badge nav-badge-wine" id="sidebarBadgeDeliveries">0</span>
       </div>
 
       <!-- Expandable More Views (Matching TRIS) -->
@@ -464,9 +464,9 @@
           <!-- CRM Assignment Filter (Assigned vs Unassigned) -->
           <div class="pill-tabs">
             <span class="nav-label" style="padding:4px 6px;align-self:center;">CRM Assignment</span>
-            <button class="pill-tab active" data-assign="all" onclick="setAssignmentFilter('all')">All Leads (<span id="assignCountAll">3,426</span>)</button>
-            <button class="pill-tab" data-assign="unassigned" onclick="setAssignmentFilter('unassigned')">Unassigned (<span id="assignCountUnassigned">2,798</span>)</button>
-            <button class="pill-tab" data-assign="assigned" onclick="setAssignmentFilter('assigned')">Assigned (<span id="assignCountAssigned">628</span>)</button>
+            <button class="pill-tab active" data-assign="all" onclick="setAssignmentFilter('all')">All Leads (<span id="assignCountAll">0</span>)</button>
+            <button class="pill-tab" data-assign="unassigned" onclick="setAssignmentFilter('unassigned')">Unassigned (<span id="assignCountUnassigned">0</span>)</button>
+            <button class="pill-tab" data-assign="assigned" onclick="setAssignmentFilter('assigned')">Assigned (<span id="assignCountAssigned">0</span>)</button>
           </div>
 
           <!-- Lifecycle Active vs Historical Toggle -->
@@ -646,9 +646,9 @@
         </div>
 
         <div class="kpi-grid">
-          <div class="kpi" onclick="openBehaviorKpiDrill(1)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel1">Entities Ranked</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal1">124</div><div class="kpi-sub" id="kpiBehaviorSub1">≥ 3 closed cases</div></div>
-          <div class="kpi" onclick="openBehaviorKpiDrill(2)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel2">Avg Trial Rate</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal2" style="color:var(--status-amber);">18.4%</div><div class="kpi-sub" id="kpiBehaviorSub2">across ranked set</div></div>
-          <div class="kpi" onclick="openBehaviorKpiDrill(3)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel3">High-Trial Targets</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal3" style="color:var(--status-emerald);">38</div><div class="kpi-sub" id="kpiBehaviorSub3">trial pct ≥ 25%</div></div>
+          <div class="kpi" onclick="openBehaviorKpiDrill(1)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel1">Entities Ranked</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal1">0</div><div class="kpi-sub" id="kpiBehaviorSub1">≥ 3 closed cases</div></div>
+          <div class="kpi" onclick="openBehaviorKpiDrill(2)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel2">Avg Trial Rate</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal2" style="color:var(--status-amber);">0.0%</div><div class="kpi-sub" id="kpiBehaviorSub2">across ranked set</div></div>
+          <div class="kpi" onclick="openBehaviorKpiDrill(3)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel3">High-Trial Targets</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal3" style="color:var(--status-emerald);">0</div><div class="kpi-sub" id="kpiBehaviorSub3">trial pct ≥ 25%</div></div>
           <div class="kpi" onclick="openBehaviorKpiDrill(4)" style="cursor:pointer;"><div class="kpi-label"><span id="kpiBehaviorLabel4">Historical Dispositions</span><span class="kpi-chevron">›</span></div><div class="kpi-value" id="kpiBehaviorVal4" style="font-size:22px;color:var(--text-white);">0</div><div class="kpi-sub" id="kpiBehaviorSub4">Verified courtroom outcomes</div></div>
         </div>
 

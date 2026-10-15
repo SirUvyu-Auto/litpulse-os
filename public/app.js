@@ -208,8 +208,9 @@ async function loadDeliveriesPage() {
     const densSub = document.getElementById('kpiDelivDensitySub');
     if (densSub) densSub.innerText = topBldg ? `${topBldg.address}` : 'Awaiting docket ingestion';
 
+    const holdsList = fullBuildingsCache.filter(b => !b.geocoded || !b.is_precise || !b.lat || !b.lng || b.runner_status === 'Hold');
     const holdsEl = document.getElementById('kpiDelivHolds');
-    if (holdsEl) holdsEl.innerText = '0';
+    if (holdsEl) holdsEl.innerText = holdsList.length.toLocaleString();
 
     const badge = document.getElementById('sidebarBadgeDeliveries');
     if (badge) badge.innerText = totalBuildings.toLocaleString();
@@ -224,7 +225,7 @@ async function loadDeliveriesPage() {
     renderClustersMap(fullBuildingsCache);
     renderDeliveriesDirectory(fullBuildingsCache);
     renderRunHistory(totalBuildings);
-    renderHoldsTable(totalBuildings);
+    renderHoldsTable(fullBuildingsCache);
   } catch (err) {
     console.error('Failed to load deliveries:', err);
   }
@@ -1144,14 +1145,43 @@ function renderRunHistory(hasData) {
   `;
 }
 
-function renderHoldsTable(hasData) {
+function renderHoldsTable(buildings) {
   const tbody = document.getElementById('holdsTableTbody');
   if (!tbody) return;
-  if (!hasData) {
+  const list = Array.isArray(buildings) ? buildings : (fullBuildingsCache || []);
+  const holds = list.filter(b => !b.geocoded || !b.is_precise || !b.lat || !b.lng || b.runner_status === 'Hold');
+  if (!holds.length) {
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-muted);">No delivery holds currently active. All addresses valid.</td></tr>`;
     return;
   }
-  tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-muted);">No holds on current batch.</td></tr>`;
+  const frag = document.createDocumentFragment();
+  holds.forEach(b => {
+    const tr = document.createElement('tr');
+    let reason = 'GPS coordinates pending verification';
+    const addr = String(b.address || '').toLowerCase();
+    if (addr.includes('po box') || addr.includes('p.o. box')) {
+      reason = 'PO Box address: physical suite required for runner delivery';
+    } else if (!b.geocoded) {
+      reason = 'GPS geocoding unresolved';
+    } else if (!b.is_precise) {
+      reason = 'Imprecise facility baseline coordinates';
+    } else if (b.runner_status === 'Hold') {
+      reason = 'Manual dispatch hold';
+    }
+
+    const tenantSummary = (b.tenants && b.tenants.length) ? b.tenants.slice(0, 2).join(', ') : (b.building_name || 'Multiple Firms');
+    tr.innerHTML = `
+      <td style="font-weight:600;color:var(--text-white);">${b.attorneys_count || 1} Counsel</td>
+      <td style="color:var(--text-muted);font-size:12px;">${escapeHtml(tenantSummary)}</td>
+      <td style="font-size:12px;color:var(--text-sub);">${escapeHtml(b.address || 'Address unlisted')}</td>
+      <td><span class="badge badge-neutral">${b.active_trials || 1} active ${(b.active_trials || 1) === 1 ? 'matter' : 'matters'}</span></td>
+      <td><span class="badge badge-amber" style="font-size:10.5px;">${escapeHtml(reason)}</span></td>
+      <td><button class="btn btn-secondary btn-sm" onclick="triggerGeocode('all')" style="padding:4px 8px;font-size:11px;">Verify GPS</button></td>
+    `;
+    frag.appendChild(tr);
+  });
+  tbody.innerHTML = '';
+  tbody.appendChild(frag);
 }
 
 // ----------------- 2. OVERVIEW PAGE LOGIC ----------------- //
@@ -1173,10 +1203,10 @@ async function loadOverviewPage() {
     if (trialsEl) trialsEl.innerText = (kpis.trials?.next7 || 0).toLocaleString();
 
     const unassignedEl = document.getElementById('kpiOverviewUnassigned');
-    if (unassignedEl) unassignedEl.innerText = (kpis.unassigned?.count || 0).toLocaleString();
+    if (unassignedEl) unassignedEl.innerText = (kpis.unassigned?.next7 !== undefined ? kpis.unassigned.next7 : (kpis.unassigned?.count || 0)).toLocaleString();
 
     const revEl = document.getElementById('kpiOverviewRevenue');
-    if (revEl) revEl.innerText = formatCurrency(kpis.outreach?.estValue || 0);
+    if (revEl) revEl.innerText = formatCurrency(kpis.trials?.next7Rev !== undefined ? kpis.trials.next7Rev : (kpis.outreach?.estValue || 0));
 
     // Update Sidebar Badges
     const badgeOutreach = document.getElementById('sidebarBadgeOutreach');
@@ -1184,7 +1214,7 @@ async function loadOverviewPage() {
 
     const badgeLarge = document.getElementById('sidebarBadgeLargeMatters');
     if (badgeLarge) {
-      const lmCount = data.largeMattersCount !== undefined ? data.largeMattersCount : 330;
+      const lmCount = data.largeMattersCount !== undefined ? data.largeMattersCount : 0;
       badgeLarge.innerText = lmCount.toLocaleString();
     }
 
@@ -2339,7 +2369,7 @@ async function renderBehavior(tab = currentBehaviorTab) {
     thead.innerHTML = `<tr><th>Law Firm</th><th>Closed Matters</th><th>Trial %</th><th>Trials</th><th>Settled</th><th>Dismissed</th></tr>`;
   }
   const populateFirms = (rows) => {
-    const avgRate = rows.length ? (rows.reduce((a, r) => a + (r.trialPct || 0), 0) / rows.length).toFixed(1) : '18.4';
+    const avgRate = rows.length ? (rows.reduce((a, r) => a + (r.trialPct || 0), 0) / rows.length).toFixed(1) : '0.0';
     const highTargets = rows.filter(r => (r.trialPct || 0) >= 25).length;
     const totalClosed = rows.reduce((a, r) => a + (r.closed || 0), 0);
 

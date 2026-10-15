@@ -1073,10 +1073,12 @@ class DataStore {
     const next90Days = activeTargets.filter(c => (c.days_until || 0) <= 90);
     const next30Days = activeTargets.filter(c => (c.days_until || 0) <= 30);
     const next7Days = activeTargets.filter(c => (c.days_until || 0) <= 7);
+    const revNext7 = next7Days.reduce((acc, c) => acc + (c.ear || c.est_value || 0), 0);
 
     // Unassigned and assigned active leads
     const unassigned = activeTargets.filter(c => !c.assigned_to || c.assigned_to === 'Unassigned' || c.hubspot_status === 'Unassigned');
     const assigned = activeTargets.filter(c => c.assigned_to && c.assigned_to !== 'Unassigned' && c.hubspot_status !== 'Unassigned');
+    const unassignedNext7 = next7Days.filter(c => !c.assigned_to || c.assigned_to === 'Unassigned' || c.hubspot_status === 'Unassigned');
 
     // Real-time coverage diagnostics calculated dynamically across active targets
     const withEmail = activeTargets.filter(c => c.email && c.email.includes('@'));
@@ -1141,12 +1143,14 @@ class DataStore {
           count: next90Days.length,
           next30: next30Days.length,
           next7: next7Days.length,
+          next7Rev: revNext7,
           label: 'Upcoming Trials (90d)',
           delta: next30Days.length > 0 ? `${next30Days.length} in calendar call` : '0 in calendar call',
           urgency: next30Days.length > 0 ? 'Prep window open' : 'No urgent trials'
         },
         unassigned: {
           count: unassigned.length,
+          next7: unassignedNext7.length,
           highUrgency: unassigned.filter(c => c.days_until <= 60).length,
           label: 'Unassigned Targets',
           delta: unassigned.length > 0 ? 'Needs sales assignment' : 'All assigned',
@@ -1197,7 +1201,7 @@ class DataStore {
       return {
         title: 'Unassigned High-Score Leads',
         sub: 'Litigation opportunities requiring immediate team ownership.',
-        rows: activeTargets.filter(c => !c.assigned_to || c.hubspot_status === 'Unassigned')
+        rows: activeTargets.filter(c => !c.assigned_to || c.assigned_to === 'Unassigned' || c.hubspot_status === 'Unassigned')
       };
     } else if (key === 'deliveries') {
       const qb = require('./quickbooksService');

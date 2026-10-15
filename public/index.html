@@ -585,6 +585,11 @@
             <option value="unassigned">Unassigned Only</option>
             <option value="assigned">Assigned Only</option>
           </select>
+          <select id="largeMattersSideFilter" class="filter-chip" onchange="filterLargeMatters()">
+            <option value="ALL">All Sides</option>
+            <option value="plaintiff">Plaintiff Only</option>
+            <option value="defense">Defense Only</option>
+          </select>
         </div>
 
         <div class="kpi-grid">
@@ -618,7 +623,7 @@
           <div class="table-wrap" id="largeMattersTableWrap">
             <table class="data-table" id="largeMattersTable">
               <thead>
-                <tr><th>Priority</th><th>Recommended Action</th><th>Trial Date</th><th>Days</th><th>Attorney</th><th>Firm</th><th>Matter Caption</th><th>Docket</th><th>Court</th><th>Est. Revenue</th><th>Owner</th><th>Status</th></tr>
+                <tr><th>Side</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm City</th><th>Trial City</th><th>Days</th><th>Trial Date</th><th>Est. Revenue</th><th>Phone</th><th>Email</th><th>Owner</th><th>Status</th><th>Docket / Caption</th></tr>
               </thead>
               <tbody id="largeMattersTbody"></tbody>
             </table>

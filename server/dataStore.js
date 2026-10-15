@@ -1074,8 +1074,27 @@ class DataStore {
     const next30Days = activeTargets.filter(c => (c.days_until || 0) <= 30);
     const next7Days = activeTargets.filter(c => (c.days_until || 0) <= 7);
 
-    // Unassigned active leads
-    const unassigned = activeTargets.filter(c => !c.assigned_to || c.hubspot_status === 'Unassigned');
+    // Unassigned and assigned active leads
+    const unassigned = activeTargets.filter(c => !c.assigned_to || c.assigned_to === 'Unassigned' || c.hubspot_status === 'Unassigned');
+    const assigned = activeTargets.filter(c => c.assigned_to && c.assigned_to !== 'Unassigned' && c.hubspot_status !== 'Unassigned');
+
+    // Real-time coverage diagnostics calculated dynamically across active targets
+    const withEmail = activeTargets.filter(c => c.email && c.email.includes('@'));
+    const withPhone = activeTargets.filter(c => c.phone && String(c.phone).trim().length >= 7);
+    const withCity = activeTargets.filter(c => c.firm_city || c.city || c.division);
+    const totalActive = activeTargets.length;
+    const coverage = {
+      emailCount: withEmail.length,
+      emailPct: totalActive > 0 ? ((withEmail.length / totalActive) * 100).toFixed(1) + '%' : '0%',
+      phoneCount: withPhone.length,
+      phonePct: totalActive > 0 ? ((withPhone.length / totalActive) * 100).toFixed(1) + '%' : '0%',
+      cityCount: withCity.length,
+      cityPct: totalActive > 0 ? ((withCity.length / totalActive) * 100).toFixed(1) + '%' : '0%',
+      assignedCount: assigned.length,
+      assignedPct: totalActive > 0 ? ((assigned.length / totalActive) * 100).toFixed(1) + '%' : '0%',
+      unassignedCount: unassigned.length,
+      unassignedPct: totalActive > 0 ? ((unassigned.length / totalActive) * 100).toFixed(1) + '%' : '0%'
+    };
 
     // Large and Complex Matters count
     const largeMattersCount = activeTargets.filter(c => (c.full_value || 0) >= 100000 || (c.ear || 0) >= 15000 || (c.counsel_matrix && c.counsel_matrix.length >= 4)).length;
@@ -1143,7 +1162,8 @@ class DataStore {
       },
       topPriorities: sorted.slice(0, 6),
       forecast: forecastByMonth,
-      largeMattersCount
+      largeMattersCount,
+      coverage
     };
   }
 

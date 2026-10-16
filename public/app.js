@@ -1081,11 +1081,15 @@ function updateRunCityCountInfo() {
   }
 }
 
-// Global outside click handler for runCityDropdown
+// Global outside click handler for runCityDropdown and largeMattersCityDropdown
 document.addEventListener('click', (e) => {
   const container = document.getElementById('runCityMultiSelect');
   if (container && !container.contains(e.target)) {
     toggleRunCityDropdown(true);
+  }
+  const lmContainer = document.getElementById('largeMattersCityMultiSelect');
+  if (lmContainer && !lmContainer.contains(e.target)) {
+    toggleLargeMattersCityDropdown(true);
   }
 });
 
@@ -1314,6 +1318,10 @@ async function loadOverviewPage() {
 }
 
 // ----------------- 3. OUTREACH QUEUE LOGIC ----------------- //
+
+function isWarRoomCase(c) {
+  return Boolean(c.is_war_room) || (c.is_local === false && c.status !== 'Historical' && c.days_until !== undefined && c.days_until >= 0 && c.days_until <= 14);
+}
 
 function renderLocalityPill(c, firmCityDisplay, trialCityDisplay) {
   const isOutOfState = Boolean(c.is_oos) || (c.state && c.state !== 'FL' && c.state !== 'Florida') || /, [A-Z]{2}$/.test(firmCityDisplay);
@@ -1607,7 +1615,6 @@ async function renderOutreachQueue(forceRefresh = false) {
     const windowPoolCount = cases.length;
 
     // Compute category counts for TRIS tabs
-    const isWarRoomCase = (c) => Boolean(c.is_war_room) || (c.is_local === false && c.status !== 'Historical' && c.days_until !== undefined && c.days_until >= 0 && c.days_until <= 14);
     const countLocal = cases.filter(c => c.is_local === true).length;
     const countOot = cases.filter(c => c.is_oot === true || (c.is_local === false && (!c.state || c.state === 'FL' || c.state === 'Florida'))).length;
     const countOos = cases.filter(c => c.is_oos === true || (c.state && c.state !== 'FL' && c.state !== 'Florida')).length;
@@ -1938,6 +1945,173 @@ let largeMattersCache = [];
 let largeMattersFilteredCache = [];
 let currentLmWindow = 'immediate';
 let activeLargeKpi = null;
+let selectedLargeMattersCities = [];
+let availableLargeMattersCities = [];
+
+function initLargeMattersCityMultiSelect(largeMatters) {
+  const cityCounts = {};
+  (largeMatters || []).forEach(m => {
+    const c = (m.trial_city || m.city || m.division || '').trim();
+    if (c) {
+      cityCounts[c] = (cityCounts[c] || 0) + 1;
+    }
+  });
+
+  const sortedNames = Object.keys(cityCounts).sort((a, b) => cityCounts[b] - cityCounts[a]);
+  availableLargeMattersCities = sortedNames.map(name => ({
+    name,
+    count: cityCounts[name]
+  }));
+
+  selectedLargeMattersCities = selectedLargeMattersCities.filter(name => cityCounts[name]);
+
+  renderLargeMattersCityList();
+  updateLargeMattersCityBadges();
+}
+
+function toggleLargeMattersCityDropdown(forceClose = false) {
+  const dropdown = document.getElementById('largeMattersCityDropdown');
+  const trigger = document.getElementById('largeMattersCityTrigger');
+  if (!dropdown || !trigger) return;
+
+  if (forceClose || dropdown.classList.contains('open')) {
+    dropdown.classList.remove('open');
+    trigger.classList.remove('active');
+  } else {
+    dropdown.classList.add('open');
+    trigger.classList.add('active');
+    const input = document.getElementById('largeMattersCitySearchInput');
+    if (input) {
+      input.value = '';
+      filterLargeMattersCityList('');
+      setTimeout(() => input.focus(), 50);
+    }
+  }
+}
+
+function filterLargeMattersCityList(query) {
+  const q = (query || '').toLowerCase().trim();
+  const listEl = document.getElementById('largeMattersCityList');
+  if (!listEl) return;
+
+  const items = listEl.querySelectorAll('.multi-select-item');
+  items.forEach(item => {
+    const cityName = item.getAttribute('data-city') || '';
+    if (!q || cityName.toLowerCase().includes(q)) {
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
+function renderLargeMattersCityList() {
+  const listEl = document.getElementById('largeMattersCityList');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+
+  if (!availableLargeMattersCities.length) {
+    listEl.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:11.5px;">No large matter cities available</div>';
+    updateLargeMattersCityCountInfo();
+    return;
+  }
+
+  availableLargeMattersCities.forEach(c => {
+    const isSelected = selectedLargeMattersCities.includes(c.name);
+    const item = document.createElement('div');
+    item.className = 'multi-select-item' + (isSelected ? ' selected' : '');
+    item.setAttribute('data-city', c.name);
+    item.onclick = (e) => {
+      e.stopPropagation();
+      toggleLargeMattersCitySelection(c.name);
+    };
+
+    item.innerHTML = `
+      <label class="multi-select-item-label" onclick="event.preventDefault();">
+        <input type="checkbox" ${isSelected ? 'checked' : ''}>
+        <span style="font-weight:${isSelected ? '600' : '400'};color:${isSelected ? '#FFF' : 'var(--text-platinum)'};">${escapeHtml(c.name)}</span>
+      </label>
+      <span class="multi-select-item-count">${c.count} ${c.count === 1 ? 'matter' : 'matters'}</span>
+    `;
+    listEl.appendChild(item);
+  });
+
+  updateLargeMattersCityCountInfo();
+}
+
+function toggleLargeMattersCitySelection(cityName) {
+  const idx = selectedLargeMattersCities.indexOf(cityName);
+  if (idx >= 0) {
+    selectedLargeMattersCities.splice(idx, 1);
+  } else {
+    selectedLargeMattersCities.push(cityName);
+  }
+  renderLargeMattersCityList();
+  updateLargeMattersCityBadges();
+  filterLargeMatters();
+}
+
+function selectAllLargeMattersCities() {
+  selectedLargeMattersCities = availableLargeMattersCities.map(c => c.name);
+  renderLargeMattersCityList();
+  updateLargeMattersCityBadges();
+  filterLargeMatters();
+}
+
+function clearAllLargeMattersCities() {
+  selectedLargeMattersCities = [];
+  renderLargeMattersCityList();
+  updateLargeMattersCityBadges();
+  filterLargeMatters();
+}
+
+function updateLargeMattersCityBadges() {
+  const badgesEl = document.getElementById('largeMattersCityBadges');
+  if (!badgesEl) return;
+
+  const totalMatters = largeMattersCache.length;
+  if (!selectedLargeMattersCities.length) {
+    badgesEl.innerHTML = `<span class="multi-select-placeholder" id="largeMattersCityPlaceholder">All Cities (${totalMatters} active)</span>`;
+  } else if (selectedLargeMattersCities.length === 1) {
+    const city = selectedLargeMattersCities[0];
+    const cityObj = availableLargeMattersCities.find(c => c.name === city);
+    const countStr = cityObj ? ` (${cityObj.count})` : '';
+    badgesEl.innerHTML = `
+      <span class="multi-select-badge" style="font-size:11px;padding:1px 6px;">
+        ${escapeHtml(city)}${countStr}
+        <span class="multi-select-badge-remove" onclick="event.stopPropagation(); toggleLargeMattersCitySelection('${escapeHtml(city)}');">✕</span>
+      </span>
+    `;
+  } else if (selectedLargeMattersCities.length <= 2) {
+    let html = '';
+    selectedLargeMattersCities.forEach(city => {
+      html += `
+        <span class="multi-select-badge" style="font-size:10.5px;padding:1px 5px;">
+          ${escapeHtml(city)}
+          <span class="multi-select-badge-remove" onclick="event.stopPropagation(); toggleLargeMattersCitySelection('${escapeHtml(city)}');">✕</span>
+        </span>
+      `;
+    });
+    badgesEl.innerHTML = html;
+  } else {
+    badgesEl.innerHTML = `
+      <span class="multi-select-badge" style="font-size:11px;padding:1px 6px;">
+        ${selectedLargeMattersCities.length} Cities Selected
+        <span class="multi-select-badge-remove" onclick="event.stopPropagation(); clearAllLargeMattersCities();">✕</span>
+      </span>
+    `;
+  }
+  updateLargeMattersCityCountInfo();
+}
+
+function updateLargeMattersCityCountInfo() {
+  const countInfo = document.getElementById('largeMattersCityCountInfo');
+  if (countInfo) {
+    countInfo.innerText = selectedLargeMattersCities.length > 0
+      ? `${selectedLargeMattersCities.length} of ${availableLargeMattersCities.length} selected`
+      : `All ${availableLargeMattersCities.length} cities active`;
+  }
+}
 
 function clickLargeKpi(type) {
   const cards = {
@@ -2124,6 +2298,7 @@ function updateLargeMattersKpis() {
 async function renderLargeMatters(forceRefresh = false) {
   // If cache is ready, render immediately without waiting for network round-trip
   if (largeMattersCache && largeMattersCache.length > 0 && !forceRefresh) {
+    initLargeMattersCityMultiSelect(largeMattersCache);
     updateLargeMattersKpis();
     filterLargeMatters();
     // Silent background revalidation
@@ -2137,6 +2312,7 @@ async function renderLargeMatters(forceRefresh = false) {
           if (pDiff !== 0) return pDiff;
           return (b.ear || b.full_value || 0) - (a.ear || a.full_value || 0);
         });
+        initLargeMattersCityMultiSelect(largeMattersCache);
         updateLargeMattersKpis();
         filterLargeMatters();
       })
@@ -2156,6 +2332,7 @@ async function renderLargeMatters(forceRefresh = false) {
       return (b.ear || b.full_value || 0) - (a.ear || a.full_value || 0);
     });
 
+    initLargeMattersCityMultiSelect(largeMattersCache);
     updateLargeMattersKpis();
     filterLargeMatters();
   } catch (err) {
@@ -2258,9 +2435,10 @@ function renderLargeMattersTable(rows) {
 
 function filterLargeMatters() {
   const q = (document.getElementById('largeMattersSearchInput')?.value || '').toLowerCase().trim();
-  const city = document.getElementById('largeMattersCityFilter')?.value || 'ALL';
   const assign = document.getElementById('largeMattersAssignFilter')?.value || 'ALL';
   const side = document.getElementById('largeMattersSideFilter')?.value || 'ALL';
+
+  const selectedCitiesLower = selectedLargeMattersCities.map(c => c.toLowerCase());
 
   const filtered = largeMattersCache.filter(item => {
     let matchesHorizon = true;
@@ -2276,7 +2454,15 @@ function filterLargeMatters() {
     }
 
     const matchesQuery = !q || JSON.stringify(item).toLowerCase().includes(q);
-    const matchesCity = city === 'ALL' || (item.trial_city && item.trial_city.toLowerCase() === city.toLowerCase()) || (item.city && item.city.toLowerCase() === city.toLowerCase()) || (item.division && item.division.toLowerCase() === city.toLowerCase());
+
+    let matchesCity = true;
+    if (selectedCitiesLower.length > 0) {
+      const trialCity = (item.trial_city || '').toLowerCase();
+      const itemCity = (item.city || '').toLowerCase();
+      const divCity = (item.division || '').toLowerCase();
+      matchesCity = selectedCitiesLower.some(sc => trialCity === sc || itemCity === sc || divCity === sc);
+    }
+
     let matchesAssign = true;
     if (assign.toLowerCase() === 'unassigned') {
       matchesAssign = !item.assigned_to || item.assigned_to === 'Unassigned' || item.hubspot_status === 'Unassigned';
@@ -3613,16 +3799,7 @@ async function loadActiveCities() {
       if (cur) drawerSelect.value = cur;
     }
 
-    // 2. Large Matters City Filter
-    const largeSelect = document.getElementById('largeMattersCityFilter');
-    if (largeSelect) {
-      const cur = largeSelect.value;
-      largeSelect.innerHTML = `<option value="ALL">All Cities (${total.toLocaleString()} active)</option>` +
-        cities.map(c => `<option value="${escapeHtml(c.city)}">${escapeHtml(c.city)} (${c.count.toLocaleString()})</option>`).join('');
-      if (cur) largeSelect.value = cur;
-    }
-
-    // 3. Outreach Queue City Filter
+    // 2. Outreach Queue City Filter
     const outreachSelect = document.getElementById('outreachCityFilter');
     if (outreachSelect) {
       const cur = outreachSelect.value;

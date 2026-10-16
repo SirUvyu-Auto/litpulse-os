@@ -579,14 +579,29 @@
         <!-- Working Filters Bar -->
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
           <input type="text" id="largeMattersSearchInput" placeholder="Filter large matters..." oninput="filterLargeMatters(this.value)" style="background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text-white);font-size:12px;min-width:220px;">
-          <select id="largeMattersCityFilter" class="filter-chip" onchange="filterLargeMattersCity(this.value)">
-            <option value="ALL">All Cities</option>
-            <option value="Miami">Miami</option>
-            <option value="Fort Lauderdale">Fort Lauderdale</option>
-            <option value="West Palm Beach">West Palm Beach</option>
-            <option value="Tampa">Tampa</option>
-            <option value="Orlando">Orlando</option>
-          </select>
+          <!-- Searchable Multi-Select City Filter for Large Matters -->
+          <div class="multi-select-container" id="largeMattersCityMultiSelect" style="position:relative;min-width:210px;max-width:320px;">
+            <div class="multi-select-trigger filter-chip" id="largeMattersCityTrigger" onclick="toggleLargeMattersCityDropdown()" style="height:32px;min-height:32px;padding:3px 10px;font-size:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+              <div class="multi-select-badges" id="largeMattersCityBadges" style="max-height:26px;overflow:hidden;display:flex;align-items:center;flex-wrap:nowrap;gap:4px;">
+                <span class="multi-select-placeholder" id="largeMattersCityPlaceholder">All Large Matter Cities</span>
+              </div>
+              <span class="multi-select-chevron" style="margin-left:6px;font-size:10px;">▼</span>
+            </div>
+            <div class="multi-select-dropdown" id="largeMattersCityDropdown" style="width:280px;">
+              <div class="multi-select-search-wrap">
+                <input type="text" class="multi-select-search-input" id="largeMattersCitySearchInput" placeholder="Search large matter cities..." oninput="filterLargeMattersCityList(this.value)">
+              </div>
+              <div class="multi-select-actions">
+                <span id="largeMattersCityCountInfo">All cities active</span>
+                <div style="display:flex;gap:8px;">
+                  <button type="button" class="multi-select-action-btn" onclick="selectAllLargeMattersCities()">Select All</button>
+                  <button type="button" class="multi-select-action-btn" onclick="clearAllLargeMattersCities()">Clear</button>
+                </div>
+              </div>
+              <div class="multi-select-list" id="largeMattersCityList" style="max-height:220px;overflow-y:auto;"></div>
+            </div>
+          </div>
+          <select id="largeMattersCityFilter" style="display:none;"></select>
           <select id="largeMattersAssignFilter" class="filter-chip" onchange="filterLargeMattersAssign(this.value)">
             <option value="ALL">All Assignments</option>
             <option value="unassigned">Unassigned Only</option>

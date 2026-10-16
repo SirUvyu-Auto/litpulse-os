@@ -574,10 +574,15 @@ function normalizeFirmName(rawName, email, attorneyName) {
     }).join(' ');
   }
 
+  // If firm name is explicitly pro se
+  if (/^(pro\s*se|self-represented|in\s*proper\s*person|in\s*pro\s*per|unrepresented)$/i.test(clean)) {
+    return 'Pro Se / Self-Represented';
+  }
+
   // Reject invalid firm names like "Plaintiff", "Defense", "Unknown Firm", "Unknown"
   const isInvalidFirm = !clean || /^(plaintiff|defense|unknown firm|unknown|counsel|lead counsel|pro se|n\/a|none|pending)$/i.test(clean);
   if (isInvalidFirm) {
-    if (attorneyName && !/^(plaintiff|defense|counsel|awaiting|pro se|unknown|lead)/i.test(attorneyName)) {
+    if (attorneyName && !/^(plaintiff|defense|counsel|awaiting|pro\s*se|unknown|lead)/i.test(attorneyName)) {
       const attyClean = attorneyName.replace(/\s*,?\s*esq\.?$/i, '').trim().replace(/\s+/g, ' ');
       return `Law Office of ${attyClean}`;
     }
@@ -585,7 +590,7 @@ function normalizeFirmName(rawName, email, attorneyName) {
   }
 
   // If firm name is identical to attorney name (solo practitioner)
-  if (attorneyName && !/^(plaintiff|defense|counsel|awaiting|pro se|unknown|lead)/i.test(attorneyName)) {
+  if (attorneyName && !/^(plaintiff|defense|counsel|awaiting|pro\s*se|unknown|lead)/i.test(attorneyName)) {
     const cleanAtty = attorneyName.replace(/\s*,?\s*esq\.?$/i, '').trim().toLowerCase();
     const cleanFirm = clean.replace(/\s*,?\s*esq\.?$/i, '').trim().toLowerCase();
     if (cleanFirm === cleanAtty) {
@@ -595,6 +600,49 @@ function normalizeFirmName(rawName, email, attorneyName) {
   }
 
   return clean;
+}
+
+function isProSeLitigant(attorneyName, firmName, caption = '', address = '', nosLabel = '', partySide = 'Plaintiff') {
+  const atty = String(attorneyName || '').trim();
+  const firm = String(firmName || '').trim();
+  const cap = String(caption || '').trim();
+  const addr = String(address || '').trim();
+
+  // 1. Explicit Pro Se keywords
+  if (/\b(pro\s*se|self-represented|in\s*proper\s*person|in\s*pro\s*per|unrepresented)\b/i.test(`${atty} ${firm}`)) {
+    return true;
+  }
+  if (/^(pro\s*se|inmate|pro se \/ self-represented)$/i.test(firm) || /^(pro\s*se|inmate)$/i.test(atty)) {
+    return true;
+  }
+
+  // 2. Correctional / Inmate facilities
+  if (/\b(inmate|prisoner|detention|correctional|penitentiary|jail)\b/i.test(`${addr} ${firm}`)) {
+    return true;
+  }
+
+  // 3. Caption matches attorney name (e.g. "Zeigler v. Walmart" and attorney is "Mykel Zeigler")
+  if (partySide === 'Plaintiff') {
+    const match = cap.match(/^([A-Za-z]+)\s+v\./i);
+    if (match) {
+      const pLast = match[1].toLowerCase();
+      const cleanAtty = atty.toLowerCase();
+      if (cleanAtty.includes(pLast) && (!firm || /^(pro se|pro se \/ self-represented|awaiting appearance|plaintiff|unknown firm|unknown)$/i.test(firm) || firm.toLowerCase() === `law office of ${cleanAtty}`)) {
+        return true;
+      }
+    }
+  } else if (partySide === 'Defense') {
+    const match = cap.match(/v\.\s+([A-Za-z]+)/i);
+    if (match) {
+      const dLast = match[1].toLowerCase();
+      const cleanAtty = atty.toLowerCase();
+      if (cleanAtty.includes(dLast) && (!firm || /^(pro se|pro se \/ self-represented|awaiting appearance|defense|unknown firm|unknown)$/i.test(firm) || firm.toLowerCase() === `law office of ${cleanAtty}`)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 function resolveFirmId(firmName) {
@@ -644,6 +692,10 @@ function resolveBuildingCoordinates(building, idx) {
 // Non-firm entity classifier (Pro Se, Government, Municipal, Corporate Defendants)
 const NON_FIRM_PATTERNS = [
   /\bpro\s*se\b/i,
+  /\bself-represented\b/i,
+  /\binmate\b/i,
+  /\bprisoner\b/i,
+  /\bunrepresented\b/i,
   /\bdepartment\s+of\s+justice\b/i,
   /\bdoj\b/i,
   /\bu\.?s\.?\s+attorney/i,
@@ -694,6 +746,7 @@ module.exports = {
   FLORIDA_VENUE_COORDINATES,
   resolveBuildingCoordinates,
   buildAttorneyEmail,
-  buildAttorneyPhone
+  buildAttorneyPhone,
+  isProSeLitigant
 };
 

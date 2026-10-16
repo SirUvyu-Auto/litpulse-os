@@ -19,7 +19,8 @@ const {
   isValidJudgeName,
   resolveBuildingCoordinates,
   buildAttorneyEmail,
-  buildAttorneyPhone
+  buildAttorneyPhone,
+  isProSeLitigant
 } = require('./normalizer');
 const geocoder = require('./geocoder');
 const parkingService = require('./parkingService');
@@ -738,6 +739,7 @@ class DataStore {
     if (!cases.length) return;
 
     const needsRecompute = force || cases.some(c => 
+      c.is_pro_se === undefined ||
       c.ear === undefined || 
       c.is_war_room === undefined ||
       c.casetype_score === undefined ||
@@ -757,6 +759,19 @@ class DataStore {
 
     // Step A: Index all appearances across cases to calculate courier Re-Hit intelligence
     const attorneyHistory = new Map();
+    const proSeCaseIds = new Set();
+
+    // First pass: identify pro se litigants and track cases with pro se involvement
+    cases.forEach(c => {
+      const isProSe = Boolean(c.is_pro_se) || isProSeLitigant(c.lead_attorney, c.firm, c.caption, c.address, c.nos_label, c.party_side);
+      c.is_pro_se = isProSe;
+      if (isProSe) {
+        c.firm = 'Pro Se / Self-Represented';
+        c.firm_id = 'firm-pro-se-self-represented';
+        if (c.case_id) proSeCaseIds.add(c.case_id);
+      }
+    });
+
     cases.forEach(c => {
       const atty = (c.lead_attorney || '').trim().toLowerCase();
       const firm = (c.firm || '').trim().toLowerCase();
@@ -790,14 +805,24 @@ class DataStore {
       }
 
       // Clean placeholder firm
-      c.firm = normalizeFirmName(c.firm, c.email, c.lead_attorney);
+      if (c.is_pro_se) {
+        c.firm = 'Pro Se / Self-Represented';
+        c.firm_id = 'firm-pro-se-self-represented';
+      } else {
+        c.firm = normalizeFirmName(c.firm, c.email, c.lead_attorney);
+      }
 
       // Scrub and dynamically resolve email and phone if missing or generic placeholder
-      if (!c.email || /^(plaintiff@lawfirm\.com|defense@lawfirm\.com|.*@lawfirm\.com|.*@example\.com)$/i.test(c.email)) {
-        c.email = buildAttorneyEmail(c.lead_attorney, c.firm);
-      }
-      if (!c.phone || /^\(305\)\s*555-0[12]00$/i.test(c.phone) || /555-0100|555-0200/.test(c.phone)) {
-        c.phone = buildAttorneyPhone(c.firm, c.city);
+      if (c.is_pro_se) {
+        c.email = 'N/A';
+        c.phone = 'N/A';
+      } else {
+        if (!c.email || /^(plaintiff@lawfirm\.com|defense@lawfirm\.com|.*@lawfirm\.com|.*@example\.com)$/i.test(c.email)) {
+          c.email = buildAttorneyEmail(c.lead_attorney, c.firm);
+        }
+        if (!c.phone || /^\(305\)\s*555-0[12]00$/i.test(c.phone) || /555-0100|555-0200/.test(c.phone)) {
+          c.phone = buildAttorneyPhone(c.firm, c.city);
+        }
       }
 
       // Defect #6 fix: Build firm-scoped unique attorney identifier
@@ -848,52 +873,80 @@ class DataStore {
         c.same_firm_both_sides = false;
       }
 
-      const attyCount = (c.counsel_matrix && c.counsel_matrix.length) ? c.counsel_matrix.length : 2;
-      const earInfo = calculateEAR(c.nos_code, c.days_until, attyCount, c.party_side, c.nos_label);
-      c.ear = earInfo.ear;
-      c.trial_prob = earInfo.trial_prob;
-      c.full_value = earInfo.full_value;
-      c.print_likelihood = earInfo.print_likelihood;
-      c.likelihood_bucket = earInfo.likelihood_bucket;
-      // Defect #4 fix: do not overwrite explicit 0 EAR with $75k fallback
-      c.est_value = (typeof c.ear === 'number' && !isNaN(c.ear)) ? c.ear : (typeof c.full_value === 'number' ? c.full_value : 75000);
+      if (c.is_pro_se) {
+        // Zero out expected revenue and priority for pro se litigants
+        c.ear = 0;
+        c.trial_prob = 0;
+        c.full_value = 0;
+        c.print_likelihood = 0;
+        c.likelihood_bucket = 'Low';
+        c.est_value = 0;
+        c.priority_score = 0;
+        c.urgency_score = 0;
+        c.revenue_score = 0;
+        c.locality_score = 0;
+        c.casetype_score = 0;
+        c.engagement_score = 0;
+        c.priority_tier = 'None';
+        c.delivery_status = 'ineligible';
+        c.hubspot_status = 'Unqualified / Pro Se';
+        c.pitch_angle = 'N/A (Pro Se Claimant)';
+        c.building_id = null;
+      } else {
+        const attyCount = (c.counsel_matrix && c.counsel_matrix.length) ? c.counsel_matrix.length : 2;
+        const earInfo = calculateEAR(c.nos_code, c.days_until, attyCount, c.party_side, c.nos_label);
+        c.ear = earInfo.ear;
+        c.trial_prob = earInfo.trial_prob;
+        c.full_value = earInfo.full_value;
+        c.print_likelihood = earInfo.print_likelihood;
+        c.likelihood_bucket = earInfo.likelihood_bucket;
+        // Defect #4 fix: do not overwrite explicit 0 EAR with $75k fallback
+        c.est_value = (typeof c.ear === 'number' && !isNaN(c.ear)) ? c.ear : (typeof c.full_value === 'number' ? c.full_value : 75000);
 
-      const locality = resolveLocality(c.address, c.firm_city, c.trial_city);
-      c.is_local = locality.is_local;
-      c.is_oos = locality.is_oos;
-      c.is_oot = locality.is_oot;
-      c.state = locality.state;
-      c.locality_badge = locality.is_local ? 'Local FL' : (locality.is_oos ? `Out-of-State (${locality.state})` : 'Out-of-Town FL');
+        const locality = resolveLocality(c.address, c.firm_city, c.trial_city);
+        c.is_local = locality.is_local;
+        c.is_oos = locality.is_oos;
+        c.is_oot = locality.is_oot;
+        c.state = locality.state;
+        c.locality_badge = locality.is_local ? 'Local FL' : (locality.is_oos ? `Out-of-State (${locality.state})` : 'Out-of-Town FL');
 
-      const isAssigned = Boolean(c.assigned_to && c.assigned_to !== 'Unassigned' && c.hubspot_status !== 'Unassigned');
-      const hasEngagement = Boolean((c.email && c.email.includes('@')) || (c.phone && c.phone.trim().length >= 7) || isAssigned || c.has_cookie_conversion);
-      const nosIntensity = (NOS_REF[c.nos_code] || NOS_REF['default']).exhibit_intensity || 1.4;
-      const scores = calculatePriorityScore(c.trial_date, c.is_local, c.nos_code, c.ear, hasEngagement, this.data.weights, nosIntensity);
-      const isHistorical = c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0);
-      if (c.days_until !== undefined && c.days_until <= 0) {
-        c.status = 'Historical';
+        const isAssigned = Boolean(c.assigned_to && c.assigned_to !== 'Unassigned' && c.hubspot_status !== 'Unassigned');
+        const hasEngagement = Boolean((c.email && c.email.includes('@')) || (c.phone && c.phone.trim().length >= 7) || isAssigned || c.has_cookie_conversion);
+        const nosIntensity = (NOS_REF[c.nos_code] || NOS_REF['default']).exhibit_intensity || 1.4;
+        const scores = calculatePriorityScore(c.trial_date, c.is_local, c.nos_code, c.ear, hasEngagement, this.data.weights, nosIntensity);
+        const isHistorical = c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0);
+        if (c.days_until !== undefined && c.days_until <= 0) {
+          c.status = 'Historical';
+        }
+        c.is_war_room = isHistorical ? false : Boolean(scores.isWarRoom);
+        if (c.is_war_room) {
+          c.locality_badge = locality.is_oos ? `War Room (${locality.state})` : 'War Room (FL)';
+        }
+        c.priority_score = isHistorical ? 0 : scores.total;
+        c.urgency_score = isHistorical ? 0 : scores.urgency;
+        c.revenue_score = isHistorical ? 0 : scores.revenue;
+        c.locality_score = isHistorical ? 0 : scores.locality;
+        c.casetype_score = isHistorical ? 0 : scores.caseType;
+        c.engagement_score = isHistorical ? 0 : scores.engagement;
+        c.priority_tier = scores.tier;
+
+        c.delivery_status = classifyDeliveryStatus(c);
+
+        // Check if opposing party is pro se
+        if (proSeCaseIds.has(c.case_id)) {
+          c.opposing_is_pro_se = true;
+          c.pitch_angle = 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards';
+        }
       }
-      c.is_war_room = isHistorical ? false : Boolean(scores.isWarRoom);
-      if (c.is_war_room) {
-        c.locality_badge = locality.is_oos ? `War Room (${locality.state})` : 'War Room (FL)';
-      }
-      c.priority_score = isHistorical ? 0 : scores.total;
-      c.urgency_score = isHistorical ? 0 : scores.urgency;
-      c.revenue_score = isHistorical ? 0 : scores.revenue;
-      c.locality_score = isHistorical ? 0 : scores.locality;
-      c.casetype_score = isHistorical ? 0 : scores.caseType;
-      c.engagement_score = isHistorical ? 0 : scores.engagement;
-      c.priority_tier = scores.tier;
-
-      c.delivery_status = classifyDeliveryStatus(c);
     });
 
     // Rebuild physical building clusters strictly for Florida local addresses
     const bldgMap = new Map();
-    const activeTargets = cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0));
+    const activeTargets = cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se);
 
     activeTargets.forEach(c => {
-      // Hand delivery clusters are for Florida office locations
+      // Hand delivery clusters are strictly for Florida office locations and commercial firms
+      if (c.is_pro_se || c.firm === 'Pro Se / Self-Represented') return;
       const state = c.state || 'FL';
       if (state !== 'FL' && state !== 'FLORIDA') return;
 
@@ -966,7 +1019,7 @@ class DataStore {
     });
 
     this.rebuildBuildingIndex();
-    this.save();
+    this.save(true);
     console.log(`[TRIS Engine] Completed recompute. Formed ${this.data.buildings.length} clean Florida delivery buildings.`);
   }
 
@@ -1032,11 +1085,21 @@ class DataStore {
     return true;
   }
 
-  save() {
+  save(sync = false) {
     // 1. Primary PostgreSQL persistence (non-blocking)
     pgStore.syncAll(this.data).catch(err => {
       console.error('[TRIS PG] Background sync error:', err.message);
     });
+
+    if (sync) {
+      if (this._saveTimer) clearTimeout(this._saveTimer);
+      try {
+        fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf8');
+      } catch (err) {
+        console.error('Failed to save synchronous local backup database file:', err.message);
+      }
+      return;
+    }
 
     // 2. Local JSON backup (debounced non-blocking write to avoid event-loop stalls on 44MB file)
     if (this._saveTimer) clearTimeout(this._saveTimer);
@@ -1081,7 +1144,7 @@ class DataStore {
 
   getDashboardOverview() {
     const allTargets = this.getCases();
-    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0));
+    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se);
     const historicalTargets = allTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
     const buildings = this.getBuildings();
 
@@ -1193,7 +1256,7 @@ class DataStore {
 
   getDrillData(key) {
     const allTargets = this.getCases();
-    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0));
+    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se);
     const historicalTargets = allTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
     const buildings = this.getBuildings();
 
@@ -1293,7 +1356,7 @@ class DataStore {
       }
       const j = judgeMap.get(judge);
       j.total_cases += 1;
-      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0);
+      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se;
       if (isActive) {
         j.active_trials += 1;
         j.total_ear += (c.ear || c.est_value || 0);
@@ -1320,7 +1383,7 @@ class DataStore {
     const cityMap = {};
     let totalActive = 0;
     cases.forEach(c => {
-      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0);
+      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se;
       if (isActive) {
         totalActive++;
         let city = c.trial_city || c.city || 'Miami';
@@ -1465,6 +1528,7 @@ class DataStore {
 
     const cases = this.getCases();
     cases.forEach(c => {
+      if (c.is_pro_se || c.firm === 'Pro Se / Self-Represented') return;
       if (c.building_id && this.buildingIndex.has(c.building_id)) {
         this.buildingIndex.get(c.building_id).push(c);
         return;
@@ -1494,6 +1558,7 @@ class DataStore {
       const bldgStreet = extractBuildingAddress(building.address).toLowerCase();
       const bldgCity = (building.city || '').toLowerCase();
       matchingCases = this.getCases().filter(c => {
+        if (c.is_pro_se || c.firm === 'Pro Se / Self-Represented') return false;
         const caseStreet = extractBuildingAddress(c.address).toLowerCase();
         const caseCity = (c.city || '').toLowerCase();
         return caseStreet === bldgStreet && caseCity === bldgCity;
@@ -1502,7 +1567,7 @@ class DataStore {
     }
 
     // Isolate active upcoming Florida drops from historical archive matters
-    const activeCases = matchingCases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && (!c.is_oos && (!c.state || c.state === 'FL')));
+    const activeCases = matchingCases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && (!c.is_oos && (!c.state || c.state === 'FL')) && !c.is_pro_se);
     const historicalCases = matchingCases.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0) || (c.is_oos || (c.state && c.state !== 'FL')));
 
     // Keep building.attorneys_count in sync with active drops
@@ -1761,6 +1826,13 @@ class DataStore {
       const defFirm = normalizeFirmName(nc.defense_firm || nc.opposing_firm || '', defEmail, defAtty);
       const defPhone = nc.defense_phone || nc.opposing_phone || '';
 
+      // Check pro se status on plaintiff and defense sides
+      const pltfIsProSe = Boolean(nc.is_pro_se) || isProSeLitigant(pltfAtty, pltfFirm, nc.caption || nc.title, rawPltfAddr, nc.nos_label, 'Plaintiff');
+      const defIsProSe = Boolean(nc.defense_is_pro_se) || isProSeLitigant(defAtty, defFirm, nc.caption || nc.title, rawDefAddr, nc.nos_label, 'Defense');
+
+      const resolvedPltfFirm = pltfIsProSe ? 'Pro Se / Self-Represented' : pltfFirm;
+      const resolvedDefFirm = defIsProSe ? 'Pro Se / Self-Represented' : defFirm;
+
       // Early settlement or court closure check
       const rawCaseStatus = (nc.case_status || '').toLowerCase();
       const isDisposedEarly = rawCaseStatus.includes('settl') || rawCaseStatus.includes('dismiss') || rawCaseStatus.includes('closed') || rawCaseStatus.includes('verdict') || rawCaseStatus.includes('concluded');
@@ -1806,12 +1878,12 @@ class DataStore {
       // Defect #8 & #25 fix: Preserve existing verified phone, email, and address if new file is thin
       let finalPltfPhone = pltfPhone || existingPltf?.phone || '';
       if (!finalPltfPhone || /^\(305\)\s*555-0[12]00$/i.test(finalPltfPhone) || /555-0100|555-0200/.test(finalPltfPhone)) {
-        finalPltfPhone = buildAttorneyPhone(pltfFirm, pltfCity);
+        finalPltfPhone = buildAttorneyPhone(resolvedPltfFirm, pltfCity);
       }
 
       let finalPltfEmail = pltfEmail || existingPltf?.email || '';
       if (!finalPltfEmail || /^(plaintiff@lawfirm\.com|defense@lawfirm\.com|.*@lawfirm\.com|.*@example\.com)$/i.test(finalPltfEmail)) {
-        finalPltfEmail = buildAttorneyEmail(pltfAtty, pltfFirm);
+        finalPltfEmail = buildAttorneyEmail(pltfAtty, resolvedPltfFirm);
       }
 
       const finalPltfAddr = pltfAddr || existingPltf?.address || '';
@@ -1819,7 +1891,7 @@ class DataStore {
       const finalPltfCity = pltfFirmCity || existingPltf?.firm_city || existingPltf?.city || pltfCity;
 
       // Defect #44 fix: Detect if same law firm is listed for Plaintiff and Defense
-      const isSameFirmBothSides = Boolean(pltfFirm && defFirm && pltfFirm !== 'Awaiting Appearance' && defFirm !== 'Awaiting Appearance' && pltfFirm.toLowerCase() === defFirm.toLowerCase());
+      const isSameFirmBothSides = Boolean(resolvedPltfFirm && resolvedDefFirm && resolvedPltfFirm !== 'Awaiting Appearance' && resolvedDefFirm !== 'Awaiting Appearance' && resolvedPltfFirm !== 'Pro Se / Self-Represented' && resolvedPltfFirm.toLowerCase() === resolvedDefFirm.toLowerCase());
 
       const pltfContactDate = nc.last_contact_date || existingPltf?.last_contact_date || existingPltf?.rehit_date || '';
       const isPltfRehit = Boolean(existingPltf?.is_rehit || pltfContactDate || (existingPltf && existingPltf.case_id !== baseCaseId));
@@ -1828,6 +1900,16 @@ class DataStore {
       const pltfLoc = resolveLocality(finalPltfAddr, finalPltfCity, trialCity);
       const pltfRecord = {
         ...commonFields,
+        is_pro_se: pltfIsProSe,
+        ear: pltfIsProSe ? 0 : (nc.ear || 0),
+        est_value: pltfIsProSe ? 0 : commonFields.est_value,
+        full_value: pltfIsProSe ? 0 : (nc.full_value || 0),
+        priority_score: pltfIsProSe ? 0 : commonFields.priority_score,
+        urgency_score: pltfIsProSe ? 0 : commonFields.urgency_score,
+        revenue_score: pltfIsProSe ? 0 : commonFields.revenue_score,
+        locality_score: pltfIsProSe ? 0 : commonFields.locality_score,
+        delivery_status: pltfIsProSe ? 'ineligible' : 'review',
+        pitch_angle: pltfIsProSe ? 'N/A (Pro Se Claimant)' : (defIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.pitch_angle || 'Narrative Demonstratives, Liability Timelines & Blowup Medical Boards')),
         is_local: pltfLoc.is_local,
         is_oot: pltfLoc.is_oot,
         is_oos: pltfLoc.is_oos,
@@ -1836,19 +1918,20 @@ class DataStore {
         party_side: 'Plaintiff',
         party_badge: 'PLTF',
         lead_attorney: pltfAtty,
-        attorney_id: buildAttorneyId(pltfAtty, pltfFirm),
-        firm: pltfFirm,
-        firm_id: resolveFirmId(pltfFirm),
-        opposing_firm: defFirm || 'Defense Counsel',
+        attorney_id: buildAttorneyId(pltfAtty, resolvedPltfFirm),
+        firm: resolvedPltfFirm,
+        firm_id: resolveFirmId(resolvedPltfFirm),
+        opposing_firm: resolvedDefFirm || 'Defense Counsel',
         opposing_attorney: defAtty || 'Defense Lead',
+        opposing_is_pro_se: defIsProSe,
         address: finalPltfAddr,
         city: finalPltfCity,
         firm_city: finalPltfCity,
         trial_city: trialCity,
-        phone: finalPltfPhone,
-        email: finalPltfEmail,
+        phone: pltfIsProSe ? 'N/A' : finalPltfPhone,
+        email: pltfIsProSe ? 'N/A' : finalPltfEmail,
         assigned_to: pltfAssignedTo,
-        hubspot_status: pltfStatus,
+        hubspot_status: pltfIsProSe ? 'Unqualified / Pro Se' : pltfStatus,
         conflict_flag: pltfConflict,
         same_firm_both_sides: isSameFirmBothSides,
         is_rehit: isPltfRehit,
@@ -1879,12 +1962,12 @@ class DataStore {
         // Defect #8 & #25 fix: Preserve existing verified phone, email, and address if new file is thin
         let finalDefPhone = defPhone || existingDef?.phone || '';
         if (!finalDefPhone || /^\(305\)\s*555-0[12]00$/i.test(finalDefPhone) || /555-0100|555-0200/.test(finalDefPhone)) {
-          finalDefPhone = buildAttorneyPhone(defFirm, defCity);
+          finalDefPhone = buildAttorneyPhone(resolvedDefFirm, defCity);
         }
 
         let finalDefEmail = defEmail || existingDef?.email || '';
         if (!finalDefEmail || /^(plaintiff@lawfirm\.com|defense@lawfirm\.com|.*@lawfirm\.com|.*@example\.com)$/i.test(finalDefEmail)) {
-          finalDefEmail = buildAttorneyEmail(defAtty, defFirm);
+          finalDefEmail = buildAttorneyEmail(defAtty, resolvedDefFirm);
         }
         const finalDefAddr = defAddr || existingDef?.address || '';
         const defFirmCity = extractFirmCity(rawDefAddr, defCity);
@@ -1897,6 +1980,16 @@ class DataStore {
         const defLoc = resolveLocality(finalDefAddr, finalDefCity, trialCity);
         const defRecord = {
           ...commonFields,
+          is_pro_se: defIsProSe,
+          ear: defIsProSe ? 0 : (nc.defense_ear || nc.ear || 0),
+          est_value: defIsProSe ? 0 : commonFields.est_value,
+          full_value: defIsProSe ? 0 : (nc.defense_full_value || nc.full_value || 0),
+          priority_score: defIsProSe ? 0 : commonFields.priority_score,
+          urgency_score: defIsProSe ? 0 : commonFields.urgency_score,
+          revenue_score: defIsProSe ? 0 : commonFields.revenue_score,
+          locality_score: defIsProSe ? 0 : commonFields.locality_score,
+          delivery_status: defIsProSe ? 'ineligible' : 'review',
+          pitch_angle: defIsProSe ? 'N/A (Pro Se Defendant)' : (pltfIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.defense_pitch_angle || 'Impeachment Callouts, Medical Board Exhibits & Expert Cross Tabs')),
           is_local: defLoc.is_local,
           is_oot: defLoc.is_oot,
           is_oos: defLoc.is_oos,
@@ -1905,19 +1998,20 @@ class DataStore {
           party_side: 'Defense',
           party_badge: 'DEF',
           lead_attorney: defAtty || 'Defense Counsel',
-          attorney_id: buildAttorneyId(defAtty || 'Defense Counsel', defFirm || 'Defense Law Practice'),
-          firm: defFirm || 'Defense Law Practice',
-          firm_id: resolveFirmId(defFirm || 'Defense Law Practice'),
-          opposing_firm: pltfFirm,
+          attorney_id: buildAttorneyId(defAtty || 'Defense Counsel', resolvedDefFirm || 'Defense Law Practice'),
+          firm: resolvedDefFirm || 'Defense Law Practice',
+          firm_id: resolveFirmId(resolvedDefFirm || 'Defense Law Practice'),
+          opposing_firm: resolvedPltfFirm,
           opposing_attorney: pltfAtty,
+          opposing_is_pro_se: pltfIsProSe,
           address: finalDefAddr,
           city: finalDefCity,
           firm_city: finalDefCity,
           trial_city: trialCity,
-          phone: finalDefPhone,
-          email: finalDefEmail,
+          phone: defIsProSe ? 'N/A' : finalDefPhone,
+          email: defIsProSe ? 'N/A' : finalDefEmail,
           assigned_to: defAssignedTo,
-          hubspot_status: defStatus,
+          hubspot_status: defIsProSe ? 'Unqualified / Pro Se' : defStatus,
           conflict_flag: defConflict,
           same_firm_both_sides: isSameFirmBothSides,
           is_rehit: isDefRehit,
@@ -1935,9 +2029,10 @@ class DataStore {
 
     // Dynamically aggregate active building clusters from active targets
     const bldgMap = new Map();
-    const activeTargets = this.data.cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0));
+    const activeTargets = this.data.cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se);
 
     activeTargets.forEach(c => {
+      if (c.is_pro_se || c.firm === 'Pro Se / Self-Represented') return;
       const state = c.state || 'FL';
       if (state !== 'FL' && state !== 'FLORIDA') return;
 

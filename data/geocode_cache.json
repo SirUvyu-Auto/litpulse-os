@@ -7999,5 +7999,131 @@
     "is_precise": true,
     "source": "photon",
     "geocoded_at": "2026-09-24T06:59:10.958Z"
+  },
+  "orlando-300 s orange ave po box 1873 orlando fl": {
+    "lat": 28.538867,
+    "lng": -81.379983,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-16T15:22:26.470Z"
+  },
+  "fort lauderdale-515 e las olas blvd suntrust bank fort lauderdale fl": {
+    "lat": 26.120145,
+    "lng": -80.141935,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-16T15:22:26.471Z"
+  },
+  "fort lauderdale-6755 w broward blvd apt 304 plantation fort lauderdale fl": {
+    "lat": 26.12098,
+    "lng": -80.178353,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-16T15:22:26.471Z"
+  },
+  "orlando-200 s orange ave po box 112 orlando fl": {
+    "lat": 28.539948,
+    "lng": -81.379489,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-16T15:22:26.471Z"
+  },
+  "delray beach-7026 charleston shores blvd lake worth delray beach fl": {
+    "lat": 26.587823,
+    "lng": -80.198941,
+    "is_precise": true,
+    "source": "osm",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "fort lauderdale-9945 nw 2nd ct plantation fort lauderdale fl": {
+    "lat": 26.123914,
+    "lng": -80.282071,
+    "is_precise": true,
+    "source": "nominatim",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "lutz-23110 state rd 54 407 lutz lutz fl": {
+    "lat": 28.195628,
+    "lng": -82.485045,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "longwood-570 crown oak centre dr longwood longwood fl": {
+    "lat": 28.702952,
+    "lng": -81.339234,
+    "is_precise": true,
+    "source": "osm",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "jacksonville-444 seabreeze blvd 100 daytona beach jacksonville fl": {
+    "lat": 29.234443,
+    "lng": -81.014672,
+    "is_precise": true,
+    "source": "nominatim",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "orlando-tower place 1900 summit tower blvd orlando fl": {
+    "lat": 28.629471,
+    "lng": -81.423719,
+    "is_precise": true,
+    "source": "osm",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "tallahassee-6265 old water oak rd tallahassee tallahassee fl": {
+    "lat": 30.528431,
+    "lng": -84.281822,
+    "is_precise": true,
+    "source": "osm",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "tallahassee-2933 mission rd apt 28 tallahassee tallahassee fl": {
+    "lat": 30.460841,
+    "lng": -84.343021,
+    "is_precise": true,
+    "source": "nominatim",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "ponte vedra-203 fort wade rd ponte vedra ponte vedra fl": {
+    "lat": 30.108221,
+    "lng": -81.385412,
+    "is_precise": true,
+    "source": "osm",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "athens-150 w hancock ave athens athens fl": {
+    "lat": 33.956782,
+    "lng": -83.393492,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "tampa-12005 whitmarsh ln tampa fl": {
+    "lat": 28.055812,
+    "lng": -82.605234,
+    "is_precise": true,
+    "source": "osm",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "san antonio-3706 watch hl san antonio san antonio fl": {
+    "lat": 28.336145,
+    "lng": -82.274412,
+    "is_precise": true,
+    "source": "osm",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "kingsland-1511 ga hwy 40 e kingsland kingsland fl": {
+    "lat": 30.808347,
+    "lng": -81.816575,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "miami-9350 s dixie hwy ph 5 miami fl": {
+    "lat": 25.683505,
+    "lng": -80.314627,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-16T15:22:26.472Z"
   }
 }

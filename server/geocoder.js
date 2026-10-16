@@ -75,29 +75,67 @@ class GeocodingEngine {
 
     // Clean address for search query
     let cleanAddress = (address || '').trim();
-    cleanAddress = cleanAddress.replace(/,?\s*(suite|ste|floor|fl|unit|room|rm|#|penthouse)\s*[a-z0-9-]+/gi, '');
+
+    // Strategy A: If pure PO Box with no street address, skip geocoding
+    if (/^(?:Universal|West Detention|Law Office)?[^0-9]*P\.?O\.?\s*Box\s*\d+/i.test(cleanAddress)) {
+      return null;
+    }
+
+    // Strip PO Box when preceded by street number (e.g. "300 S Orange Ave PO Box 1873" -> "300 S Orange Ave")
+    if (/\b\d{1,6}\s+[^,]+/i.test(cleanAddress)) {
+      cleanAddress = cleanAddress.replace(/\s*(?:P\.?O\.?\s*Box|\bPO\s*Box)\s*[\w\d-]+/i, '');
+    }
+
+    // Strip building name prefix before street number (e.g. "Tower Place, 1900 Summit..." -> "1900 Summit...")
+    cleanAddress = cleanAddress.replace(/^[^0-9]+,\s*(?=[0-9]+\s+)/i, '');
+
+    // Strip tenant/bank suffixes (e.g. "515 E Las Olas Blvd Suntrust Bank" -> "515 E Las Olas Blvd")
+    cleanAddress = cleanAddress.replace(/(?:Blvd|Ave|St|Rd|Dr|Way|Hwy|Ln|Ct)\s+(?:Suntrust\s+Bank|Suntrust|Bank|Inc|LLC|Ph\s*\d+|Apt\s*\d+|Suite\s*[\w\d]+|\.\.\s*\d+)/i, m => {
+      return m.split(/\s+(?:Suntrust|Bank|Inc|LLC|Ph|Apt|Suite|\.\.)/i)[0];
+    });
+
+    // Strip suite, floor, apt, room artifacts
+    cleanAddress = cleanAddress.replace(/,?\s*(?:suite|ste|floor|fl|unit|room|rm|#|penthouse|apt|ph)\s*[a-z0-9-]+/gi, '');
+    cleanAddress = cleanAddress.replace(/\.\.\s*\d+/g, '');
+    cleanAddress = cleanAddress.replace(/,\s*[A-Z]{2}$/i, '');
     cleanAddress = cleanAddress.replace(/\s+/g, ' ').trim();
+
+    // Multi-state detection
+    let targetState = (state || 'FL').trim();
+    if (/Athens/i.test(city) || /Kingsland/i.test(city) || /GA\s+Hwy/i.test(cleanAddress)) {
+      targetState = 'GA';
+    }
 
     // Clean city (strip accidental zip codes or states)
     let cleanCity = (city || '').replace(/,\s*[A-Z]{2}\b/gi, '').replace(/\b\d{5}\b/g, '').trim();
 
-    // Strategy 1: Full clean address with city and state
-    const queries = [];
-    if (cleanAddress && cleanCity) {
-      queries.push(`${cleanAddress}, ${cleanCity}, ${state} USA`.replace(/,\s*,/g, ','));
+    // Check for embedded sub-city (e.g. "Plantation" in "6755 W Broward Blvd, Plantation, Fort Lauderdale")
+    const embeddedCityMatch = cleanAddress.match(/,\s*([A-Za-z\s]+)$/i);
+    let embeddedCity = null;
+    if (embeddedCityMatch && !/Blvd|Ave|St|Rd|Dr|Way|Hwy|Ln|Ct/i.test(embeddedCityMatch[1])) {
+      embeddedCity = embeddedCityMatch[1].trim();
+      cleanAddress = cleanAddress.replace(/,\s*[A-Za-z\s]+$/i, '').trim();
     }
 
-    // Strategy 2: Extract starting from the street number if preceded by building names
-    // E.g. "Two Datran Center, 9130 S Dadeland Blvd" -> "9130 S Dadeland Blvd"
+    const queries = [];
+    if (embeddedCity) {
+      queries.push(`${cleanAddress}, ${embeddedCity}, ${targetState} USA`.replace(/,\s*,/g, ','));
+    }
+    if (cleanAddress && cleanCity) {
+      queries.push(`${cleanAddress}, ${cleanCity}, ${targetState} USA`.replace(/,\s*,/g, ','));
+    }
+
+    // Extract starting from street number
     const streetMatch = cleanAddress.match(/\b(\d{1,6}\s+[A-Za-z0-9\s\.]+)/);
     if (streetMatch && streetMatch[1].trim() !== cleanAddress) {
       const streetPart = streetMatch[1].trim();
-      queries.push(`${streetPart}, ${cleanCity}, ${state} USA`.replace(/,\s*,/g, ','));
+      if (embeddedCity) queries.push(`${streetPart}, ${embeddedCity}, ${targetState} USA`.replace(/,\s*,/g, ','));
+      queries.push(`${streetPart}, ${cleanCity}, ${targetState} USA`.replace(/,\s*,/g, ','));
     }
 
-    // Strategy 3: Just address and state if city was ambiguous
+    // Just address and state
     if (cleanAddress) {
-      queries.push(`${cleanAddress}, ${state} USA`.replace(/,\s*,/g, ','));
+      queries.push(`${cleanAddress}, ${targetState} USA`.replace(/,\s*,/g, ','));
     }
 
     let coords = null;

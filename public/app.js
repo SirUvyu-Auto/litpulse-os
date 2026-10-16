@@ -1236,10 +1236,14 @@ function renderHoldsTable(buildings) {
   const frag = document.createDocumentFragment();
   holds.forEach(b => {
     const tr = document.createElement('tr');
+    tr.className = 'clickable-row';
+    tr.style.cursor = 'pointer';
+    tr.onclick = () => openBuildingDossier(b.building_id);
+
     let reason = 'GPS coordinates pending verification';
     const addr = String(b.address || '').toLowerCase();
     if (addr.includes('po box') || addr.includes('p.o. box')) {
-      reason = 'PO Box address: physical suite required for runner delivery';
+      reason = 'PO Box: physical law office suite required for courier delivery';
     } else if (!b.geocoded) {
       reason = 'GPS geocoding unresolved';
     } else if (!b.is_precise) {
@@ -1255,7 +1259,11 @@ function renderHoldsTable(buildings) {
       <td style="font-size:12px;color:var(--text-sub);">${escapeHtml(b.address || 'Address unlisted')}</td>
       <td><span class="badge badge-neutral">${b.active_trials || 1} active ${(b.active_trials || 1) === 1 ? 'matter' : 'matters'}</span></td>
       <td><span class="badge badge-amber" style="font-size:10.5px;">${escapeHtml(reason)}</span></td>
-      <td><button class="btn btn-secondary btn-sm" onclick="triggerGeocode('all')" style="padding:4px 8px;font-size:11px;">Verify GPS</button></td>
+      <td>
+        <button class="btn-export" style="font-size:11px;padding:4px 10px;" onclick="event.stopPropagation();openBuildingDossier('${escapeHtml(b.building_id)}')">
+          Inspect Location
+        </button>
+      </td>
     `;
     frag.appendChild(tr);
   });

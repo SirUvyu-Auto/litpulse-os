@@ -1227,6 +1227,13 @@ class DataStore {
         sub: 'Litigation opportunities requiring immediate team ownership.',
         rows: activeTargets.filter(c => !c.assigned_to || c.assigned_to === 'Unassigned' || c.hubspot_status === 'Unassigned')
       };
+    } else if (key === 'holds') {
+      const holdsList = buildings.filter(b => !b.geocoded || !b.is_precise || !b.lat || !b.lng || b.runner_status === 'Hold');
+      return {
+        title: 'Delivery Data Holds',
+        sub: 'Commercial building locations pending GPS resolution or physical suite verification before routing.',
+        rows: holdsList
+      };
     } else if (key === 'deliveries') {
       const qb = require('./quickbooksService');
       const enrichedBuildings = buildings.map(b => {

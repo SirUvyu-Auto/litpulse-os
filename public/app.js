@@ -63,28 +63,16 @@ function showToast(msg) {
 
 // Toggle Expandable More Views in Sidebar
 function toggleNavMore() {
-  const sec = document.getElementById('navMoreSection');
-  const chev = document.getElementById('navMoreChevron');
-  if (!sec) return;
-  const open = sec.style.display !== 'none';
-  sec.style.display = open ? 'none' : 'block';
-  if (chev) chev.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+  showToast('More views are locked and restricted.');
+}
+
+function handleLockedNavMore() {
+  showToast('More views are locked and restricted.');
 }
 
 // Navigation between Sidebar Pages
 function navigateToPage(pageKey) {
   activePage = pageKey;
-
-  // Auto-expand More Views if selecting one of its pages
-  const morePages = ['forecast', 'geo', 'courts', 'attorneys', 'firms', 'relationships', 'trials', 'patterns', 'sales'];
-  if (morePages.includes(pageKey)) {
-    const sec = document.getElementById('navMoreSection');
-    const chev = document.getElementById('navMoreChevron');
-    if (sec && sec.style.display === 'none') {
-      sec.style.display = 'block';
-      if (chev) chev.style.transform = 'rotate(90deg)';
-    }
-  }
 
   // Update Sidebar
   document.querySelectorAll('.sidebar .nav-item').forEach(el => {
@@ -142,6 +130,13 @@ function setDeliveriesSubtab(tabKey) {
 
   if (tabKey === 'clusters' && clusterLeafletMap) {
     setTimeout(() => clusterLeafletMap.invalidateSize(), 150);
+  } else if (tabKey === 'holds') {
+    renderHoldsTable(fullBuildingsCache);
+    const holdsEl = document.getElementById('dsub-holds');
+    if (holdsEl) {
+      setTimeout(() => holdsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+    showToast('Viewing delivery data holds pending GPS/suite verification');
   }
 }
 
@@ -400,8 +395,13 @@ function initClusterMap() {
     });
 
     clusterMarkersGroup.on('clustermouseout', function(cEvent) {
-      if (cEvent.layer && typeof cEvent.layer.closeTooltip === 'function') {
-        cEvent.layer.closeTooltip();
+      if (cEvent.layer) {
+        if (typeof cEvent.layer.closeTooltip === 'function') {
+          cEvent.layer.closeTooltip();
+        }
+        if (typeof cEvent.layer.unbindTooltip === 'function') {
+          cEvent.layer.unbindTooltip();
+        }
       }
     });
   } else {
@@ -697,12 +697,9 @@ async function triggerGeocode(scope = 'top100') {
   }
 }
 
-async function renderDeliveriesClusters(buildings) {
-  const container = document.getElementById('clustersCardContainer');
+function drawClustersIntoContainer(clusters, container) {
   if (!container) return;
-  container.innerHTML = '';
-
-  if (!buildings.length) {
+  if (!clusters || !clusters.length) {
     container.innerHTML = `
       <div style="padding:48px 24px;text-align:center;color:var(--text-muted);background:var(--bg-dark-3);border-radius:8px;border:1px dashed var(--border);">
         <div style="font-size:15px;font-weight:600;color:var(--text-white);margin-bottom:6px;">No Delivery Clusters Yet</div>
@@ -715,18 +712,6 @@ async function renderDeliveriesClusters(buildings) {
     return;
   }
 
-  // Fetch Walkable Clusters from API
-  try {
-    const res = await fetch('/api/deliveries/walkable-clusters');
-    const data = await res.json();
-    if (data.success && Array.isArray(data.clusters)) {
-      walkableClustersCache = data.clusters;
-    }
-  } catch (e) {
-    console.warn('Could not fetch server walkable clusters, using fallback', e);
-  }
-
-  const clusters = walkableClustersCache.length > 0 ? walkableClustersCache : [];
   const walkClusters = clusters.filter(c => c.kind === 'walk-cluster');
   const pairs = clusters.filter(c => c.kind === 'pair');
   const solos = clusters.filter(c => c.kind === 'solo');
@@ -738,6 +723,8 @@ async function renderDeliveriesClusters(buildings) {
   if (subEl) {
     subEl.innerText = `${walkClusters.length} Walk-Clusters (Park Once & Walk ≤0.5 km) · ${pairs.length} Pairs · ${solos.length} Solo Stops · ${cityBuckets.length} City Buckets across Florida`;
   }
+
+  const fragment = document.createDocumentFragment();
 
   // Render Walkable Loops First
   walkableLoops.forEach(c => {
@@ -805,7 +792,7 @@ async function renderDeliveriesClusters(buildings) {
         ${stopsHtml}
       </div>
     `;
-    container.appendChild(groupDiv);
+    fragment.appendChild(groupDiv);
   });
 
   // Render Standalone Drive-To Buildings Group
@@ -857,7 +844,37 @@ async function renderDeliveriesClusters(buildings) {
         ${standaloneItemsHtml}
       </div>
     `;
-    container.appendChild(standaloneDiv);
+    fragment.appendChild(standaloneDiv);
+  }
+
+  container.innerHTML = '';
+  container.appendChild(fragment);
+}
+
+async function renderDeliveriesClusters(buildings) {
+  const container = document.getElementById('clustersCardContainer');
+  if (!container) return;
+
+  if (!buildings || !buildings.length) {
+    drawClustersIntoContainer([], container);
+    return;
+  }
+
+  // If cached clusters exist, draw immediately so container never flashes blank
+  if (walkableClustersCache && walkableClustersCache.length > 0) {
+    drawClustersIntoContainer(walkableClustersCache, container);
+  }
+
+  // Fetch Walkable Clusters from API silently
+  try {
+    const res = await fetch('/api/deliveries/walkable-clusters');
+    const data = await res.json();
+    if (data && data.success && Array.isArray(data.clusters) && data.clusters.length > 0) {
+      walkableClustersCache = data.clusters;
+      drawClustersIntoContainer(walkableClustersCache, container);
+    }
+  } catch (e) {
+    console.warn('Could not fetch server walkable clusters, retaining current display', e);
   }
 }
 
@@ -2113,6 +2130,30 @@ function updateLargeMattersCityCountInfo() {
   }
 }
 
+let currentLargeViewMode = 'deck';
+
+function setLargeViewMode(mode) {
+  currentLargeViewMode = mode;
+  const cardsGrid = document.getElementById('largeMattersCardsGrid');
+  const btnDeck = document.getElementById('btnLargeViewDeck');
+  const btnTable = document.getElementById('btnLargeViewTable');
+
+  if (mode === 'deck') {
+    if (cardsGrid) cardsGrid.style.display = 'grid';
+    if (btnDeck) btnDeck.classList.add('active');
+    if (btnTable) btnTable.classList.remove('active');
+  } else {
+    if (cardsGrid) cardsGrid.style.display = 'none';
+    if (btnDeck) btnDeck.classList.remove('active');
+    if (btnTable) btnTable.classList.add('active');
+  }
+}
+
+function setLargeDeckTitle(title) {
+  const el = document.getElementById('largeDeckTitle');
+  if (el) el.innerText = title;
+}
+
 function clickLargeKpi(type) {
   const cards = {
     all: document.getElementById('kpiCardLargeAll'),
@@ -2129,6 +2170,7 @@ function clickLargeKpi(type) {
     if (searchInput) searchInput.value = '';
     const assignFilter = document.getElementById('largeMattersAssignFilter');
     if (assignFilter) assignFilter.value = 'ALL';
+    setLargeDeckTitle('White-Glove Outreach Targets');
     setLmWindow('immediate');
     return;
   }
@@ -2144,24 +2186,37 @@ function clickLargeKpi(type) {
     if (searchInput) searchInput.value = '';
     if (assignFilter) assignFilter.value = 'ALL';
     setLmWindow('all');
-    showToast('Showing all large matters');
+    setLargeDeckTitle('All Large & Complex Litigation Targets');
+    showToast('Showing all large matter outreach cards');
   } else if (type === 'pipeline') {
     if (searchInput) searchInput.value = '';
     if (assignFilter) assignFilter.value = 'ALL';
     setLmWindow('all');
     largeMattersCache.sort((a, b) => (b.ear || b.full_value || 0) - (a.ear || a.full_value || 0));
+    setLargeDeckTitle('Top Revenue Targets (Sorted by EAR)');
     filterLargeMatters();
     showToast('Sorted by cumulative pipeline value');
   } else if (type === 'urgent') {
     if (searchInput) searchInput.value = '';
     if (assignFilter) assignFilter.value = 'ALL';
     setLmWindow('60');
+    setLargeDeckTitle('Urgent Trial Targets (<=60 Days to Trial)');
     showToast('Filtered to urgent preparation window (<=60d)');
   } else if (type === 'unassigned') {
     if (searchInput) searchInput.value = '';
     if (assignFilter) assignFilter.value = 'unassigned';
     setLmWindow('all');
-    showToast('Filtered to unassigned high-value matters');
+    setLargeDeckTitle('Unassigned High-Value Targets (Needs White-Glove Rep)');
+    showToast('Filtered to unassigned high-value opportunities');
+  }
+
+  // Ensure rich outreach cards view is active and scroll smoothly into view
+  setLargeViewMode('deck');
+  const deckSection = document.getElementById('largeMattersDeckSection');
+  if (deckSection) {
+    setTimeout(() => {
+      deckSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 60);
   }
 }
 
@@ -2433,6 +2488,157 @@ function renderLargeMattersTable(rows) {
   updateDualScrolls();
 }
 
+function renderLargeMattersCards(matters) {
+  const container = document.getElementById('largeMattersCardsGrid');
+  if (!container) return;
+
+  const activeCards = (matters || []).filter(c => c.days_until === undefined || c.days_until > 0);
+  if (!activeCards.length) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; padding: 36px 20px; text-align: center; background: var(--bg-card); border: 1px dashed var(--border); border-radius: var(--radius-md); color: var(--text-muted);">
+        <div style="font-size: 14px; font-weight: 600; color: var(--text-white); margin-bottom: 4px;">No Large Outreach Targets In Filter</div>
+        <div style="font-size: 12px;">Adjust the Action Horizon or City filter to surface high-EAR litigation targets.</div>
+      </div>
+    `;
+    return;
+  }
+
+  const slice = activeCards.slice(0, 36);
+  const fragment = document.createDocumentFragment();
+
+  slice.forEach(c => {
+    const card = document.createElement('div');
+    const isUnassigned = !c.assigned_to || c.assigned_to === 'Unassigned' || c.hubspot_status === 'Unassigned';
+    const isUrgent = c.days_until !== undefined && c.days_until <= 60;
+
+    let borderClass = '';
+    if (isUnassigned) borderClass = 'is-unassigned';
+    else if (isUrgent) borderClass = 'is-urgent';
+    else borderClass = 'is-top-pipe';
+
+    card.className = `large-outreach-card ${borderClass}`;
+
+    const sideBadge = (c.party_side || '').toLowerCase() === 'defense'
+      ? '<span class="tag-def">DEF</span>'
+      : '<span class="tag-pltf">PLTF</span>';
+
+    const clientBadge = (c.is_client || c.hubspot_status === 'Booked' || c.hubspot_status === 'Won' || c.hubspot_status === 'Signed')
+      ? '<span class="badge-client" title="QuickBooks Client">● CLIENT</span>'
+      : '<span class="badge-prospect" title="New Prospect">PROSPECT</span>';
+
+    const rehitBadge = c.is_rehit
+      ? `<span class="badge-rehit" title="Courier Re-Hit"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>RE-HIT</span>`
+      : '';
+
+    const warRoomBadge = isWarRoomCase(c)
+      ? '<span class="badge-warroom" title="Traveling War Room">⚡ WAR ROOM</span>'
+      : '';
+
+    const daysColor = (c.days_until || 0) <= 30 ? 'var(--status-crimson)' : ((c.days_until || 0) <= 60 ? 'var(--status-amber)' : 'var(--text-white)');
+    const earVal = formatCurrency(c.ear || c.full_value || 150000);
+
+    const pitchAngle = c.pitch_angle || (
+      (c.party_side || '').toLowerCase() === 'defense'
+        ? 'Impeachment Callouts, Medical Board Exhibits & Expert Cross Tabs'
+        : 'Narrative Demonstratives, Liability Timelines & Blowup Medical Boards'
+    );
+
+    const firmCity = c.firm_city || c.city || 'Miami';
+    const trialCity = c.trial_city || c.division || 'Miami';
+    const localityPill = renderLocalityPill(c, firmCity, trialCity) || '<span class="tag-locality tag-local">LOCAL</span>';
+
+    const phoneLink = c.phone
+      ? `<a href="tel:${escapeHtml(c.phone)}" class="outreach-btn-call" title="Call ${escapeHtml(c.phone)}" onclick="event.stopPropagation();">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Counsel
+        </a>`
+      : `<span class="outreach-btn-call outreach-btn-disabled">No Phone</span>`;
+
+    const emailLink = c.email
+      ? `<a href="mailto:${escapeHtml(c.email)}" class="outreach-btn-mail" title="Email ${escapeHtml(c.email)}" onclick="event.stopPropagation();">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Direct Pitch
+        </a>`
+      : `<span class="outreach-btn-mail outreach-btn-disabled">No Email</span>`;
+
+    const targetId = c.target_id || c.case_id;
+
+    card.innerHTML = `
+      <div>
+        <div class="large-card-top">
+          <div class="large-card-badges">
+            ${sideBadge}
+            ${renderPriorityBadge(c)}
+            <span style="font-size:11px;font-weight:700;color:${daysColor};font-family:var(--font-mono);">
+              ⏳ ${c.days_until ?? 0}d to trial
+            </span>
+          </div>
+          <div style="font-size:13.5px;font-weight:700;color:var(--status-emerald);font-family:var(--font-mono);">
+            ${earVal}
+          </div>
+        </div>
+
+        <div class="large-card-atty">
+          <span>${escapeHtml(c.lead_attorney || 'Counsel')}</span>
+          ${clientBadge}
+          ${rehitBadge}
+          ${warRoomBadge}
+        </div>
+
+        <div class="large-card-firm">
+          <span>🏢 ${escapeHtml(c.firm || 'Law Practice')}</span>
+          <span style="color:var(--text-muted);">·</span>
+          <span>${escapeHtml(firmCity)}</span>
+          ${localityPill}
+        </div>
+
+        <div class="large-card-caption" title="${escapeHtml(c.caption || '')}">
+          <div style="font-weight:600;color:var(--text-white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            ${escapeHtml(c.caption || 'Commercial Dispute')}
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;margin-top:2px;">
+            <span>Docket #${escapeHtml(c.case_id || '')}</span>
+            <span>🏛️ ${escapeHtml(trialCity)} (${escapeHtml(c.court || 'Court')})</span>
+          </div>
+        </div>
+
+        <div class="large-card-pitch">
+          <strong>Strategic Pitch:</strong> ${escapeHtml(pitchAngle)}
+        </div>
+      </div>
+
+      <div>
+        <div class="large-card-actions">
+          ${phoneLink}
+          ${emailLink}
+          <button class="outreach-btn-dossier" onclick="event.stopPropagation();openDossier('${escapeHtml(targetId)}')" title="Open complete litigation dossier">
+            Case Dossier →
+          </button>
+        </div>
+
+        <div class="large-card-footer">
+          <div>
+            ${isUnassigned
+              ? '<span style="color:var(--status-amber);font-weight:600;">⚠️ Unassigned (Needs White-Glove Rep)</span>'
+              : `<span style="color:var(--text-white);">👤 Owner: <strong>${escapeHtml(c.assigned_to)}</strong></span>`
+            }
+          </div>
+          <div>
+            <span class="status-pill ${c.hubspot_status === 'Booked' ? 'clean' : ''}" style="font-size:10px;padding:1px 6px;">
+              ${escapeHtml(c.hubspot_status || 'New')}
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    fragment.appendChild(card);
+  });
+
+  container.innerHTML = '';
+  container.appendChild(fragment);
+}
+
 function filterLargeMatters() {
   const q = (document.getElementById('largeMattersSearchInput')?.value || '').toLowerCase().trim();
   const assign = document.getElementById('largeMattersAssignFilter')?.value || 'ALL';
@@ -2475,6 +2681,12 @@ function filterLargeMatters() {
 
   largeMattersFilteredCache = filtered;
   renderLargeMattersTable(filtered);
+  renderLargeMattersCards(filtered);
+
+  const countInfo = document.getElementById('largeMattersTableCountInfo');
+  if (countInfo) countInfo.innerText = `Showing ${filtered.length.toLocaleString()} matters`;
+  const badgeEl = document.getElementById('largeDeckBadge');
+  if (badgeEl) badgeEl.innerText = `${filtered.length.toLocaleString()} Priority Targets`;
 }
 
 function filterLargeMattersCity(city) {
@@ -2910,6 +3122,54 @@ function renderDrawerTable(rows, key) {
   const tbody = document.getElementById('drawerTableBody');
   thead.innerHTML = '';
   tbody.innerHTML = '';
+
+  if (key === 'holds') {
+    thead.innerHTML = `
+      <tr>
+        <th>Building Name / Firm</th>
+        <th>Street Address</th>
+        <th>City</th>
+        <th>Counsel</th>
+        <th>Hold Reason</th>
+        <th>Action</th>
+      </tr>
+    `;
+
+    const fragment = document.createDocumentFragment();
+    rows.forEach(b => {
+      const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => openBuildingDossier(b.building_id);
+
+      let reason = 'GPS coordinates pending verification';
+      const addr = String(b.address || '').toLowerCase();
+      if (addr.includes('po box') || addr.includes('p.o. box')) {
+        reason = 'PO Box: physical suite required for runner delivery';
+      } else if (!b.geocoded) {
+        reason = 'GPS geocoding unresolved';
+      } else if (!b.is_precise) {
+        reason = 'Imprecise facility coordinates';
+      } else if (b.runner_status === 'Hold') {
+        reason = 'Manual dispatch hold';
+      }
+
+      tr.innerHTML = `
+        <td class="cell-bold">${escapeHtml(b.building_name || b.address || 'Commercial Building')}</td>
+        <td>${escapeHtml(b.address || '')}</td>
+        <td><span class="badge-tag">${escapeHtml(b.city || 'Florida')}</span></td>
+        <td class="cell-mono">${b.attorneys_count || 1}</td>
+        <td><span class="badge-priority badge-priority-high">${escapeHtml(reason)}</span></td>
+        <td>
+          <button class="btn-export" style="font-size:11px;padding:4px 10px;" onclick="event.stopPropagation();openBuildingDossier('${escapeHtml(b.building_id)}')">
+            Inspect Location
+          </button>
+        </td>
+      `;
+      fragment.appendChild(tr);
+    });
+    tbody.appendChild(fragment);
+    return;
+  }
 
   if (key === 'deliveries') {
     thead.innerHTML = `
@@ -3919,7 +4179,7 @@ async function syncRealtimeData() {
   if (document.hidden) return;
   try {
     if (activePage === 'deliveries') {
-      loadDeliveriesPage();
+      checkGeocodeStatus();
     } else if (activePage === 'overview') {
       loadOverviewPage();
     } else if (activePage === 'outreach') {

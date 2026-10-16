@@ -51,10 +51,11 @@
         <span class="nav-badge nav-badge-wine" id="sidebarBadgeDeliveries">0</span>
       </div>
 
-      <!-- Expandable More Views (Matching TRIS) -->
-      <div class="nav-more-toggle" onclick="toggleNavMore()">
-        <svg id="navMoreChevron" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="transition:transform 0.15s"><polyline points="9 18 15 12 9 6"/></svg>
+      <!-- Locked More Views -->
+      <div class="nav-more-toggle locked" onclick="handleLockedNavMore()" style="cursor:not-allowed;opacity:0.65;" title="More views are locked (Admin Restricted)">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" style="color:var(--text-muted);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         <span>More views</span>
+        <span style="font-size:9.5px;padding:1px 5px;background:rgba(255,255,255,0.06);border-radius:4px;color:var(--text-muted);margin-left:auto;">Locked</span>
       </div>
       <div id="navMoreSection" style="display:none">
         <div class="nav-item" data-page="forecast" onclick="navigateToPage('forecast')">
@@ -193,7 +194,7 @@
             <div class="kpi-sub" id="kpiDelivDensitySub">Awaiting docket ingestion</div>
           </div>
 
-          <div class="kpi" onclick="openDrill('unassigned')">
+          <div class="kpi" id="kpiDelivHoldsCard" onclick="setDeliveriesSubtab('holds')" title="View delivery buildings pending GPS verification">
             <div class="kpi-label">
               <span>Data Holds</span>
               <span class="kpi-chevron">›</span>
@@ -635,6 +636,35 @@
             <div class="kpi-value" id="kpiLargeUnassigned" style="color:var(--status-amber);">0</div>
             <div class="kpi-sub">needs white-glove rep</div>
           </div>
+        </div>
+
+        <!-- Rich Actionable Outreach Deck for High-Value Matters -->
+        <div id="largeMattersDeckSection" style="margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:14px;font-weight:700;color:var(--text-white);display:flex;align-items:center;gap:6px;">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--status-amber);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span id="largeDeckTitle">White-Glove Outreach Targets</span>
+              </span>
+              <span id="largeDeckBadge" class="filter-chip" style="font-size:11px;padding:2px 8px;font-weight:600;background:rgba(245,158,11,0.15);color:#FCD34D;border-color:rgba(245,158,11,0.3);">
+                0 Priority Targets
+              </span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="pill-tabs" style="padding:2px;">
+                <button class="pill-tab active" id="btnLargeViewDeck" onclick="setLargeViewMode('deck')">Outreach Cards</button>
+                <button class="pill-tab" id="btnLargeViewTable" onclick="setLargeViewMode('table')">Table View Only</button>
+              </div>
+            </div>
+          </div>
+          <div id="largeMattersCardsGrid" class="large-cards-grid"></div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;">
+            Comprehensive Pipeline Table Overview
+          </div>
+          <span style="font-size:11.5px;color:var(--text-muted);" id="largeMattersTableCountInfo">Showing 0 matters</span>
         </div>
 
         <div class="card" style="padding:0;overflow:hidden;position:relative;">

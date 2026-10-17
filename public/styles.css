@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap');
 
 :root {
+  color-scheme: dark;
   --theme-wine: #5F1519;
   --theme-wine-hover: #8B1E24;
   --theme-crimson: #A52A30;
@@ -46,6 +47,7 @@
 
 html, body {
   height: 100%;
+  color-scheme: dark;
   background-color: var(--bg-dark);
   color: var(--text-platinum);
   font-family: var(--font-ui);
@@ -570,6 +572,40 @@ body {
   pointer-events: none;
 }
 
+/* Global Select & Option Dark Theming */
+select {
+  color-scheme: dark !important;
+  background-color: var(--bg-dark-3);
+  color: var(--text-white);
+  border: 1px solid var(--border);
+  outline: none;
+}
+
+select:focus {
+  border-color: var(--border-wine);
+}
+
+select.filter-chip {
+  color: var(--text-white) !important;
+  background-color: var(--bg-dark-3);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+select option,
+select optgroup {
+  background-color: #121826 !important;
+  color: #F8FAFC !important;
+  padding: 6px 10px;
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+  background-color: #8B1E24 !important;
+  color: #FFFFFF !important;
+}
+
 /* Artifact 4 KPI Grid */
 .kpi-grid {
   display: grid;
@@ -827,18 +863,23 @@ body {
 }
 
 .map-toolbar {
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: var(--bg-dark-3);
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  min-height: 48px;
 }
 
 .map-title-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .map-venue-label {
@@ -846,6 +887,7 @@ body {
   font-size: 13px;
   font-weight: 700;
   color: var(--text-white);
+  white-space: nowrap;
 }
 
 .map-stats-chip {
@@ -856,16 +898,47 @@ body {
   background: var(--wine-soft);
   color: #FCA5A5;
   border: 1px solid var(--border-wine);
+  white-space: nowrap;
+}
+
+.map-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.map-actions select.filter-chip {
+  max-width: 145px;
+  height: 28px;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: var(--bg-dark-2);
+  border: 1px solid var(--border);
+  color: var(--text-white);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn-map-reset {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-muted);
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 4px 10px;
   font-size: 11px;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
   transition: all 0.15s ease;
 }
 
@@ -1001,6 +1074,8 @@ body {
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
+  z-index: 2000 !important;
+  pointer-events: none;
 }
 .cluster-hover-tooltip .leaflet-tooltip-content {
   margin: 0 !important;

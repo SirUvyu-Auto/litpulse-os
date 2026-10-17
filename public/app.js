@@ -61,13 +61,17 @@ function showToast(msg) {
   setTimeout(() => t.remove(), 3500);
 }
 
-// Toggle Expandable More Views in Sidebar
+// Expandable More Views in Sidebar (Deliberately unresponsive without lock indication)
+function handleMoreViewsClick() {
+  // Retained in place as unresponsive to click
+}
+
 function toggleNavMore() {
-  showToast('More views are locked and restricted.');
+  // Retained in place as unresponsive
 }
 
 function handleLockedNavMore() {
-  showToast('More views are locked and restricted.');
+  // Retained in place as unresponsive
 }
 
 // Navigation between Sidebar Pages
@@ -254,6 +258,27 @@ function initClusterMap() {
     attribution: ''
   }).addTo(clusterLeafletMap);
 
+  // Keep hover cards contained within map bounds
+  clusterLeafletMap.on('tooltipopen', function(e) {
+    const tooltip = e.tooltip;
+    const container = tooltip && tooltip._container;
+    if (!container) return;
+    const mapEl = clusterLeafletMap.getContainer();
+    if (!mapEl) return;
+    const mapRect = mapEl.getBoundingClientRect();
+    const rect = container.getBoundingClientRect();
+
+    if (rect.left < mapRect.left + 12) {
+      const shift = (mapRect.left + 12) - rect.left;
+      container.style.marginLeft = `${shift}px`;
+    } else if (rect.right > mapRect.right - 12) {
+      const shift = rect.right - (mapRect.right - 12);
+      container.style.marginLeft = `-${shift}px`;
+    } else {
+      container.style.marginLeft = '0px';
+    }
+  });
+
   // Dynamic Leaflet Marker Clustering Group
   if (typeof L.markerClusterGroup === 'function') {
     clusterMarkersGroup = L.markerClusterGroup({
@@ -386,9 +411,19 @@ function initClusterMap() {
         </div>
       `;
 
+      let direction = 'top';
+      let offset = [0, -18];
+      try {
+        const point = clusterLeafletMap.latLngToContainerPoint(cluster.getLatLng());
+        if (point.y < 175) {
+          direction = 'bottom';
+          offset = [0, 20];
+        }
+      } catch (err) {}
+
       cluster.bindTooltip(hoverHtml, {
-        direction: 'top',
-        offset: [0, -16],
+        direction: direction,
+        offset: offset,
         className: 'cluster-hover-tooltip',
         opacity: 1
       }).openTooltip();
@@ -549,11 +584,32 @@ function renderClustersMap(buildings, targetCity = null, preserveView = false) {
       </div>
     `;
 
-    marker.bindTooltip(pinHoverHtml, {
-      direction: 'top',
-      offset: [0, -pinAnchor[1] - 3],
-      className: 'cluster-hover-tooltip',
-      opacity: 1
+    marker.on('mouseover', function() {
+      let direction = 'top';
+      let offset = [0, -pinAnchor[1] - 4];
+      try {
+        const point = clusterLeafletMap.latLngToContainerPoint(marker.getLatLng());
+        if (point.y < 175) {
+          direction = 'bottom';
+          offset = [0, pinAnchor[1] + 6];
+        }
+      } catch (err) {}
+
+      marker.bindTooltip(pinHoverHtml, {
+        direction: direction,
+        offset: offset,
+        className: 'cluster-hover-tooltip',
+        opacity: 1
+      }).openTooltip();
+    });
+
+    marker.on('mouseout', function() {
+      if (typeof marker.closeTooltip === 'function') {
+        marker.closeTooltip();
+      }
+      if (typeof marker.unbindTooltip === 'function') {
+        marker.unbindTooltip();
+      }
     });
 
     const popupHtml = `

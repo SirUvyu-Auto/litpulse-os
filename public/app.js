@@ -101,23 +101,21 @@ function renderStateScopeDropdown() {
   const optionsContainer = document.getElementById('stateScopeOptions');
   if (!optionsContainer) return;
 
-  const isAllSelected = selectedStates.includes('ALL') ||
-    (availableStatesData.length > 0 && availableStatesData.every(st => selectedStates.includes(st.code)));
-
+  const isAllExplicitlySelected = selectedStates.includes('ALL');
   const nationalMatters = nationalSummaryData?.active_cases || 0;
 
   let html = `
-    <div class="state-scope-item ${isAllSelected ? 'selected' : ''}" onclick="handleStateItemClick('ALL', event)">
-      <input type="checkbox" class="state-scope-checkbox" ${isAllSelected ? 'checked' : ''} onclick="event.stopPropagation(); handleStateItemClick('ALL', event)">
+    <div class="state-scope-item ${isAllExplicitlySelected ? 'selected' : ''}" onclick="handleStateItemClick('ALL', event)">
+      <input type="checkbox" class="state-scope-checkbox" ${isAllExplicitlySelected ? 'checked' : ''} onclick="event.stopPropagation(); handleStateItemClick('ALL', event)">
       <div class="state-scope-item-body">
-        <span class="state-scope-item-name">🇺🇸 National (All States)</span>
+        <span class="state-scope-item-name">🌐 All States</span>
         <span class="state-scope-item-count">${nationalMatters.toLocaleString()}</span>
       </div>
     </div>
   `;
 
   availableStatesData.forEach(st => {
-    const isChecked = isAllSelected || selectedStates.includes(st.code);
+    const isChecked = isAllExplicitlySelected || selectedStates.includes(st.code);
     const icon = getStateIcon(st.code);
     html += `
       <div class="state-scope-item ${isChecked ? 'selected' : ''}" onclick="handleStateItemClick('${escapeHtml(st.code)}', event)">
@@ -137,17 +135,14 @@ function updateStateScopeTriggerLabel() {
   const labelEl = document.getElementById('stateScopeLabel');
   if (!labelEl) return;
 
-  const isAllSelected = selectedStates.includes('ALL') ||
-    (availableStatesData.length > 0 && availableStatesData.every(st => selectedStates.includes(st.code)));
-
-  if (isAllSelected) {
+  if (selectedStates.includes('ALL')) {
     const natCount = nationalSummaryData?.active_cases || 0;
-    labelEl.textContent = `🇺🇸 National (${natCount.toLocaleString()} matters)`;
+    labelEl.textContent = `🌐 All States (${natCount.toLocaleString()} matters)`;
   } else if (selectedStates.length === 1) {
     const code = selectedStates[0];
     const st = availableStatesData.find(s => s.code === code);
-    const name = st ? st.name : code;
-    const count = st?.active_cases || 0;
+    const name = st ? st.name : (code === 'FL' ? 'Florida' : code);
+    const count = st?.active_cases || (code === 'FL' ? (nationalSummaryData?.active_cases || 0) : 0);
     labelEl.textContent = `${getStateIcon(code)} ${name} (${count.toLocaleString()} matters)`;
   } else if (selectedStates.length > 1) {
     const tags = selectedStates.map(c => `${getStateIcon(c)} ${c}`).join(', ');
@@ -155,7 +150,7 @@ function updateStateScopeTriggerLabel() {
   } else {
     selectedStates = ['FL'];
     const st = availableStatesData.find(s => s.code === 'FL');
-    const count = st?.active_cases || 0;
+    const count = st?.active_cases || (nationalSummaryData?.active_cases || 0);
     labelEl.textContent = `🌴 Florida (${count.toLocaleString()} matters)`;
   }
 }
@@ -180,27 +175,26 @@ function handleStateItemClick(code, e) {
   if (e) e.stopPropagation();
 
   if (code === 'ALL') {
-    const isAllSelected = selectedStates.includes('ALL') ||
-      (availableStatesData.length > 0 && availableStatesData.every(st => selectedStates.includes(st.code)));
-    if (isAllSelected) {
+    if (selectedStates.includes('ALL')) {
+      // Toggle off All States: fall back to Florida as default
       selectedStates = ['FL'];
     } else {
       selectedStates = ['ALL'];
     }
   } else {
+    // Individual state clicked
     if (selectedStates.includes('ALL')) {
-      selectedStates = availableStatesData.map(st => st.code);
-    }
-
-    if (selectedStates.includes(code)) {
-      selectedStates = selectedStates.filter(c => c !== code);
-      if (!selectedStates.length) {
-        selectedStates = ['FL'];
-      }
+      // If was previously in ALL mode, user clicked a specific state: select only that state
+      selectedStates = [code];
     } else {
-      selectedStates.push(code);
-      if (availableStatesData.length > 0 && availableStatesData.every(st => selectedStates.includes(st.code))) {
-        selectedStates = ['ALL'];
+      if (selectedStates.includes(code)) {
+        selectedStates = selectedStates.filter(c => c !== code);
+        // If nothing selected, default back to Florida
+        if (!selectedStates.length) {
+          selectedStates = ['FL'];
+        }
+      } else {
+        selectedStates.push(code);
       }
     }
   }

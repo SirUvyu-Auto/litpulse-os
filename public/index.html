@@ -209,7 +209,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Practical Clusters &amp; Geospatial Routing</div>
-                <div class="card-sub" id="clustersSummarySub">0 clusters · Auto-geocoded on docket ingestion · walk-friendly = ≥3 buildings within 0.5 km</div>
+                <div class="card-sub" id="clustersSummarySub">0 walkable clusters identified</div>
               </div>
             </div>
 
@@ -283,7 +283,7 @@
         <div id="dsub-runbuilder" style="display:none;">
           <div class="card">
             <div class="card-header">
-              <div><div class="card-title">Daily Run Sheet Builder</div><div class="card-sub">Rules applied automatically: R1 Firm limit (max 2/day), R2 Building limit, R4 Deadline priority</div></div>
+              <div><div class="card-title">Daily Run Sheet Builder</div><div class="card-sub">Automated routing sheets for field delivery</div></div>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;">
               <div><label class="nav-label" style="padding:0 0 6px 0;">Run Date</label><input id="runFieldDate" type="date" value="2026-09-17" style="background:var(--bg-dark-3);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text-white);width:100%;"></div>
@@ -846,7 +846,7 @@
 
       <div class="grid-2">
         <div class="card">
-          <div class="card-header"><div><div class="card-title">Courthouse Rankings</div><div class="card-sub">Court Opportunity = Active + Upcoming + Target Firms</div></div></div>
+          <div class="card-header"><div><div class="card-title">Courthouse Rankings</div><div class="card-sub">Ranked by litigation activity and firm presence</div></div></div>
           <div style="max-height:420px;overflow-y:auto">
             <table class="data-table">
               <thead><tr><th>Court</th><th>Circuit</th><th style="text-align:right">Active</th><th style="text-align:right">Upcoming</th><th style="text-align:right">Density</th><th style="text-align:right">Opp Score</th></tr></thead>
@@ -923,7 +923,7 @@
       <div class="kpi-grid cols-4" id="firmsKpis"></div>
 
       <div class="card" style="margin-bottom:16px">
-        <div class="card-header"><div><div class="card-title">Top 20 Firms</div><div class="card-sub">By Firm Influence Score = Active Trials (40%) + Unique Attorneys (30%) + Geographic Reach (30%)</div></div></div>
+        <div class="card-header"><div><div class="card-title">Top 20 Firms</div><div class="card-sub">Ranked by litigation activity and geographic reach</div></div></div>
         <table class="data-table">
           <thead><tr><th>#</th><th>Firm</th><th style="text-align:right">Active Trials</th><th style="text-align:right">Attorneys</th><th style="text-align:right">Districts</th><th style="text-align:right">Revenue Opp</th><th style="text-align:right">Influence</th></tr></thead>
           <tbody id="firmsTable"></tbody>
@@ -960,7 +960,7 @@
 
       <div class="card" style="margin-bottom:16px">
         <div class="card-header">
-          <div><div class="card-title">Influence Network</div><div class="card-sub">Force-directed graph · node size = influence · edge weight = relationship strength</div></div>
+          <div><div class="card-title">Influence Network</div><div class="card-sub">Visualizing counsel, law firms, judges, and venues</div></div>
           <div style="display:flex;gap:14px;font-size:11.5px;color:var(--text-2)">
             <span><span class="legend-dot" style="background:#FF6B1A;border-radius:50%"></span> Attorney</span>
             <span><span class="legend-dot" style="background:#3B82F6;border-radius:50%"></span> Firm</span>
@@ -1002,7 +1002,7 @@
 
       <div class="card" style="margin-bottom:16px">
         <div class="card-header">
-          <div><div class="card-title">Upcoming Trial Docket</div><div class="card-sub">Scored by Outreach Priority  -  sorted by Trial Urgency × Revenue Opportunity × Firm Influence</div></div>
+          <div><div class="card-title">Upcoming Trial Docket</div><div class="card-sub">Upcoming trial dockets prioritized for trial support</div></div>
           <div style="display:flex;gap:6px">
             <span class="filter-chip active" data-filter="docket:all">All</span>
             <span class="filter-chip" data-filter="docket:urgency80">High Urgency</span>
@@ -1060,7 +1060,7 @@
       <!-- 2-column: Top opportunities + Emerging trends -->
       <div class="grid-2" style="margin-bottom:16px">
         <div class="card">
-          <div class="card-header"><div><div class="card-title">Top Opportunity Rankings</div><div class="card-sub">Scored by frequency × revenue × recency · click any row to explore</div></div></div>
+          <div class="card-header"><div><div class="card-title">Top Opportunity Rankings</div><div class="card-sub">Ranked by revenue opportunity and timing</div></div></div>
           <div id="patternsTopOpps" style="max-height:420px;overflow-y:auto"></div>
         </div>
         <div class="card">
@@ -1112,7 +1112,7 @@
 
       <div class="grid-2">
         <div class="card">
-          <div class="card-header"><div><div class="card-title">Outreach Priority Queue</div><div class="card-sub">(Trial Urgency × 40%) + (Revenue Opp × 40%) + (Firm Influence × 20%)</div></div></div>
+          <div class="card-header"><div><div class="card-title">Outreach Priority Queue</div><div class="card-sub">Ranked by trial urgency and revenue opportunity</div></div></div>
           <div id="priorityList"></div>
         </div>
         <div class="card">

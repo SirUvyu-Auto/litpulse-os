@@ -54797,8 +54797,8 @@
       "city": "Cincinnati, OH",
       "phone": "513-651-6800",
       "email": "dfreitas@fbtlaw.com",
-      "assigned_to": null,
-      "hubspot_status": "Unassigned",
+      "assigned_to": "Kristopher Davis",
+      "hubspot_status": "Lead",
       "conflict_flag": false,
       "pitch_angle": "Narrative Demonstratives, Liability Timelines & Medical Boards",
       "notes": "Concluded or settled matter archived in historical vault.",
@@ -54821,7 +54821,9 @@
       "source_file": "Florida_Trial_Docket_Master_Unified.xlsx",
       "source_log_id": "log-1789595421596",
       "is_war_room": false,
-      "is_pro_se": false
+      "is_pro_se": false,
+      "hubspot_contact_id": "564072082163",
+      "has_cookie_conversion": true
     },
     {
       "case_id": "9:25-cv-80398",

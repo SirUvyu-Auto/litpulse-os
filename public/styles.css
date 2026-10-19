@@ -1455,23 +1455,18 @@ table.data-table {
   z-index: 101;
 }
 
-.data-table tr:has(.score-tooltip-wrap:hover),
-.data-table tr.priority-hover-active {
-  z-index: 99999 !important;
-  position: relative;
+.data-table tr:hover {
+  z-index: 100;
 }
 
-.data-table tr:has(.score-tooltip-wrap:hover) td,
-.data-table tr.priority-hover-active td {
-  z-index: 99999 !important;
+.data-table tr:has(.score-tooltip-wrap:hover) {
+  z-index: 100000 !important;
   position: relative;
 }
 
 .data-table tr:has(.score-tooltip-wrap:hover) td:first-child,
-.data-table tr:has(.score-tooltip-wrap:hover) td:nth-child(2),
-.data-table tr.priority-hover-active td:first-child,
-.data-table tr.priority-hover-active td:nth-child(2) {
-  z-index: 100000 !important;
+.data-table tr:has(.score-tooltip-wrap:hover) td:nth-child(2) {
+  z-index: 100001 !important;
 }
 
 .data-table tr:last-child td {
@@ -2267,28 +2262,25 @@ table.data-table {
 }
 
 .score-tooltip-wrap:hover {
-  z-index: 100001 !important;
+  z-index: 100005 !important;
 }
 
 .score-tooltip {
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  left: calc(100% + 12px);
+  left: calc(100% + 14px);
   top: 50%;
   transform: translateY(-50%);
   width: 255px;
-  background: #14080B;
-  background: linear-gradient(145deg, rgba(22, 10, 14, 0.98), rgba(12, 5, 8, 0.98));
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(252, 165, 165, 0.4);
+  background: #111116 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
   border-radius: 8px;
   padding: 11px 14px;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.92), 0 0 28px rgba(139, 30, 36, 0.5);
-  z-index: 100005 !important;
-  pointer-events: none;
-  transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.95), 0 0 24px rgba(0, 0, 0, 0.85);
+  z-index: 100010 !important;
+  pointer-events: none !important;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
   text-align: left;
   font-weight: 400;
 }
@@ -2296,7 +2288,6 @@ table.data-table {
 .score-tooltip-wrap:hover .score-tooltip {
   visibility: visible;
   opacity: 1;
-  transform: translateY(-50%) translateX(2px);
 }
 
 .score-tooltip-title {

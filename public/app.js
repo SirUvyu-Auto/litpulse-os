@@ -764,7 +764,7 @@ function drawClustersIntoContainer(clusters, container) {
       </div>
     `;
     const subEl = document.getElementById('clustersSummarySub');
-    if (subEl) subEl.innerText = '0 clusters · Auto-geocoded on docket ingestion · walk-friendly = ≥3 buildings within 0.5 km';
+    if (subEl) subEl.innerText = '0 walkable clusters identified';
     return;
   }
 
@@ -1438,7 +1438,7 @@ function renderPriorityBadge(c) {
     : '';
 
   return `
-    <span class="score-tooltip-wrap" onclick="event.stopPropagation();" onmouseenter="this.closest('tr')?.classList.add('priority-hover-active'); this.closest('td')?.classList.add('priority-cell-hover');" onmouseleave="this.closest('tr')?.classList.remove('priority-hover-active'); this.closest('td')?.classList.remove('priority-cell-hover');">
+    <span class="score-tooltip-wrap" onclick="event.stopPropagation();">
       <span class="badge-priority ${scoreClass}">${total}</span>
       <div class="score-tooltip">
         <div class="score-tooltip-title">

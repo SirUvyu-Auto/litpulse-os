@@ -47,15 +47,59 @@ function extractBuildingAddress(fullAddress) {
   return bldg || fullAddress;
 }
 
-function resolveLocality(address, city, division) {
-  let state = 'FL';
+const US_STATE_NAMES = {
+  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
+  CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
+  HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
+  KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+  MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri',
+  MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
+  NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
+  OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
+  SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
+  VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+  DC: 'District of Columbia', PR: 'Puerto Rico'
+};
+
+const KNOWN_STATE_CITIES = {
+  // Florida
+  miami: 'FL', 'fort lauderdale': 'FL', 'ft lauderdale': 'FL', 'ft. lauderdale': 'FL',
+  orlando: 'FL', tampa: 'FL', jacksonville: 'FL', 'west palm beach': 'FL',
+  'fort myers': 'FL', tallahassee: 'FL', gainesville: 'FL', 'ft. pierce': 'FL',
+  'panama city': 'FL', ocala: 'FL', 'key west': 'FL', 'st. petersburg': 'FL',
+  'coral gables': 'FL', 'boca raton': 'FL', 'hollywood': 'FL', 'clearwater': 'FL',
+  // Georgia
+  atlanta: 'GA', savannah: 'GA', augusta: 'GA', macon: 'GA', columbus: 'GA',
+  // Texas
+  houston: 'TX', dallas: 'TX', austin: 'TX', 'san antonio': 'TX', 'fort worth': 'TX',
+  // New York
+  'new york': 'NY', manhattan: 'NY', brooklyn: 'NY', albany: 'NY', buffalo: 'NY',
+  // California
+  'los angeles': 'CA', 'san francisco': 'CA', 'san diego': 'CA', sacramento: 'CA'
+};
+
+function deriveVenueState(city, court, division) {
+  const cleanCity = (city || '').toLowerCase().trim();
+  if (KNOWN_STATE_CITIES[cleanCity]) return KNOWN_STATE_CITIES[cleanCity];
+
+  const fullStr = `${court || ''} ${division || ''} ${city || ''}`.toUpperCase();
+  const match = fullStr.match(/\b([A-Z]{2})\b/);
+  if (match && US_STATE_NAMES[match[1]]) {
+    return match[1];
+  }
+  return 'FL'; // Default fallback
+}
+
+function resolveLocality(address, city, division, venueState = 'FL') {
+  let state = (venueState || 'FL').toUpperCase();
   const cleanAddr = (address || '').toUpperCase();
   const cleanCity = (city || '').toLowerCase().trim();
   const cleanDiv = (division || '').toLowerCase().trim();
+  const courtState = (venueState || 'FL').trim().toUpperCase();
 
   // Detect state code from address
   const stateMatch = cleanAddr.match(/\b([A-Z]{2})\s+\d{5}\b/) || cleanAddr.match(/,\s*([A-Z]{2})\b/);
-  if (stateMatch) {
+  if (stateMatch && US_STATE_NAMES[stateMatch[1]]) {
     state = stateMatch[1];
   } else if (cleanAddr.includes('NEW YORK')) state = 'NY';
   else if (cleanAddr.includes('CALIFORNIA')) state = 'CA';
@@ -65,13 +109,15 @@ function resolveLocality(address, city, division) {
   else if (cleanAddr.includes('ILLINOIS')) state = 'IL';
   else if (cleanAddr.includes('FLORIDA') || cleanAddr.includes(' FL')) state = 'FL';
 
-  const isOOS = state !== 'FL' && state !== 'FLORIDA';
+  const isOOS = state !== courtState;
   const isLocal = !isOOS && (
     cleanCity === cleanDiv ||
     cleanCity.includes(cleanDiv) ||
     cleanDiv.includes(cleanCity) ||
     (cleanDiv === 'ft lauderdale' && cleanCity === 'fort lauderdale') ||
-    (cleanDiv === 'fort lauderdale' && cleanCity === 'ft lauderdale')
+    (cleanDiv === 'fort lauderdale' && cleanCity === 'ft lauderdale') ||
+    (cleanDiv === 'ft. lauderdale' && cleanCity === 'fort lauderdale') ||
+    (cleanDiv === 'fort lauderdale' && cleanCity === 'ft. lauderdale')
   );
   const isOOT = !isOOS && !isLocal;
 
@@ -918,12 +964,15 @@ class DataStore {
         // Defect #4 fix: do not overwrite explicit 0 EAR with $75k fallback
         c.est_value = (typeof c.ear === 'number' && !isNaN(c.ear)) ? c.ear : (typeof c.full_value === 'number' ? c.full_value : 75000);
 
-        const locality = resolveLocality(c.address, c.firm_city, c.trial_city);
+        const venueState = (c.venue_state || deriveVenueState(c.trial_city, c.court, c.division) || 'FL').toUpperCase();
+        c.venue_state = venueState;
+
+        const locality = resolveLocality(c.address, c.firm_city, c.trial_city, venueState);
         c.is_local = locality.is_local;
         c.is_oos = locality.is_oos;
         c.is_oot = locality.is_oot;
         c.state = locality.state;
-        c.locality_badge = locality.is_local ? 'Local FL' : (locality.is_oos ? `Out-of-State (${locality.state})` : 'Out-of-Town FL');
+        c.locality_badge = locality.is_local ? `Local ${venueState}` : (locality.is_oos ? `Out-of-State (${locality.state})` : `Out-of-Town ${venueState}`);
 
         const isAssigned = Boolean(c.assigned_to && c.assigned_to !== 'Unassigned' && c.hubspot_status !== 'Unassigned');
         const hasEngagement = Boolean((c.email && c.email.includes('@')) || (c.phone && c.phone.trim().length >= 7) || isAssigned || c.has_cookie_conversion);
@@ -935,7 +984,7 @@ class DataStore {
         }
         c.is_war_room = isHistorical ? false : Boolean(scores.isWarRoom);
         if (c.is_war_room) {
-          c.locality_badge = locality.is_oos ? `War Room (${locality.state})` : 'War Room (FL)';
+          c.locality_badge = locality.is_oos ? `War Room (${locality.state})` : `War Room (${venueState})`;
         }
         c.priority_score = isHistorical ? 0 : scores.total;
         c.urgency_score = isHistorical ? 0 : scores.urgency;
@@ -1157,11 +1206,64 @@ class DataStore {
     };
   }
 
-  getDashboardOverview() {
-    const allTargets = this.getCases();
-    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
-    const historicalTargets = allTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
+  getStatesSummary() {
+    const cases = this.getCases();
+    const stateMap = new Map();
+
+    cases.forEach(c => {
+      const vState = (c.venue_state || 'FL').trim().toUpperCase();
+      if (!stateMap.has(vState)) {
+        stateMap.set(vState, {
+          code: vState,
+          name: US_STATE_NAMES[vState] || vState,
+          total_cases: 0,
+          active_cases: 0,
+          total_ear: 0,
+          buildings_count: 0
+        });
+      }
+      const entry = stateMap.get(vState);
+      entry.total_cases++;
+      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded;
+      if (isActive) {
+        entry.active_cases++;
+        entry.total_ear += (c.ear || c.est_value || 0);
+      }
+    });
+
     const buildings = this.getBuildings();
+    buildings.forEach(b => {
+      const bState = (b.state || 'FL').trim().toUpperCase();
+      if (stateMap.has(bState)) {
+        stateMap.get(bState).buildings_count++;
+      }
+    });
+
+    const statesList = Array.from(stateMap.values()).sort((a, b) => b.active_cases - a.active_cases);
+    const totalActive = statesList.reduce((acc, s) => acc + s.active_cases, 0);
+    const totalEar = statesList.reduce((acc, s) => acc + s.total_ear, 0);
+
+    return {
+      national: {
+        code: 'ALL',
+        name: 'National (All States)',
+        active_cases: totalActive,
+        total_ear: totalEar,
+        states_count: statesList.length
+      },
+      states: statesList
+    };
+  }
+
+  getDashboardOverview(stateFilter = null) {
+    const allTargets = this.getCases();
+    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
+    const scopedTargets = stateCode ? allTargets.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allTargets;
+    const activeTargets = scopedTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
+    const historicalTargets = scopedTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
+    
+    const allBuildings = this.getBuildings();
+    const buildings = stateCode ? allBuildings.filter(b => (b.state || 'FL').toUpperCase() === stateCode) : allBuildings;
 
     // High priority active outreach: Priority score >= 45 (Red or Orange Tier)
     const highPriority = activeTargets.filter(c => (c.priority_score || 0) >= 45);
@@ -1227,6 +1329,8 @@ class DataStore {
     }));
 
     return {
+      active_state: stateCode || 'ALL',
+      active_state_name: stateCode ? (US_STATE_NAMES[stateCode] || stateCode) : 'National (All States)',
       totalCases: activeTargets.length,
       historicalCount: historicalTargets.length,
       kpis: {
@@ -1269,11 +1373,15 @@ class DataStore {
     };
   }
 
-  getDrillData(key) {
+  getDrillData(key, stateFilter = null) {
     const allTargets = this.getCases();
-    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
-    const historicalTargets = allTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
-    const buildings = this.getBuildings();
+    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
+    const scopedTargets = stateCode ? allTargets.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allTargets;
+    const activeTargets = scopedTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
+    const historicalTargets = scopedTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
+    
+    const allBuildings = this.getBuildings();
+    const buildings = stateCode ? allBuildings.filter(b => (b.state || 'FL').toUpperCase() === stateCode) : allBuildings;
 
     if (key === 'outreach') {
       return {
@@ -1341,10 +1449,10 @@ class DataStore {
       return {
         title: 'Judicial Calendar & Courtroom Appearances',
         sub: 'Presiding federal and circuit court judges ranked by active upcoming trial volume.',
-        rows: this.getJudgeAnalytics()
+        rows: this.getJudgeAnalytics(stateFilter)
       };
     } else if (key === 'exclusions' || key === 'government') {
-      const excludedRows = allTargets.filter(c => c.is_government || c.is_excluded);
+      const excludedRows = scopedTargets.filter(c => c.is_government || c.is_excluded);
       return {
         title: 'Excluded Sovereign & Government Counsel',
         sub: 'DOJ, U.S. Attorneys, State AGs, public defenders, and sovereign entities quarantined from commercial sales pipelines.',
@@ -1354,8 +1462,10 @@ class DataStore {
     return { title: 'Granular Data View', sub: '', rows: activeTargets };
   }
 
-  getJudgeAnalytics() {
-    const cases = this.getCases();
+  getJudgeAnalytics(stateFilter = null) {
+    const allCases = this.getCases();
+    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
+    const cases = stateCode ? allCases.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allCases;
     const judgeMap = new Map();
 
     cases.forEach(c => {
@@ -1400,8 +1510,10 @@ class DataStore {
     }).sort((a, b) => b.active_trials - a.active_trials);
   }
 
-  getActiveCities() {
-    const cases = this.getCases();
+  getActiveCities(stateFilter = null) {
+    const allCases = this.getCases();
+    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
+    const cases = stateCode ? allCases.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allCases;
     const cityMap = {};
     let totalActive = 0;
     cases.forEach(c => {
@@ -1419,7 +1531,7 @@ class DataStore {
       .map(([city, count]) => ({ city, count }))
       .sort((a, b) => b.count - a.count);
 
-    return { totalActiveTrials: totalActive, cities };
+    return { totalActiveTrials: totalActive, cities, active_state: stateCode || 'ALL' };
   }
 
   getCase(id) {
@@ -1606,11 +1718,13 @@ class DataStore {
     };
   }
 
-  getWalkableClusters(cityName = null) {
+  getWalkableClusters(cityName = null, stateFilter = null) {
     const allBuildings = this.getBuildings();
+    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
+    const scoped = stateCode ? allBuildings.filter(b => (b.state || 'FL').toUpperCase() === stateCode) : allBuildings;
     const buildings = cityName && cityName !== 'ALL'
-      ? allBuildings.filter(b => b.city && b.city.toLowerCase() === cityName.toLowerCase())
-      : allBuildings;
+      ? scoped.filter(b => b.city && b.city.toLowerCase() === cityName.toLowerCase())
+      : scoped;
 
     if (!buildings.length) return [];
 
@@ -1865,14 +1979,17 @@ class DataStore {
       const isHistorical = isConcluded || isDisposedEarly;
 
       const trialCity = normalizeCity(nc.division, '', nc.division, nc.court, baseCaseId);
+      const venueState = (nc.venue_state || nc.court_state || nc.trial_state || nc.state || deriveVenueState(trialCity, nc.court, nc.division) || 'FL').toUpperCase();
+
       const commonFields = {
         case_id: baseCaseId,
         source_file: fileName || 'manual_import.csv',
         source_log_id: logId,
         caption: nc.caption || nc.title || 'Litigation Matter',
-        court: nc.court || 'S.D. Fla.',
+        court: nc.court || (venueState === 'FL' ? 'S.D. Fla.' : `${venueState} Court`),
         division: trialCity,
         trial_city: trialCity,
+        venue_state: venueState,
         judge: nc.judge || 'Presiding Judge',
         nos_label: nc.nos_label || 'Civil Action',
         trial_date: nc.trial_date || '2026-12-01',
@@ -1923,7 +2040,7 @@ class DataStore {
       const isPltfRehit = Boolean(existingPltf?.is_rehit || pltfContactDate || (existingPltf && existingPltf.case_id !== baseCaseId));
       const pltfPriorMatter = existingPltf?.caption || existingPltf?.rehit_prior_matter || '';
 
-      const pltfLoc = resolveLocality(finalPltfAddr, finalPltfCity, trialCity);
+      const pltfLoc = resolveLocality(finalPltfAddr, finalPltfCity, trialCity, venueState);
       const pltfIsGov = Boolean(pltfGov.isGovernment);
       const pltfRecord = {
         ...commonFields,
@@ -1945,6 +2062,7 @@ class DataStore {
         is_oot: pltfLoc.is_oot,
         is_oos: pltfLoc.is_oos,
         state: pltfLoc.state,
+        locality_badge: pltfLoc.is_local ? `Local ${venueState}` : (pltfLoc.is_oos ? `Out-of-State (${pltfLoc.state})` : `Out-of-Town ${venueState}`),
         target_id: pltfTargetId,
         party_side: 'Plaintiff',
         party_badge: 'PLTF',
@@ -2008,7 +2126,7 @@ class DataStore {
         const isDefRehit = Boolean(existingDef?.is_rehit || defContactDate || (existingDef && existingDef.case_id !== baseCaseId));
         const defPriorMatter = existingDef?.caption || existingDef?.rehit_prior_matter || '';
 
-        const defLoc = resolveLocality(finalDefAddr, finalDefCity, trialCity);
+        const defLoc = resolveLocality(finalDefAddr, finalDefCity, trialCity, venueState);
         const defIsGov = Boolean(defGov.isGovernment);
         const defRecord = {
           ...commonFields,
@@ -2030,6 +2148,7 @@ class DataStore {
           is_oot: defLoc.is_oot,
           is_oos: defLoc.is_oos,
           state: defLoc.state,
+          locality_badge: defLoc.is_local ? `Local ${venueState}` : (defLoc.is_oos ? `Out-of-State (${defLoc.state})` : `Out-of-Town ${venueState}`),
           target_id: defTargetId,
           party_side: 'Defense',
           party_badge: 'DEF',
@@ -2069,8 +2188,8 @@ class DataStore {
 
     activeTargets.forEach(c => {
       if (c.is_pro_se || c.is_government || c.is_excluded || c.firm === 'Pro Se / Self-Represented') return;
-      const state = c.state || 'FL';
-      if (state !== 'FL' && state !== 'FLORIDA') return;
+      const state = (c.state || c.venue_state || 'FL').toUpperCase();
+      if (!US_STATE_NAMES[state]) return;
 
       let city = c.city || 'Miami';
       if (city.includes(',')) city = city.split(',')[0].trim();
@@ -2163,8 +2282,10 @@ class DataStore {
     return addedCount;
   }
 
-  getTrialTendency(minClosed = 3) {
-    const cases = this.getCases();
+  getTrialTendency(minClosed = 3, stateFilter = null) {
+    const allCases = this.getCases();
+    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
+    const cases = stateCode ? allCases.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allCases;
     const firmMap = new Map();
 
     const cleanFirmDisplay = (rawFirm) => {

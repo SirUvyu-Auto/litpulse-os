@@ -10,6 +10,108 @@ let fullCasesCache = [];
 let fullBuildingsCache = [];
 let drillDataCache = [];
 
+// Universal Operating Jurisdiction State
+let activeJurisdictionState = localStorage.getItem('litpulse_active_state') || 'ALL';
+
+function getStateParam(prefix = '?') {
+  if (!activeJurisdictionState || activeJurisdictionState === 'ALL') return '';
+  return `${prefix}state=${encodeURIComponent(activeJurisdictionState)}`;
+}
+
+const STATE_VIEWPORTS = {
+  ALL: { center: [38.5, -96.5], zoom: 4 },
+  FL: { center: [27.8, -81.7], zoom: 7 },
+  GA: { center: [32.9, -83.6], zoom: 7 },
+  TX: { center: [31.0, -99.9], zoom: 6 },
+  NY: { center: [42.9, -75.5], zoom: 7 },
+  CA: { center: [36.7, -119.4], zoom: 6 }
+};
+
+async function loadAvailableStates() {
+  try {
+    const res = await fetch('/api/states');
+    const data = await res.json();
+    if (!data.success) return;
+
+    const selector = document.getElementById('globalStateSelector');
+    if (!selector) return;
+
+    selector.innerHTML = '';
+
+    // National Option
+    const natOpt = document.createElement('option');
+    natOpt.value = 'ALL';
+    natOpt.textContent = `🇺🇸 National (${(data.national?.active_cases || 0).toLocaleString()} matters)`;
+    selector.appendChild(natOpt);
+
+    // States options
+    if (data.states && data.states.length) {
+      data.states.forEach(st => {
+        const opt = document.createElement('option');
+        opt.value = st.code;
+        const icon = st.code === 'FL' ? '🌴' : (st.code === 'GA' ? '🍑' : (st.code === 'TX' ? '⭐️' : (st.code === 'NY' ? '🗽' : '🏛️')));
+        opt.textContent = `${icon} ${st.name} (${st.active_cases.toLocaleString()} matters)`;
+        selector.appendChild(opt);
+      });
+    }
+
+    // Set value if valid
+    const validValues = Array.from(selector.options).map(o => o.value);
+    if (validValues.includes(activeJurisdictionState)) {
+      selector.value = activeJurisdictionState;
+    } else {
+      activeJurisdictionState = validValues.includes('FL') ? 'FL' : 'ALL';
+      selector.value = activeJurisdictionState;
+    }
+  } catch (err) {
+    console.error('Failed to load available states:', err);
+  }
+}
+
+function onStateScopeChange(newVal) {
+  activeJurisdictionState = newVal || 'ALL';
+  localStorage.setItem('litpulse_active_state', activeJurisdictionState);
+
+  // Invalidate caches so fresh state-filtered data is retrieved
+  cachedOutreachData = null;
+  cachedHistoricalData = null;
+  largeMattersCache = [];
+  cachedBehaviorData = null;
+  cachedJudgesData = null;
+  walkableClustersCache = [];
+  mapInitialBoundsFitted = false;
+  activeMapCityFilter = 'ALL';
+
+  const citySelect = document.getElementById('mapCityFilter');
+  if (citySelect) {
+    citySelect.innerHTML = '<option value="ALL">All Metro Cities</option>';
+  }
+
+  showToast(`Jurisdiction set to: ${newVal === 'ALL' ? 'National (All States)' : newVal}`);
+
+  loadActiveCities();
+  loadOverviewPage();
+  refreshCurrentActivePage();
+}
+
+function refreshCurrentActivePage() {
+  if (activePage === 'deliveries') {
+    loadDeliveriesPage();
+  } else if (activePage === 'outreach') {
+    renderOutreachQueue(true);
+  } else if (activePage === 'largematters') {
+    renderLargeMatters(true);
+  } else if (activePage === 'trials') {
+    loadTrialTendency('trials');
+  } else if (activePage === 'behavior') {
+    loadTrialTendency('firms');
+  } else if (activePage === 'courts') {
+    loadTrialTendency('judges');
+  } else if (activePage === 'overview') {
+    loadOverviewPage();
+  }
+}
+
 // Geospatial Map State
 let clusterLeafletMap = null;
 let clusterMarkersGroup = null;
@@ -175,7 +277,7 @@ async function checkGeocodeStatus() {
 
 async function loadDeliveriesPage() {
   try {
-    const res = await fetch('/api/drill/deliveries');
+    const res = await fetch(`/api/drill/deliveries${getStateParam('?')}`);
     const data = await res.json();
     if (!data.success) return;
 
@@ -454,7 +556,7 @@ function populateMapCityFilter(validBuildings) {
 
   const cityCounts = {};
   validBuildings.forEach(b => {
-    const c = (b.city || 'Florida').trim();
+    const c = (b.city || 'Metro Area').trim();
     cityCounts[c] = (cityCounts[c] || 0) + (b.attorneys_count || 1);
   });
 
@@ -569,7 +671,8 @@ function renderClustersMap(buildings, targetCity = null, preserveView = false) {
   }
 
   if (!filteredBuildings.length) {
-    if (clusterLeafletMap) clusterLeafletMap.setView([26.7153, -80.0534], 7);
+    const vp = STATE_VIEWPORTS[activeJurisdictionState] || STATE_VIEWPORTS.FL;
+    if (clusterLeafletMap) clusterLeafletMap.setView(vp.center, vp.zoom);
     return;
   }
 
@@ -994,7 +1097,7 @@ async function renderDeliveriesClusters(buildings) {
 
   // Fetch Walkable Clusters from API silently
   try {
-    const res = await fetch('/api/deliveries/walkable-clusters');
+    const res = await fetch(`/api/deliveries/walkable-clusters${getStateParam('?')}`);
     const data = await res.json();
     if (data && data.success && Array.isArray(data.clusters) && data.clusters.length > 0) {
       walkableClustersCache = data.clusters;
@@ -1405,7 +1508,7 @@ function renderHoldsTable(buildings) {
 
 async function loadOverviewPage() {
   try {
-    const res = await fetch('/api/dashboard/overview');
+    const res = await fetch(`/api/dashboard/overview${getStateParam('?')}`);
     const data = await res.json();
     if (!data.success) return;
     fullCasesCache = data.topPriorities || [];
@@ -1644,17 +1747,17 @@ async function renderOutreachQueue(forceRefresh = false) {
     let data;
     if (activeLifecycle === 'historical') {
       if (!cachedHistoricalData || forceRefresh) {
-        const res = await fetch('/api/drill/historical');
+        const res = await fetch(`/api/drill/historical${getStateParam('?')}`);
         cachedHistoricalData = await res.json();
       }
       data = cachedHistoricalData;
     } else {
       if (!cachedOutreachData || forceRefresh) {
-        const res = await fetch('/api/drill/outreach');
+        const res = await fetch(`/api/drill/outreach${getStateParam('?')}`);
         cachedOutreachData = await res.json();
       } else {
         // Stale-while-revalidate: silently re-verify in background without blocking UI
-        fetch('/api/drill/outreach')
+        fetch(`/api/drill/outreach${getStateParam('?')}`)
           .then(r => r.json())
           .then(fresh => {
             if (fresh && fresh.success) {
@@ -1700,7 +1803,7 @@ async function renderOutreachQueue(forceRefresh = false) {
       const badge = document.getElementById('historicalCountBadge');
       if (badge) badge.innerText = Number(data.historicalCount).toLocaleString();
     } else {
-      fetch('/api/drill/historical')
+      fetch(`/api/drill/historical${getStateParam('?')}`)
         .then(r => r.json())
         .then(hData => {
           if (hData && hData.success) {
@@ -2495,7 +2598,7 @@ async function renderLargeMatters(forceRefresh = false) {
     updateLargeMattersKpis();
     filterLargeMatters();
     // Silent background revalidation
-    fetch('/api/drill/largematters')
+    fetch(`/api/drill/largematters${getStateParam('?')}`)
       .then(r => r.json())
       .then(data => {
         if (!data || !data.success) return;
@@ -2514,7 +2617,7 @@ async function renderLargeMatters(forceRefresh = false) {
   }
 
   try {
-    const res = await fetch('/api/drill/largematters');
+    const res = await fetch(`/api/drill/largematters${getStateParam('?')}`);
     const data = await res.json();
     if (!data.success) return;
 
@@ -2927,7 +3030,7 @@ async function renderBehavior(tab = currentBehaviorTab) {
     if (cachedJudgesData && cachedJudgesData.judges) {
       populateJudges(cachedJudgesData.judges);
     }
-    fetch('/api/judges')
+    fetch(`/api/judges${getStateParam('?')}`)
       .then(r => r.json())
       .then(data => {
         if (data && data.judges) {
@@ -3019,7 +3122,7 @@ async function renderBehavior(tab = currentBehaviorTab) {
     if (cachedOutreachData && cachedOutreachData.rows) {
       populateAttorneys(cachedOutreachData);
     }
-    fetch('/api/drill/outreach')
+    fetch(`/api/drill/outreach${getStateParam('?')}`)
       .then(r => r.json())
       .then(d => {
         if (d && d.rows) {
@@ -3085,7 +3188,7 @@ async function renderBehavior(tab = currentBehaviorTab) {
   if (cachedBehaviorData && cachedBehaviorData.rows) {
     populateFirms(cachedBehaviorData.rows);
   }
-  fetch('/api/behavior')
+  fetch(`/api/behavior${getStateParam('?')}`)
     .then(r => r.json())
     .then(data => {
       if (data && data.success && data.rows) {
@@ -3236,7 +3339,7 @@ async function openDrill(key) {
   updateDualScrolls();
 
   try {
-    const res = await fetch(`/api/drill/${key}`);
+    const res = await fetch(`/api/drill/${key}${getStateParam('?')}`);
     const data = await res.json();
     if (!data.success) return;
 
@@ -4377,6 +4480,10 @@ function exportActiveCsv() {
     window: win
   });
 
+  if (activeJurisdictionState && activeJurisdictionState !== 'ALL') {
+    params.set('state', activeJurisdictionState);
+  }
+
   showToast('Generating filtered CSV export...');
   window.location.href = `/api/export/csv?${params.toString()}`;
 }
@@ -4385,7 +4492,7 @@ function exportActiveCsv() {
 
 async function loadActiveCities() {
   try {
-    const res = await fetch('/api/cities/active');
+    const res = await fetch(`/api/cities/active${getStateParam('?')}`);
     const data = await res.json();
     if (!data.success || !data.cities) return;
 
@@ -4488,13 +4595,13 @@ let cachedJudgesData = null;
 async function prefetchAllTabs() {
   try {
     Promise.allSettled([
-      fetch('/api/drill/outreach').then(r => r.json()).then(d => {
+      fetch(`/api/drill/outreach${getStateParam('?')}`).then(r => r.json()).then(d => {
         if (d && d.success) {
           cachedOutreachData = d;
           updateOutreachCountsFromData(d);
         }
       }),
-      fetch('/api/drill/largematters').then(r => r.json()).then(d => {
+      fetch(`/api/drill/largematters${getStateParam('?')}`).then(r => r.json()).then(d => {
         if (d && d.success) {
           largeMattersCache = (d.rows || []).filter(c => c.days_until === undefined || c.days_until > 0);
           largeMattersCache.sort((a, b) => {
@@ -4505,10 +4612,10 @@ async function prefetchAllTabs() {
           updateLargeMattersKpis();
         }
       }),
-      fetch('/api/behavior?minClosed=3').then(r => r.json()).then(d => {
+      fetch(`/api/behavior?minClosed=3${getStateParam('&')}`).then(r => r.json()).then(d => {
         if (d && d.success) cachedBehaviorData = d;
       }),
-      fetch('/api/judges').then(r => r.json()).then(d => {
+      fetch(`/api/judges${getStateParam('?')}`).then(r => r.json()).then(d => {
         if (d && d.success) cachedJudgesData = d;
       })
     ]);
@@ -4525,7 +4632,7 @@ async function syncRealtimeData() {
     } else if (activePage === 'overview') {
       loadOverviewPage();
     } else if (activePage === 'outreach') {
-      const res = await fetch('/api/drill/outreach');
+      const res = await fetch(`/api/drill/outreach${getStateParam('?')}`);
       const d = await res.json();
       if (d && d.success) {
         cachedOutreachData = d;
@@ -4533,7 +4640,7 @@ async function syncRealtimeData() {
         renderOutreachQueue(false);
       }
     } else if (activePage === 'largematters') {
-      const res = await fetch('/api/drill/largematters');
+      const res = await fetch(`/api/drill/largematters${getStateParam('?')}`);
       const d = await res.json();
       if (d && d.success) {
         largeMattersCache = (d.rows || []).filter(c => c.days_until === undefined || c.days_until > 0);
@@ -4565,6 +4672,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setupDualScroll('outreachTopScroll', 'outreachTableWrap', 'outreachTable');
   setupDualScroll('largeMattersTopScroll', 'largeMattersTableWrap', 'largeMattersTable');
   setupDualScroll('drawerTopScroll', 'drawerTableWrap', 'drawerTable');
+  loadAvailableStates();
   loadActiveCities();
 
   navigateToPage('deliveries');

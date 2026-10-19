@@ -320,6 +320,47 @@ body {
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
+.state-scope-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 10px;
+  height: 32px;
+  margin-left: 6px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.state-scope-wrap:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.state-scope-icon {
+  color: #94A3B8;
+  flex-shrink: 0;
+}
+
+.state-scope-select {
+  background: transparent;
+  color: #F8FAFC;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding-right: 4px;
+}
+
+.state-scope-select option {
+  background: #111116;
+  color: #F8FAFC;
+  padding: 6px 10px;
+}
+
 .search {
   margin-left: auto;
   position: relative;

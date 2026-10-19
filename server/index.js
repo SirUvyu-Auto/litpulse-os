@@ -124,6 +124,7 @@ function mapRowToCase(rowObj, idx) {
   const outcome = getVal('outcome', 'caseoutcome', 'case_outcome', 'disposition', 'verdict', 'result', 'judgment') || '';
   const rawContactDate = getVal('lastcontactdate', 'lastcontact', 'contactdate', 'contactedat', 'lastvisit', 'visitdate', 'lasttouch', 'activitydate');
   const lastContactDate = parseTrialDate(rawContactDate) || '';
+  const rawState = getVal('venuestate', 'courtstate', 'trialstate', 'state', 'jurisdiction');
 
   return {
     case_id: caseId,
@@ -134,6 +135,7 @@ function mapRowToCase(rowObj, idx) {
     nos_label: nosLabel,
     trial_date: trialDate,
     est_value: estValue,
+    venue_state: rawState || '',
 
     // Plaintiff
     plaintiff_attorney: leadAttorney,
@@ -428,10 +430,21 @@ app.post('/api/geocoding/start', async (req, res) => {
   }
 });
 
+// Operating State & Jurisdiction Registry
+app.get('/api/states', (req, res) => {
+  try {
+    const summary = db.getStatesSummary();
+    res.json({ success: true, ...summary });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Executive Dashboard Overview
 app.get('/api/dashboard/overview', (req, res) => {
   try {
-    const overview = db.getDashboardOverview();
+    const stateFilter = req.query.state || null;
+    const overview = db.getDashboardOverview(stateFilter);
     res.json({ success: true, ...overview });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -442,7 +455,8 @@ app.get('/api/dashboard/overview', (req, res) => {
 app.get('/api/drill/:key', (req, res) => {
   try {
     const key = req.params.key;
-    const drill = db.getDrillData(key);
+    const stateFilter = req.query.state || null;
+    const drill = db.getDrillData(key, stateFilter);
     res.json({ success: true, ...drill });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -746,7 +760,8 @@ app.post('/api/deliveries/geocode', async (req, res) => {
 app.get('/api/deliveries/walkable-clusters', (req, res) => {
   try {
     const city = req.query.city || null;
-    const clusters = db.getWalkableClusters(city);
+    const state = req.query.state || null;
+    const clusters = db.getWalkableClusters(city, state);
     res.json({ success: true, clusters });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -775,7 +790,8 @@ app.post('/api/lead/status', (req, res) => {
 app.get('/api/behavior', (req, res) => {
   try {
     const minClosed = req.query.minClosed !== undefined ? parseInt(req.query.minClosed, 10) : 3;
-    const list = db.getTrialTendency(minClosed);
+    const state = req.query.state || null;
+    const list = db.getTrialTendency(minClosed, state);
     res.json({ success: true, rows: list });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -796,7 +812,8 @@ app.post('/api/deliveries/geocode', async (req, res) => {
 // Judicial Calendar & Analytics
 app.get('/api/judges', (req, res) => {
   try {
-    const judges = db.getJudgeAnalytics();
+    const state = req.query.state || null;
+    const judges = db.getJudgeAnalytics(state);
     res.json({ success: true, count: judges.length, judges });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -806,7 +823,8 @@ app.get('/api/judges', (req, res) => {
 // Active Trial Cities Endpoint
 app.get('/api/cities/active', (req, res) => {
   try {
-    const result = db.getActiveCities();
+    const state = req.query.state || null;
+    const result = db.getActiveCities(state);
     res.json({ success: true, ...result });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -818,11 +836,12 @@ app.get('/api/export/csv', (req, res) => {
   const key = req.query.drillKey || 'outreach';
   const q = req.query.q || '';
   const city = req.query.city || 'ALL';
+  const state = req.query.state || 'ALL';
   const assignment = req.query.assignment || 'ALL';
   const partySide = req.query.partySide || 'ALL';
   const windowDays = req.query.window || 'ALL';
 
-  const data = db.getDrillData(key);
+  const data = db.getDrillData(key, state);
   let rows = data.rows || [];
 
   // 1. Text Search Filter

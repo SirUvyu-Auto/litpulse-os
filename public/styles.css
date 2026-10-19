@@ -911,6 +911,48 @@ select option:checked {
   min-width: 0;
 }
 
+/* Map Mode Segmented Toggle */
+.map-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-dark-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.map-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.map-toggle-btn:hover {
+  color: var(--text-white);
+}
+
+.map-toggle-btn.active {
+  background: var(--wine-soft);
+  color: var(--text-white);
+  border: 1px solid var(--border-wine);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
 .map-actions select.filter-chip {
   max-width: 145px;
   height: 28px;
@@ -1007,6 +1049,23 @@ select option:checked {
   color: #10B981;
   font-size: 10px;
   line-height: 1;
+}
+
+/* Heatmap Legend Bar */
+.heat-scale-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.heat-gradient-bar {
+  width: 140px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #8B1E24 0%, #DC2626 30%, #F97316 60%, #F59E0B 85%, #FEF08A 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Leaflet Cluster Bubbles */

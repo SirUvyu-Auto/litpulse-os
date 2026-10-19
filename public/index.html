@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="leaflet-heat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
 </head>
 <body>
@@ -224,6 +225,10 @@
                     <span class="map-stats-chip" id="mapTotalDropsBadge" style="background:rgba(220,38,38,0.18);border-color:rgba(220,38,38,0.35);color:#FCA5A5;">0 Drops</span>
                   </div>
                   <div class="map-actions">
+                    <div class="map-view-toggle">
+                      <button id="btnMapPinsMode" class="map-toggle-btn active" onclick="setMapDisplayMode('pins')" title="Show Pins and Clusters">📍 Pins</button>
+                      <button id="btnMapHeatMode" class="map-toggle-btn" onclick="setMapDisplayMode('heat')" title="Show Thermal Heatmap">🔥 Heatmap</button>
+                    </div>
                     <select id="mapCityFilter" class="filter-chip" onchange="filterMapByCity(this.value)">
                       <option value="ALL">All Metro Areas</option>
                     </select>
@@ -237,7 +242,7 @@
                   </div>
                 </div>
                 <!-- Clean Map Legend Strip -->
-                <div class="map-legend-bar">
+                <div class="map-legend-bar" id="mapPinsLegend">
                   <div class="legend-item">
                     <span class="legend-dot legend-mega"></span>
                     <span>Mega Hub (5+ drops)</span>
@@ -253,6 +258,14 @@
                   <div class="legend-item">
                     <span class="legend-dot legend-client">★</span>
                     <span>Active Client Tenant</span>
+                  </div>
+                </div>
+                <div class="map-legend-bar" id="mapHeatLegend" style="display:none;">
+                  <span style="font-size:11px;color:var(--text-white);font-weight:600;">🔥 Litigation Density Heatmap:</span>
+                  <div class="heat-scale-wrap">
+                    <span>Sparse</span>
+                    <div class="heat-gradient-bar"></div>
+                    <span>High Litigation Concentration</span>
                   </div>
                 </div>
                 <div id="clusterMap"></div>

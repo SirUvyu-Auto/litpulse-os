@@ -13,6 +13,8 @@ let drillDataCache = [];
 // Geospatial Map State
 let clusterLeafletMap = null;
 let clusterMarkersGroup = null;
+let clusterHeatmapLayer = null;
+let activeMapDisplayMode = 'pins';
 let clusterMarkersMap = new Map();
 let clusterBoundsCache = null;
 let mapInitialBoundsFitted = false;
@@ -513,6 +515,59 @@ function renderClustersMap(buildings, targetCity = null, preserveView = false) {
     labelEl.innerText = activeMapCityFilter !== 'ALL' ? `${activeMapCityFilter} Cluster` : 'Florida Target Buildings';
   }
 
+  // Handle Display Mode: Heatmap vs Pins
+  const isHeatMode = activeMapDisplayMode === 'heat';
+  const pinsLegendEl = document.getElementById('mapPinsLegend');
+  const heatLegendEl = document.getElementById('mapHeatLegend');
+
+  if (isHeatMode) {
+    if (pinsLegendEl) pinsLegendEl.style.display = 'none';
+    if (heatLegendEl) heatLegendEl.style.display = 'flex';
+
+    if (clusterLeafletMap.hasLayer(clusterMarkersGroup)) {
+      clusterLeafletMap.removeLayer(clusterMarkersGroup);
+    }
+
+    const heatPoints = filteredBuildings.map(b => {
+      const drops = b.attorneys_count || 1;
+      const intensity = Math.min(1.0, Math.max(0.35, drops / 5));
+      return [b.lat, b.lng, intensity];
+    });
+
+    if (clusterHeatmapLayer) {
+      clusterHeatmapLayer.setLatLngs(heatPoints);
+      if (!clusterLeafletMap.hasLayer(clusterHeatmapLayer)) {
+        clusterHeatmapLayer.addTo(clusterLeafletMap);
+      }
+    } else if (typeof L.heatLayer === 'function') {
+      clusterHeatmapLayer = L.heatLayer(heatPoints, {
+        radius: 32,
+        blur: 20,
+        maxZoom: 16,
+        max: 1.0,
+        minOpacity: 0.35,
+        gradient: {
+          0.2: '#8B1E24',
+          0.45: '#DC2626',
+          0.65: '#F97316',
+          0.85: '#F59E0B',
+          1.0: '#FEF08A'
+        }
+      }).addTo(clusterLeafletMap);
+    }
+  } else {
+    if (pinsLegendEl) pinsLegendEl.style.display = 'flex';
+    if (heatLegendEl) heatLegendEl.style.display = 'none';
+
+    if (clusterHeatmapLayer && clusterLeafletMap.hasLayer(clusterHeatmapLayer)) {
+      clusterLeafletMap.removeLayer(clusterHeatmapLayer);
+    }
+
+    if (!clusterLeafletMap.hasLayer(clusterMarkersGroup)) {
+      clusterMarkersGroup.addTo(clusterLeafletMap);
+    }
+  }
+
   if (!filteredBuildings.length) {
     if (clusterLeafletMap) clusterLeafletMap.setView([26.7153, -80.0534], 7);
     return;
@@ -520,8 +575,13 @@ function renderClustersMap(buildings, targetCity = null, preserveView = false) {
 
   const latLngs = [];
 
-  filteredBuildings.forEach(b => {
-    const drops = b.attorneys_count || 1;
+  if (isHeatMode) {
+    filteredBuildings.forEach(b => {
+      latLngs.push([b.lat, b.lng]);
+    });
+  } else {
+    filteredBuildings.forEach(b => {
+      const drops = b.attorneys_count || 1;
     const isMega = drops >= 5;
     const isMulti = drops >= 2 && drops < 5;
     const isClient = Boolean(b.has_client);
@@ -639,6 +699,7 @@ function renderClustersMap(buildings, targetCity = null, preserveView = false) {
     clusterMarkersMap.set(b.building_id, { marker, data: b });
     latLngs.push([b.lat, b.lng]);
   });
+  }
 
   if (latLngs.length > 0) {
     const bounds = L.latLngBounds(latLngs);
@@ -670,6 +731,16 @@ function filterMapByDensity(density) {
   activeMapDensityFilter = density;
   renderClustersMap(mapAllBuildingsCache, null, true);
 }
+
+function setMapDisplayMode(mode) {
+  activeMapDisplayMode = mode;
+  const btnPins = document.getElementById('btnMapPinsMode');
+  const btnHeat = document.getElementById('btnMapHeatMode');
+  if (btnPins) btnPins.classList.toggle('active', mode === 'pins');
+  if (btnHeat) btnHeat.classList.toggle('active', mode === 'heat');
+  renderClustersMap(mapAllBuildingsCache, null, true);
+}
+window.setMapDisplayMode = setMapDisplayMode;
 
 function focusBuildingOnMap(buildingId, lat, lng) {
   if (!clusterLeafletMap) return;

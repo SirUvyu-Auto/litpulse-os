@@ -20,7 +20,8 @@ const {
   resolveBuildingCoordinates,
   buildAttorneyEmail,
   buildAttorneyPhone,
-  isProSeLitigant
+  isProSeLitigant,
+  isGovernmentEntity
 } = require('./normalizer');
 const geocoder = require('./geocoder');
 const parkingService = require('./parkingService');
@@ -740,6 +741,7 @@ class DataStore {
 
     const needsRecompute = force || cases.some(c => 
       c.is_pro_se === undefined ||
+      c.is_government === undefined ||
       c.ear === undefined || 
       c.is_war_room === undefined ||
       c.casetype_score === undefined ||
@@ -761,7 +763,7 @@ class DataStore {
     const attorneyHistory = new Map();
     const proSeCaseIds = new Set();
 
-    // First pass: identify pro se litigants and track cases with pro se involvement
+    // First pass: identify pro se litigants and government entities
     cases.forEach(c => {
       const isProSe = Boolean(c.is_pro_se) || isProSeLitigant(c.lead_attorney, c.firm, c.caption, c.address, c.nos_label, c.party_side);
       c.is_pro_se = isProSe;
@@ -769,6 +771,18 @@ class DataStore {
         c.firm = 'Pro Se / Self-Represented';
         c.firm_id = 'firm-pro-se-self-represented';
         if (c.case_id) proSeCaseIds.add(c.case_id);
+      }
+
+      const gov = isGovernmentEntity(c.lead_attorney, c.firm, c.email, c.address, c.caption);
+      c.is_government = gov.isGovernment;
+      if (gov.isGovernment) {
+        c.is_excluded = true;
+        c.exclusion_code = gov.exclusion_code;
+        c.exclusion_reason = gov.reason;
+      } else if (!c.is_excluded) {
+        c.is_excluded = false;
+        c.exclusion_code = null;
+        c.exclusion_reason = null;
       }
     });
 
@@ -873,8 +887,8 @@ class DataStore {
         c.same_firm_both_sides = false;
       }
 
-      if (c.is_pro_se) {
-        // Zero out expected revenue and priority for pro se litigants
+      if (c.is_pro_se || c.is_government) {
+        // Zero out expected revenue and priority for pro se litigants or sovereign government counsel
         c.ear = 0;
         c.trial_prob = 0;
         c.full_value = 0;
@@ -889,8 +903,8 @@ class DataStore {
         c.engagement_score = 0;
         c.priority_tier = 'None';
         c.delivery_status = 'ineligible';
-        c.hubspot_status = 'Unqualified / Pro Se';
-        c.pitch_angle = 'N/A (Pro Se Claimant)';
+        c.hubspot_status = c.is_government ? 'Unqualified / Government' : 'Unqualified / Pro Se';
+        c.pitch_angle = c.is_government ? 'N/A (Sovereign Government Entity)' : 'N/A (Pro Se Claimant)';
         c.building_id = null;
       } else {
         const attyCount = (c.counsel_matrix && c.counsel_matrix.length) ? c.counsel_matrix.length : 2;
@@ -942,11 +956,11 @@ class DataStore {
 
     // Rebuild physical building clusters strictly for Florida local addresses
     const bldgMap = new Map();
-    const activeTargets = cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se);
+    const activeTargets = cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
 
     activeTargets.forEach(c => {
       // Hand delivery clusters are strictly for Florida office locations and commercial firms
-      if (c.is_pro_se || c.firm === 'Pro Se / Self-Represented') return;
+      if (c.is_pro_se || c.is_government || c.is_excluded || c.firm === 'Pro Se / Self-Represented') return;
       const state = c.state || 'FL';
       if (state !== 'FL' && state !== 'FLORIDA') return;
 
@@ -1144,7 +1158,7 @@ class DataStore {
 
   getDashboardOverview() {
     const allTargets = this.getCases();
-    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se);
+    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
     const historicalTargets = allTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
     const buildings = this.getBuildings();
 
@@ -1256,7 +1270,7 @@ class DataStore {
 
   getDrillData(key) {
     const allTargets = this.getCases();
-    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se);
+    const activeTargets = allTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
     const historicalTargets = allTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
     const buildings = this.getBuildings();
 
@@ -1328,6 +1342,13 @@ class DataStore {
         sub: 'Presiding federal and circuit court judges ranked by active upcoming trial volume.',
         rows: this.getJudgeAnalytics()
       };
+    } else if (key === 'exclusions' || key === 'government') {
+      const excludedRows = allTargets.filter(c => c.is_government || c.is_excluded);
+      return {
+        title: 'Excluded Sovereign & Government Counsel',
+        sub: 'DOJ, U.S. Attorneys, State AGs, public defenders, and sovereign entities quarantined from commercial sales pipelines.',
+        rows: excludedRows.sort((a, b) => (a.case_id || '').localeCompare(b.case_id || ''))
+      };
     }
     return { title: 'Granular Data View', sub: '', rows: activeTargets };
   }
@@ -1356,7 +1377,7 @@ class DataStore {
       }
       const j = judgeMap.get(judge);
       j.total_cases += 1;
-      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se;
+      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded;
       if (isActive) {
         j.active_trials += 1;
         j.total_ear += (c.ear || c.est_value || 0);
@@ -1383,7 +1404,7 @@ class DataStore {
     const cityMap = {};
     let totalActive = 0;
     cases.forEach(c => {
-      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se;
+      const isActive = c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded;
       if (isActive) {
         totalActive++;
         let city = c.trial_city || c.city || 'Miami';
@@ -1528,7 +1549,7 @@ class DataStore {
 
     const cases = this.getCases();
     cases.forEach(c => {
-      if (c.is_pro_se || c.firm === 'Pro Se / Self-Represented') return;
+      if (c.is_pro_se || c.is_government || c.is_excluded || c.firm === 'Pro Se / Self-Represented') return;
       if (c.building_id && this.buildingIndex.has(c.building_id)) {
         this.buildingIndex.get(c.building_id).push(c);
         return;
@@ -1558,7 +1579,7 @@ class DataStore {
       const bldgStreet = extractBuildingAddress(building.address).toLowerCase();
       const bldgCity = (building.city || '').toLowerCase();
       matchingCases = this.getCases().filter(c => {
-        if (c.is_pro_se || c.firm === 'Pro Se / Self-Represented') return false;
+        if (c.is_pro_se || c.is_government || c.is_excluded || c.firm === 'Pro Se / Self-Represented') return false;
         const caseStreet = extractBuildingAddress(c.address).toLowerCase();
         const caseCity = (c.city || '').toLowerCase();
         return caseStreet === bldgStreet && caseCity === bldgCity;
@@ -1567,7 +1588,7 @@ class DataStore {
     }
 
     // Isolate active upcoming Florida drops from historical archive matters
-    const activeCases = matchingCases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && (!c.is_oos && (!c.state || c.state === 'FL')) && !c.is_pro_se);
+    const activeCases = matchingCases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && (!c.is_oos && (!c.state || c.state === 'FL')) && !c.is_pro_se && !c.is_government && !c.is_excluded);
     const historicalCases = matchingCases.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0) || (c.is_oos || (c.state && c.state !== 'FL')));
 
     // Keep building.attorneys_count in sync with active drops
@@ -1830,6 +1851,10 @@ class DataStore {
       const pltfIsProSe = Boolean(nc.is_pro_se) || isProSeLitigant(pltfAtty, pltfFirm, nc.caption || nc.title, rawPltfAddr, nc.nos_label, 'Plaintiff');
       const defIsProSe = Boolean(nc.defense_is_pro_se) || isProSeLitigant(defAtty, defFirm, nc.caption || nc.title, rawDefAddr, nc.nos_label, 'Defense');
 
+      // Check government entity status on plaintiff and defense sides
+      const pltfGov = isGovernmentEntity(pltfAtty, pltfFirm, pltfEmail, rawPltfAddr, nc.caption || nc.title);
+      const defGov = isGovernmentEntity(defAtty, defFirm, defEmail, rawDefAddr, nc.caption || nc.title);
+
       const resolvedPltfFirm = pltfIsProSe ? 'Pro Se / Self-Represented' : pltfFirm;
       const resolvedDefFirm = defIsProSe ? 'Pro Se / Self-Represented' : defFirm;
 
@@ -1898,18 +1923,23 @@ class DataStore {
       const pltfPriorMatter = existingPltf?.caption || existingPltf?.rehit_prior_matter || '';
 
       const pltfLoc = resolveLocality(finalPltfAddr, finalPltfCity, trialCity);
+      const pltfIsGov = Boolean(pltfGov.isGovernment);
       const pltfRecord = {
         ...commonFields,
         is_pro_se: pltfIsProSe,
-        ear: pltfIsProSe ? 0 : (nc.ear || 0),
-        est_value: pltfIsProSe ? 0 : commonFields.est_value,
-        full_value: pltfIsProSe ? 0 : (nc.full_value || 0),
-        priority_score: pltfIsProSe ? 0 : commonFields.priority_score,
-        urgency_score: pltfIsProSe ? 0 : commonFields.urgency_score,
-        revenue_score: pltfIsProSe ? 0 : commonFields.revenue_score,
-        locality_score: pltfIsProSe ? 0 : commonFields.locality_score,
-        delivery_status: pltfIsProSe ? 'ineligible' : 'review',
-        pitch_angle: pltfIsProSe ? 'N/A (Pro Se Claimant)' : (defIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.pitch_angle || 'Narrative Demonstratives, Liability Timelines & Blowup Medical Boards')),
+        is_government: pltfIsGov,
+        is_excluded: pltfIsGov,
+        exclusion_code: pltfGov.exclusion_code,
+        exclusion_reason: pltfGov.reason,
+        ear: (pltfIsProSe || pltfIsGov) ? 0 : (nc.ear || 0),
+        est_value: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.est_value,
+        full_value: (pltfIsProSe || pltfIsGov) ? 0 : (nc.full_value || 0),
+        priority_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.priority_score,
+        urgency_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.urgency_score,
+        revenue_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.revenue_score,
+        locality_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.locality_score,
+        delivery_status: (pltfIsProSe || pltfIsGov) ? 'ineligible' : 'review',
+        pitch_angle: pltfIsGov ? 'N/A (Sovereign Government Entity)' : (pltfIsProSe ? 'N/A (Pro Se Claimant)' : (defIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.pitch_angle || 'Narrative Demonstratives, Liability Timelines & Blowup Medical Boards'))),
         is_local: pltfLoc.is_local,
         is_oot: pltfLoc.is_oot,
         is_oos: pltfLoc.is_oos,
@@ -1931,7 +1961,7 @@ class DataStore {
         phone: pltfIsProSe ? 'N/A' : finalPltfPhone,
         email: pltfIsProSe ? 'N/A' : finalPltfEmail,
         assigned_to: pltfAssignedTo,
-        hubspot_status: pltfIsProSe ? 'Unqualified / Pro Se' : pltfStatus,
+        hubspot_status: pltfIsGov ? 'Unqualified / Government' : (pltfIsProSe ? 'Unqualified / Pro Se' : pltfStatus),
         conflict_flag: pltfConflict,
         same_firm_both_sides: isSameFirmBothSides,
         is_rehit: isPltfRehit,
@@ -1978,18 +2008,23 @@ class DataStore {
         const defPriorMatter = existingDef?.caption || existingDef?.rehit_prior_matter || '';
 
         const defLoc = resolveLocality(finalDefAddr, finalDefCity, trialCity);
+        const defIsGov = Boolean(defGov.isGovernment);
         const defRecord = {
           ...commonFields,
           is_pro_se: defIsProSe,
-          ear: defIsProSe ? 0 : (nc.defense_ear || nc.ear || 0),
-          est_value: defIsProSe ? 0 : commonFields.est_value,
-          full_value: defIsProSe ? 0 : (nc.defense_full_value || nc.full_value || 0),
-          priority_score: defIsProSe ? 0 : commonFields.priority_score,
-          urgency_score: defIsProSe ? 0 : commonFields.urgency_score,
-          revenue_score: defIsProSe ? 0 : commonFields.revenue_score,
-          locality_score: defIsProSe ? 0 : commonFields.locality_score,
-          delivery_status: defIsProSe ? 'ineligible' : 'review',
-          pitch_angle: defIsProSe ? 'N/A (Pro Se Defendant)' : (pltfIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.defense_pitch_angle || 'Impeachment Callouts, Medical Board Exhibits & Expert Cross Tabs')),
+          is_government: defIsGov,
+          is_excluded: defIsGov,
+          exclusion_code: defGov.exclusion_code,
+          exclusion_reason: defGov.reason,
+          ear: (defIsProSe || defIsGov) ? 0 : (nc.defense_ear || nc.ear || 0),
+          est_value: (defIsProSe || defIsGov) ? 0 : commonFields.est_value,
+          full_value: (defIsProSe || defIsGov) ? 0 : (nc.defense_full_value || nc.full_value || 0),
+          priority_score: (defIsProSe || defIsGov) ? 0 : commonFields.priority_score,
+          urgency_score: (defIsProSe || defIsGov) ? 0 : commonFields.urgency_score,
+          revenue_score: (defIsProSe || defIsGov) ? 0 : commonFields.revenue_score,
+          locality_score: (defIsProSe || defIsGov) ? 0 : commonFields.locality_score,
+          delivery_status: (defIsProSe || defIsGov) ? 'ineligible' : 'review',
+          pitch_angle: defIsGov ? 'N/A (Sovereign Government Entity)' : (defIsProSe ? 'N/A (Pro Se Defendant)' : (pltfIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.defense_pitch_angle || 'Impeachment Callouts, Medical Board Exhibits & Expert Cross Tabs'))),
           is_local: defLoc.is_local,
           is_oot: defLoc.is_oot,
           is_oos: defLoc.is_oos,
@@ -2011,7 +2046,7 @@ class DataStore {
           phone: defIsProSe ? 'N/A' : finalDefPhone,
           email: defIsProSe ? 'N/A' : finalDefEmail,
           assigned_to: defAssignedTo,
-          hubspot_status: defIsProSe ? 'Unqualified / Pro Se' : defStatus,
+          hubspot_status: defIsGov ? 'Unqualified / Government' : (defIsProSe ? 'Unqualified / Pro Se' : defStatus),
           conflict_flag: defConflict,
           same_firm_both_sides: isSameFirmBothSides,
           is_rehit: isDefRehit,
@@ -2029,10 +2064,10 @@ class DataStore {
 
     // Dynamically aggregate active building clusters from active targets
     const bldgMap = new Map();
-    const activeTargets = this.data.cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se);
+    const activeTargets = this.data.cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
 
     activeTargets.forEach(c => {
-      if (c.is_pro_se || c.firm === 'Pro Se / Self-Represented') return;
+      if (c.is_pro_se || c.is_government || c.is_excluded || c.firm === 'Pro Se / Self-Represented') return;
       const state = c.state || 'FL';
       if (state !== 'FL' && state !== 'FLORIDA') return;
 

@@ -645,6 +645,62 @@ function isProSeLitigant(attorneyName, firmName, caption = '', address = '', nos
   return false;
 }
 
+function isGovernmentEntity(attorneyName, firmName, email = '', address = '', caption = '') {
+  const atty = String(attorneyName || '').trim().toLowerCase();
+  const firm = String(firmName || '').trim().toLowerCase();
+  const eml = String(email || '').trim().toLowerCase();
+
+  // 1. Government email domains
+  if (/@(.*\.)?(usdoj\.gov|usa\.doj\.gov|sec\.gov|ftc\.gov|irs\.gov|eeoc\.gov|fd\.org|myfloridalegal\.com|miamidade\.gov|broward\.org|tampa\.gov|orlando\.gov|talgov\.com|sa13\.org|sao\d+\.org)\b/i.test(eml)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_EMAIL', reason: email };
+  }
+
+  // 2. Department of Justice (DOJ)
+  if (/\b(doj[- ]?(civ|tax|usao|crm|enrd|atr)?|u\.?s\.?\s*dept(artment)?\s+of\s+justice|united\s+states\s+department\s+of\s+justice|department\s+of\s+justice)\b/i.test(firm)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_DOJ', reason: firmName };
+  }
+
+  // 3. United States Attorney's Offices (USAO)
+  if (/\b(usao|u\.?s\.?\s*attorney('?s)?\s*office|united\s+states\s+attorney('?s)?\s*office|assistant\s+u\.?s\.?\s*attorney|ausa)\b/i.test(firm)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_USAO', reason: firmName };
+  }
+
+  // 4. Federal Agencies (SEC, FTC, EEOC, IRS, etc.)
+  if (/\b(securities\s+(&|and)\s+exchange\s+commission|federal\s+trade\s+commission|internal\s+revenue\s+service|equal\s+employment\s+opportunity\s+commission)\b/i.test(firm)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_FED_AGENCY', reason: firmName };
+  }
+
+  // 5. State Attorney General
+  if (/\b(office\s+of\s+(the\s+)?attorney\s+general|state\s+attorney\s+general|florida\s+attorney\s+general|attorney\s+general('?s)?\s+office)\b/i.test(firm)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_STATE_AG', reason: firmName };
+  }
+
+  // 6. State Prosecutors / District Attorneys
+  if (/\b(state\s+attorney('?s)?\s*office|office\s+of\s+(the\s+)?state\s+attorney|district\s+attorney('?s)?\s*office)\b/i.test(firm)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_PROSECUTOR', reason: firmName };
+  }
+
+  // 7. Public Defenders
+  if (/\b(public\s+defender('?s)?\s*office|office\s+of\s+(the\s+)?public\s+defender|federal\s+public\s+defender)\b/i.test(firm)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_PUBLIC_DEFENDER', reason: firmName };
+  }
+
+  // 8. Municipal & County Legal Departments
+  if (/\b(city\s+attorney('?s)?\s*office|office\s+of\s+(the\s+)?city\s+attorney|county\s+attorney('?s)?\s*office|office\s+of\s+(the\s+)?county\s+attorney|miami-dade\s+county\s+attorney)\b/i.test(firm)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_MUNI', reason: firmName };
+  }
+
+  // 9. Attorney Title Suffixes/Designations (Guard against former titles)
+  if (/\b(ausa|assistant\s+u\.?s\.?\s*attorney|assistant\s+united\s+states\s+attorney|special\s+assistant\s+u\.?s\.?\s*attorney)\b/i.test(atty) && !/\b(former|ex-)\b/i.test(atty)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_USAO', reason: attorneyName };
+  }
+  if (/\b(assistant\s+state\s+attorney|assistant\s+public\s+defender)\b/i.test(atty) && !/\b(former|ex-)\b/i.test(atty)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_PROSECUTOR', reason: attorneyName };
+  }
+
+  return { isGovernment: false, exclusion_code: null, reason: null };
+}
+
 function resolveFirmId(firmName) {
   const norm = (firmName || '').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
   return norm ? `firm-${norm}` : 'firm-unknown';
@@ -747,6 +803,7 @@ module.exports = {
   resolveBuildingCoordinates,
   buildAttorneyEmail,
   buildAttorneyPhone,
-  isProSeLitigant
+  isProSeLitigant,
+  isGovernmentEntity
 };
 

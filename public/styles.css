@@ -388,8 +388,7 @@ body {
 .state-scope-dropdown-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 4px 12px 10px 12px;
+  padding: 6px 12px 8px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -399,30 +398,6 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: #94A3B8;
-}
-
-.state-scope-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.state-scope-action-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #E2E8F0;
-  font-family: var(--font-ui);
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.state-scope-action-btn:hover {
-  background: rgba(139, 30, 36, 0.3);
-  border-color: rgba(139, 30, 36, 0.6);
-  color: #fff;
 }
 
 .state-scope-options {

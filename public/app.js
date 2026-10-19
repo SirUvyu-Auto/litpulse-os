@@ -155,22 +155,6 @@ function updateStateScopeTriggerLabel() {
   }
 }
 
-function selectFloridaOnly(e) {
-  if (e) e.stopPropagation();
-  selectedStates = ['FL'];
-  renderStateScopeDropdown();
-  updateStateScopeTriggerLabel();
-  onStateScopeChange();
-}
-
-function selectAllStates(e) {
-  if (e) e.stopPropagation();
-  selectedStates = ['ALL'];
-  renderStateScopeDropdown();
-  updateStateScopeTriggerLabel();
-  onStateScopeChange();
-}
-
 function handleStateItemClick(code, e) {
   if (e) e.stopPropagation();
 

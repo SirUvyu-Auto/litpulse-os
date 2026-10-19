@@ -1234,6 +1234,9 @@
           <div class="subtitle" id="bldgModalAddress" style="color: var(--text-muted); font-size: 12.5px;">Building Address</div>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="btn-export" id="bldgHeaderResolveBtn" style="display: none; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(220,38,38,0.18); border: 1px solid #DC2626; color: #FCA5A5; font-weight: 600;" onclick="openResolveHoldModal(currentBuildingData?.building_id)">
+            🔧 Resolve Hold
+          </button>
           <button class="btn-export" id="bldgExportCsvBtn" style="display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--wine-soft); border: 1px solid var(--border-wine); color: #FFFFFF;" onclick="downloadBuildingCsv()">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download Building Outreach CSV
@@ -1242,6 +1245,20 @@
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
+      </div>
+
+      <!-- Delivery Hold Warning & Action Banner (Visible when building has unresolved GPS/PO Box hold) -->
+      <div id="bldgModalHoldBanner" style="display:none; padding:12px 18px; background:rgba(220,38,38,0.12); border-bottom:1px solid rgba(220,38,38,0.3); align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:28px; height:28px; border-radius:6px; background:rgba(220,38,38,0.2); display:flex; align-items:center; justify-content:center; color:#FCA5A5; font-size:14px; font-weight:700;">⚠️</div>
+          <div>
+            <div style="font-size:12.5px; font-weight:700; color:#FCA5A5; letter-spacing:0.3px;">DELIVERY DATA HOLD ACTIVE</div>
+            <div id="bldgModalHoldReason" style="font-size:11.5px; color:var(--text-sub);">Physical office suite required for courier routing. PO Box cannot receive hand deliveries.</div>
+          </div>
+        </div>
+        <button class="btn-primary" style="background:#DC2626; border:none; color:#FFFFFF; font-weight:700; padding:6px 14px; border-radius:5px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="openResolveHoldModal(currentBuildingData?.building_id)">
+          🔧 Resolve Address &amp; Release Hold
+        </button>
       </div>
 
       <!-- Building Metadata & Logistics Bar -->
@@ -1324,6 +1341,114 @@
           </thead>
           <tbody id="bldgAttorneysTbody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RESOLVE DELIVERY DATA HOLD MODAL ================= -->
+  <div class="modal-backdrop" id="resolveHoldModal" onclick="closeResolveHoldModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 680px; width: 92vw; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span class="tag-anchor" style="background: rgba(220,38,38,0.18); color: #FCA5A5; border-color: rgba(220,38,38,0.4);">DELIVERY DATA HOLD RESOLUTION</span>
+          </div>
+          <h2 class="h1" id="resolveHoldTitle" style="font-size: 18px; margin-bottom: 2px;">Resolve Building Location</h2>
+          <div class="subtitle" id="resolveHoldSub" style="color: var(--text-muted); font-size: 12px;">Verify physical street address and office suite for courier dispatch.</div>
+        </div>
+        <button class="close-btn" onclick="closeResolveHoldModal()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 20px; overflow-y: auto;">
+        <!-- Issue description card -->
+        <div style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 6px; padding: 12px 14px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="font-size: 14px;">⚠️</span>
+            <strong style="color: #FCD34D; font-size: 12.5px;" id="resolveHoldIssueTitle">Current Address Flagged</strong>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-sub); line-height: 1.4;" id="resolveHoldIssueDesc">
+            Courier runners cannot deliver trial demonstratives or exhibits to a P.O. Box. Enter the verified physical law firm street address below.
+          </div>
+          <div style="margin-top: 8px; font-size: 11.5px; color: #E2E8F0; font-family: monospace; background: rgba(0,0,0,0.3); padding: 6px 8px; border-radius: 4px;" id="resolveHoldCurrentAddressDisplay">
+            Universal Property Casualty Ins. Co., P.O. Box 9388
+          </div>
+        </div>
+
+        <input type="hidden" id="resolveHoldBldgId" />
+
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-platinum); margin-bottom: 5px;">
+              Verified Physical Street Address <span style="color: #EF4444;">*</span>
+            </label>
+            <input type="text" id="resolveAddressInput" placeholder="e.g. 1110 W Commercial Blvd" style="width: 100%; padding: 9px 12px; background: var(--bg-dark-3); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text-white); font-size: 13px;" />
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Enter the exact commercial street number and roadway. P.O. Boxes will be automatically flagged.</div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-platinum); margin-bottom: 5px;">
+                Law Firm Suite / Floor / Unit
+              </label>
+              <input type="text" id="resolveSuiteInput" placeholder="e.g. Suite 300, 3rd Floor" style="width: 100%; padding: 9px 12px; background: var(--bg-dark-3); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text-white); font-size: 13px;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-platinum); margin-bottom: 5px;">
+                City <span style="color: #EF4444;">*</span>
+              </label>
+              <input type="text" id="resolveCityInput" placeholder="e.g. Fort Lauderdale" style="width: 100%; padding: 9px 12px; background: var(--bg-dark-3); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text-white); font-size: 13px;" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-platinum); margin-bottom: 5px;">
+                Building / Complex Name (Optional)
+              </label>
+              <input type="text" id="resolveBuildingNameInput" placeholder="e.g. Universal Corporate Center" style="width: 100%; padding: 9px 12px; background: var(--bg-dark-3); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text-white); font-size: 13px;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-platinum); margin-bottom: 5px;">
+                State
+              </label>
+              <input type="text" id="resolveStateInput" value="FL" style="width: 100%; padding: 9px 12px; background: var(--bg-dark-3); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text-white); font-size: 13px;" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-platinum); margin-bottom: 5px;">
+                🚗 Parking &amp; Facility Logistics
+              </label>
+              <input type="text" id="resolveParkingInput" placeholder="e.g. Multi-level visitor parking garage on west side" style="width: 100%; padding: 8px 12px; background: var(--bg-dark-3); border: 1px solid var(--border); border-radius: 6px; color: var(--text-white); font-size: 12px;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-platinum); margin-bottom: 5px;">
+                🛡️ Lobby Security &amp; Access Notes
+              </label>
+              <input type="text" id="resolveSecurityInput" placeholder="e.g. Front desk security check-in; elevators require badge" style="width: 100%; padding: 8px 12px; background: var(--bg-dark-3); border: 1px solid var(--border); border-radius: 6px; color: var(--text-white); font-size: 12px;" />
+            </div>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-platinum); margin-bottom: 5px;">
+              Courier Dispatch Status After Resolution
+            </label>
+            <select id="resolveStatusSelect" style="width: 100%; padding: 9px 12px; background: var(--bg-dark-3); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text-white); font-size: 13px;">
+              <option value="Ready for Drop" selected>Ready for Drop (Release hold immediately and activate on courier map)</option>
+              <option value="Hold">Keep on Hold (Save updated address but keep pending further field verification)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="padding: 14px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: flex-end; gap: 10px; background: var(--bg-dark-2);">
+        <button class="btn-export" onclick="closeResolveHoldModal()">Cancel</button>
+        <button class="btn-primary" id="resolveHoldSubmitBtn" style="background: #16A34A; color: white; border: none; font-weight: 700; padding: 8px 18px; border-radius: 6px; font-size: 12.5px; cursor: pointer; display: flex; align-items: center; gap: 6px;" onclick="submitResolveHold()">
+          <span>✓ Verify Address &amp; Release Hold</span>
+        </button>
       </div>
     </div>
   </div>

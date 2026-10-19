@@ -1778,15 +1778,26 @@ table.data-table {
   pointer-events: auto;
 }
 
-#dossierModal,
-#buildingDossierModal,
-#weightsControlModal,
-#dropFeedbackModal {
+#buildingDossierModal {
   z-index: 1400 !important;
 }
 
+#dossierModal {
+  z-index: 1600 !important;
+}
+
+#weightsControlModal,
+#dropFeedbackModal {
+  z-index: 1700 !important;
+}
+
+#resolveHoldModal {
+  z-index: 1800 !important;
+}
+
 #weightsControlModal.open,
-#dropFeedbackModal.open {
+#dropFeedbackModal.open,
+#resolveHoldModal.open {
   opacity: 1 !important;
   pointer-events: auto !important;
   display: flex !important;
@@ -1805,6 +1816,11 @@ table.data-table {
 #buildingDossierModal .modal-box {
   width: min(96vw, 1240px) !important;
   max-height: 92vh !important;
+}
+
+#resolveHoldModal .modal-box {
+  width: min(92vw, 680px) !important;
+  max-height: 90vh !important;
 }
 
 .walkable-group {

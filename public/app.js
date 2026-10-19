@@ -1386,9 +1386,12 @@ function renderHoldsTable(buildings) {
       <td style="font-size:12px;color:var(--text-sub);">${escapeHtml(b.address || 'Address unlisted')}</td>
       <td><span class="badge badge-neutral">${b.active_trials || 1} active ${(b.active_trials || 1) === 1 ? 'matter' : 'matters'}</span></td>
       <td><span class="badge badge-amber" style="font-size:10.5px;">${escapeHtml(reason)}</span></td>
-      <td>
+      <td style="white-space:nowrap;">
+        <button class="btn-primary" style="font-size:11px;padding:4px 10px;background:#B91C1C;color:#fff;font-weight:600;border:none;border-radius:4px;cursor:pointer;margin-right:6px;" onclick="event.stopPropagation();openResolveHoldModal('${escapeHtml(b.building_id)}')">
+          🔧 Resolve Hold
+        </button>
         <button class="btn-export" style="font-size:11px;padding:4px 10px;" onclick="event.stopPropagation();openBuildingDossier('${escapeHtml(b.building_id)}')">
-          Inspect Location
+          Inspect
         </button>
       </td>
     `;
@@ -3294,9 +3297,12 @@ function renderDrawerTable(rows, key) {
         <td><span class="badge-tag">${escapeHtml(b.city || 'Florida')}</span></td>
         <td class="cell-mono">${b.attorneys_count || 1}</td>
         <td><span class="badge-priority badge-priority-high">${escapeHtml(reason)}</span></td>
-        <td>
+        <td style="white-space:nowrap;">
+          <button class="btn-primary" style="font-size:11px;padding:4px 10px;background:#B91C1C;color:#fff;font-weight:600;border:none;border-radius:4px;cursor:pointer;margin-right:6px;" onclick="event.stopPropagation();openResolveHoldModal('${escapeHtml(b.building_id)}')">
+            🔧 Resolve Hold
+          </button>
           <button class="btn-export" style="font-size:11px;padding:4px 10px;" onclick="event.stopPropagation();openBuildingDossier('${escapeHtml(b.building_id)}')">
-            Inspect Location
+            Inspect
           </button>
         </td>
       `;
@@ -3815,13 +3821,18 @@ async function openDossier(caseId) {
       ${integrationsCard}
     `;
     document.getElementById('dossierModal').classList.add('open');
+    const modalBox = document.querySelector('#dossierModal .modal-box');
+    if (modalBox) modalBox.scrollTop = 0;
   } catch (err) {
     console.error('Error opening dossier:', err);
   }
 }
 
 function closeDossier(e) {
-  if (e && e.target !== document.getElementById('dossierModal') && !e.target.closest('.close-btn')) return;
+  if (e) {
+    if (e.target !== document.getElementById('dossierModal') && !e.target.closest('.close-btn')) return;
+    e.stopPropagation();
+  }
   document.getElementById('dossierModal').classList.remove('open');
 }
 
@@ -3961,6 +3972,32 @@ async function openBuildingDossier(buildingId) {
     // Clear search input
     const searchInput = document.getElementById('bldgSearchInput');
     if (searchInput) searchInput.value = '';
+
+    // Check if building is currently on hold or has PO Box
+    const isHold = !b.geocoded || !b.is_precise || !b.lat || !b.lng || b.runner_status === 'Hold';
+    const isPoBox = /p\.?o\.?\s*box/i.test(b.address || '');
+    const holdBanner = document.getElementById('bldgModalHoldBanner');
+    const headerResolveBtn = document.getElementById('bldgHeaderResolveBtn');
+    const holdReasonEl = document.getElementById('bldgModalHoldReason');
+
+    if (isHold || isPoBox) {
+      if (holdBanner) holdBanner.style.display = 'flex';
+      if (headerResolveBtn) headerResolveBtn.style.display = 'inline-flex';
+      if (holdReasonEl) {
+        if (isPoBox) {
+          holdReasonEl.innerText = 'P.O. Box address detected. Hand deliveries require a verified commercial law office street address and suite.';
+        } else if (!b.geocoded) {
+          holdReasonEl.innerText = 'GPS rooftop coordinates unresolved. Address verification required for runner dispatch.';
+        } else if (b.runner_status === 'Hold') {
+          holdReasonEl.innerText = 'Administrative dispatch hold placed on this facility.';
+        } else {
+          holdReasonEl.innerText = 'Imprecise facility coordinates. Physical suite verification required.';
+        }
+      }
+    } else {
+      if (holdBanner) holdBanner.style.display = 'none';
+      if (headerResolveBtn) headerResolveBtn.style.display = 'none';
+    }
 
     renderBuildingAttorneysTable(currentBuildingActiveCases);
 
@@ -4128,6 +4165,176 @@ function downloadBuildingCsv() {
 function closeBuildingDossier(e) {
   if (e && e.target !== document.getElementById('buildingDossierModal') && !e.target.closest('.close-btn')) return;
   document.getElementById('buildingDossierModal').classList.remove('open');
+}
+
+// ----------------- DELIVERY DATA HOLD RESOLUTION ----------------- //
+
+function openResolveHoldModal(buildingId) {
+  if (!buildingId) return;
+  const b = (fullBuildingsCache || []).find(x => x.building_id === buildingId) || currentBuildingData;
+  if (!b) return showToast('Building details not found.');
+
+  const bldgIdInput = document.getElementById('resolveHoldBldgId');
+  if (bldgIdInput) bldgIdInput.value = b.building_id;
+
+  const titleEl = document.getElementById('resolveHoldTitle');
+  if (titleEl) titleEl.innerText = b.building_name || b.address || 'Commercial Building';
+
+  const curAddrEl = document.getElementById('resolveHoldCurrentAddressDisplay');
+  if (curAddrEl) curAddrEl.innerText = `${b.address || ''} · ${b.city || 'Florida'}`;
+
+  // Analyze hold reason
+  const addr = String(b.address || '').toLowerCase();
+  const issueTitle = document.getElementById('resolveHoldIssueTitle');
+  const issueDesc = document.getElementById('resolveHoldIssueDesc');
+
+  if (addr.includes('po box') || addr.includes('p.o. box')) {
+    if (issueTitle) issueTitle.innerText = 'P.O. Box Detected (Courier Ineligible)';
+    if (issueDesc) issueDesc.innerText = 'Courier hand deliveries require a verified physical commercial law office suite. Enter the firm\'s actual street address below.';
+  } else if (!b.geocoded) {
+    if (issueTitle) issueTitle.innerText = 'GPS Rooftop Unresolved';
+    if (issueDesc) issueDesc.innerText = 'OpenStreetMap/Photon could not automatically pinpoint this address. Verify or correct the street spelling.';
+  } else if (!b.is_precise) {
+    if (issueTitle) issueTitle.innerText = 'Facility Baseline Imprecise';
+    if (issueDesc) issueDesc.innerText = 'Coordinates are estimated based on regional baseline. Input verified physical address for rooftop precision.';
+  } else if (b.runner_status === 'Hold') {
+    if (issueTitle) issueTitle.innerText = 'Manual Dispatch Hold';
+    if (issueDesc) issueDesc.innerText = 'This building was manually put on hold. Confirm access notes and release when ready.';
+  }
+
+  // Pre-fill fields
+  let cleanStreet = b.address || '';
+  if (/p\.?o\.?\s*box/i.test(cleanStreet)) {
+    cleanStreet = cleanStreet.replace(/,\s*p\.?o\.?\s*box\s*[\w\d-]+/i, '').replace(/p\.?o\.?\s*box\s*[\w\d-]+/i, '').trim();
+    if (cleanStreet.toLowerCase().startsWith('universal property')) {
+      cleanStreet = '1110 W Commercial Blvd';
+    }
+  }
+  cleanStreet = cleanStreet.replace(/,\s*[A-Z]{2}$/i, '').replace(/,\s*(Fort Lauderdale|Miami|Tampa|Orlando|Jacksonville|West Palm Beach).*/i, '').trim();
+
+  const addrInput = document.getElementById('resolveAddressInput');
+  if (addrInput) addrInput.value = cleanStreet || '';
+
+  const suiteInput = document.getElementById('resolveSuiteInput');
+  if (suiteInput) suiteInput.value = b.suite || '';
+
+  const cityInput = document.getElementById('resolveCityInput');
+  if (cityInput) cityInput.value = b.city || 'Fort Lauderdale';
+
+  const stateInput = document.getElementById('resolveStateInput');
+  if (stateInput) stateInput.value = b.state || 'FL';
+
+  const nameInput = document.getElementById('resolveBuildingNameInput');
+  if (nameInput) nameInput.value = b.building_name || '';
+
+  const parkInput = document.getElementById('resolveParkingInput');
+  if (parkInput) parkInput.value = b.parking_notes || '';
+
+  const secInput = document.getElementById('resolveSecurityInput');
+  if (secInput) secInput.value = b.security_notes || '';
+
+  const statusSelect = document.getElementById('resolveStatusSelect');
+  if (statusSelect) statusSelect.value = 'Ready for Drop';
+
+  const modal = document.getElementById('resolveHoldModal');
+  if (modal) modal.classList.add('open');
+}
+
+function closeResolveHoldModal(e) {
+  if (e && e.target !== document.getElementById('resolveHoldModal') && !e.target.closest('.close-btn') && !e.target.closest('.btn-export')) return;
+  if (e) e.stopPropagation();
+  const modal = document.getElementById('resolveHoldModal');
+  if (modal) modal.classList.remove('open');
+}
+
+async function submitResolveHold() {
+  const bldgId = document.getElementById('resolveHoldBldgId')?.value;
+  if (!bldgId) return showToast('Building ID missing.');
+
+  const verifiedAddress = document.getElementById('resolveAddressInput')?.value.trim();
+  const suite = document.getElementById('resolveSuiteInput')?.value.trim();
+  const city = document.getElementById('resolveCityInput')?.value.trim();
+  const state = document.getElementById('resolveStateInput')?.value.trim() || 'FL';
+  const buildingName = document.getElementById('resolveBuildingNameInput')?.value.trim();
+  const parkingNotes = document.getElementById('resolveParkingInput')?.value.trim();
+  const securityNotes = document.getElementById('resolveSecurityInput')?.value.trim();
+  const runnerStatus = document.getElementById('resolveStatusSelect')?.value || 'Ready for Drop';
+
+  if (!verifiedAddress) {
+    return showToast('Please enter a verified physical street address.');
+  }
+  if (!city) {
+    return showToast('Please enter the city for this address.');
+  }
+
+  const btn = document.getElementById('resolveHoldSubmitBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = 'Verifying & Geocoding...';
+  }
+
+  try {
+    const res = await fetch(`/api/building/${encodeURIComponent(bldgId)}/resolve-hold`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        verified_address: verifiedAddress,
+        suite,
+        city,
+        state,
+        building_name: buildingName,
+        parking_notes: parkingNotes,
+        security_notes: securityNotes,
+        runner_status: runnerStatus
+      })
+    });
+
+    const data = await res.json();
+    if (!data.success || !data.building) {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✓ Verify Address &amp; Release Hold</span>';
+      }
+      return showToast(data.error || 'Failed to resolve hold.');
+    }
+
+    showToast('Delivery hold resolved! Building address verified and released for courier dispatch.');
+    closeResolveHoldModal();
+
+    // Update building in local cache
+    const updated = data.building;
+    const idx = (fullBuildingsCache || []).findIndex(b => b.building_id === bldgId);
+    if (idx !== -1) {
+      fullBuildingsCache[idx] = { ...fullBuildingsCache[idx], ...updated };
+    }
+
+    // Refresh Holds table and deliveries directory
+    renderHoldsTable(fullBuildingsCache);
+    renderDeliveriesDirectory(fullBuildingsCache);
+
+    // Update KPI count
+    const holdsList = (fullBuildingsCache || []).filter(b => !b.geocoded || !b.is_precise || !b.lat || !b.lng || b.runner_status === 'Hold');
+    const holdsEl = document.getElementById('kpiDelivHolds');
+    if (holdsEl) holdsEl.innerText = holdsList.length.toLocaleString();
+
+    // If Building Dossier Modal is open, refresh it
+    if (document.getElementById('buildingDossierModal')?.classList.contains('open') && currentBuildingData?.building_id === bldgId) {
+      openBuildingDossier(bldgId);
+    }
+
+    // If Universal Drill Drawer is open on holds, refresh it
+    if (document.getElementById('drawerBackdrop')?.classList.contains('open') && currentDrillKey === 'holds') {
+      openDrill('holds');
+    }
+  } catch (err) {
+    console.error('Error resolving hold:', err);
+    showToast('Failed to resolve hold: ' + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>✓ Verify Address &amp; Release Hold</span>';
+    }
+  }
 }
 
 function handleGlobalSearch(q) {

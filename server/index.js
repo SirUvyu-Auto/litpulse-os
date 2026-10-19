@@ -637,6 +637,21 @@ app.post('/api/building/:id/access', async (req, res) => {
   }
 });
 
+// Resolve Delivery Data Hold (update physical address, suite, geocode, and release hold)
+app.post('/api/building/:id/resolve-hold', async (req, res) => {
+  try {
+    const updated = await db.resolveBuildingHold(req.params.id, req.body);
+    if (!updated) return res.status(404).json({ success: false, error: 'Building not found' });
+    res.json({
+      success: true,
+      message: 'Delivery hold resolved successfully. Building address verified and released for courier dispatch.',
+      building: updated
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Export Building Outreach CSV
 app.get('/api/building/:id/export-csv', (req, res) => {
   try {

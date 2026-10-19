@@ -21,7 +21,8 @@ const {
   buildAttorneyEmail,
   buildAttorneyPhone,
   isProSeLitigant,
-  isGovernmentEntity
+  isGovernmentEntity,
+  FLORIDA_VENUE_COORDINATES
 } = require('./normalizer');
 const geocoder = require('./geocoder');
 const parkingService = require('./parkingService');
@@ -2408,6 +2409,92 @@ class DataStore {
       facility_source: 'Courier Field Override'
     });
     parkingService.saveCache();
+    this.save();
+    return b;
+  }
+
+  async resolveBuildingHold(buildingId, updateData) {
+    const b = (this.data.buildings || []).find(x => x.building_id === buildingId);
+    if (!b) return null;
+
+    const {
+      verified_address,
+      suite,
+      city,
+      state,
+      building_name,
+      runner_status,
+      parking_notes,
+      security_notes,
+      lat,
+      lng
+    } = updateData || {};
+
+    if (verified_address) {
+      let finalAddr = String(verified_address).trim();
+      if (suite && !finalAddr.toLowerCase().includes(String(suite).trim().toLowerCase())) {
+        finalAddr = `${finalAddr}, ${String(suite).trim()}`;
+      }
+      b.address = finalAddr;
+    }
+    if (suite) b.suite = String(suite).trim();
+    if (city) b.city = String(city).trim();
+    if (state) b.state = String(state).trim();
+    if (building_name) b.building_name = String(building_name).trim();
+    if (parking_notes !== undefined && parking_notes !== null) b.parking_notes = String(parking_notes).trim();
+    if (security_notes !== undefined && security_notes !== null) b.security_notes = String(security_notes).trim();
+
+    // Geocode the verified address
+    let resolvedCoords = null;
+    if (typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng)) {
+      resolvedCoords = { lat, lng, is_precise: true, source: 'Manual Coordinates' };
+    } else {
+      try {
+        resolvedCoords = await geocoder.geocodeAddress(b.address, b.city, b.state || 'FL');
+      } catch (e) {
+        console.warn(`[ResolveHold] Geocode error for ${b.address}:`, e.message);
+      }
+    }
+
+    if (resolvedCoords) {
+      b.lat = resolvedCoords.lat;
+      b.lng = resolvedCoords.lng;
+      b.is_precise = true;
+      b.geocoded = true;
+      b.facility_source = resolvedCoords.source ? `Verified (${resolvedCoords.source})` : 'Verified Rooftop GPS';
+    } else {
+      // If address now has a valid street number and no PO box, assign city baseline and mark verified
+      const hasStreet = /\b\d{1,6}\s+/.test(b.address) && !/p\.?o\.?\s*box/i.test(b.address);
+      if (hasStreet) {
+        const base = FLORIDA_VENUE_COORDINATES[b.city] || FLORIDA_VENUE_COORDINATES['Miami'];
+        if (!b.lat || !b.lng) {
+          b.lat = base.lat;
+          b.lng = base.lng;
+        }
+        b.is_precise = true;
+        b.geocoded = true;
+        b.facility_source = 'Verified Physical Street Address';
+      }
+    }
+
+    b.runner_status = runner_status || 'Ready for Drop';
+    b.hold_resolved_at = new Date().toISOString();
+    b.hold_resolved_by = 'Dispatcher Override';
+
+    // Propagate verified address to all matching cases so attorney records reflect the deliverable location
+    if (b.address && Array.isArray(this.data.cases)) {
+      this.data.cases.forEach(c => {
+        if (c.building_id === buildingId) {
+          c.address = b.address;
+          if (b.city) {
+            c.city = b.city;
+            c.firm_city = b.city;
+          }
+        }
+      });
+    }
+
+    this.rebuildBuildingIndex();
     this.save();
     return b;
   }

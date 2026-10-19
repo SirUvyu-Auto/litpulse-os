@@ -1,6 +1,6 @@
 // TRIS: Lit&More Trial Revenue Intelligence System
 
-let activePage = 'deliveries';
+let activePage = 'overview';
 let activeDeliveriesSubtab = 'clusters';
 let activeOutreachCategory = 'all';
 let activeOutreachSide = 'all';
@@ -10,12 +10,16 @@ let fullCasesCache = [];
 let fullBuildingsCache = [];
 let drillDataCache = [];
 
-// Universal Operating Jurisdiction State
-let activeJurisdictionState = localStorage.getItem('litpulse_active_state') || 'ALL';
+// Universal Operating Jurisdiction State (Multi-Select, default: Florida)
+let selectedStates = ['FL'];
+let availableStatesData = [];
+let nationalSummaryData = null;
 
 function getStateParam(prefix = '?') {
-  if (!activeJurisdictionState || activeJurisdictionState === 'ALL') return '';
-  return `${prefix}state=${encodeURIComponent(activeJurisdictionState)}`;
+  if (!selectedStates || !selectedStates.length || selectedStates.includes('ALL')) {
+    return `${prefix}state=ALL`;
+  }
+  return `${prefix}state=${encodeURIComponent(selectedStates.join(','))}`;
 }
 
 const STATE_VIEWPORTS = {
@@ -27,50 +31,187 @@ const STATE_VIEWPORTS = {
   CA: { center: [36.7, -119.4], zoom: 6 }
 };
 
+function getStateIcon(code) {
+  const map = {
+    FL: '🌴',
+    GA: '🍑',
+    TX: '⭐️',
+    NY: '🗽',
+    CA: '🌉',
+    IL: '🏙️',
+    PA: '🔔',
+    OH: '🌰',
+    NC: '🌲',
+    VA: '🏛️'
+  };
+  return map[code] || '🏛️';
+}
+
+function toggleStateScopeDropdown(e) {
+  if (e) e.stopPropagation();
+  const dropdown = document.getElementById('stateScopeDropdown');
+  const trigger = document.getElementById('stateScopeTrigger');
+  if (!dropdown) return;
+  const isCurrentlyOpen = dropdown.style.display === 'block';
+  if (isCurrentlyOpen) {
+    dropdown.style.display = 'none';
+    trigger?.classList.remove('open');
+  } else {
+    dropdown.style.display = 'block';
+    trigger?.classList.add('open');
+  }
+}
+
+function closeStateScopeDropdown() {
+  const dropdown = document.getElementById('stateScopeDropdown');
+  const trigger = document.getElementById('stateScopeTrigger');
+  if (dropdown) dropdown.style.display = 'none';
+  if (trigger) trigger.classList.remove('open');
+}
+
+document.addEventListener('click', (e) => {
+  const container = document.getElementById('stateScopeContainer');
+  if (container && !container.contains(e.target)) {
+    closeStateScopeDropdown();
+  }
+});
+
 async function loadAvailableStates() {
   try {
     const res = await fetch('/api/states');
     const data = await res.json();
     if (!data.success) return;
 
-    const selector = document.getElementById('globalStateSelector');
-    if (!selector) return;
+    nationalSummaryData = data.national || null;
+    availableStatesData = data.states || [];
 
-    selector.innerHTML = '';
-
-    // National Option
-    const natOpt = document.createElement('option');
-    natOpt.value = 'ALL';
-    natOpt.textContent = `🇺🇸 National (${(data.national?.active_cases || 0).toLocaleString()} matters)`;
-    selector.appendChild(natOpt);
-
-    // States options
-    if (data.states && data.states.length) {
-      data.states.forEach(st => {
-        const opt = document.createElement('option');
-        opt.value = st.code;
-        const icon = st.code === 'FL' ? '🌴' : (st.code === 'GA' ? '🍑' : (st.code === 'TX' ? '⭐️' : (st.code === 'NY' ? '🗽' : '🏛️')));
-        opt.textContent = `${icon} ${st.name} (${st.active_cases.toLocaleString()} matters)`;
-        selector.appendChild(opt);
-      });
+    // Ensure default is Florida
+    if (!selectedStates || !selectedStates.length) {
+      selectedStates = ['FL'];
     }
 
-    // Set value if valid
-    const validValues = Array.from(selector.options).map(o => o.value);
-    if (validValues.includes(activeJurisdictionState)) {
-      selector.value = activeJurisdictionState;
-    } else {
-      activeJurisdictionState = validValues.includes('FL') ? 'FL' : 'ALL';
-      selector.value = activeJurisdictionState;
-    }
+    renderStateScopeDropdown();
+    updateStateScopeTriggerLabel();
   } catch (err) {
     console.error('Failed to load available states:', err);
   }
 }
 
-function onStateScopeChange(newVal) {
-  activeJurisdictionState = newVal || 'ALL';
-  localStorage.setItem('litpulse_active_state', activeJurisdictionState);
+function renderStateScopeDropdown() {
+  const optionsContainer = document.getElementById('stateScopeOptions');
+  if (!optionsContainer) return;
+
+  const isAllSelected = selectedStates.includes('ALL') ||
+    (availableStatesData.length > 0 && availableStatesData.every(st => selectedStates.includes(st.code)));
+
+  const nationalMatters = nationalSummaryData?.active_cases || 0;
+
+  let html = `
+    <div class="state-scope-item ${isAllSelected ? 'selected' : ''}" onclick="handleStateItemClick('ALL', event)">
+      <input type="checkbox" class="state-scope-checkbox" ${isAllSelected ? 'checked' : ''} onclick="event.stopPropagation(); handleStateItemClick('ALL', event)">
+      <div class="state-scope-item-body">
+        <span class="state-scope-item-name">🇺🇸 National (All States)</span>
+        <span class="state-scope-item-count">${nationalMatters.toLocaleString()}</span>
+      </div>
+    </div>
+  `;
+
+  availableStatesData.forEach(st => {
+    const isChecked = isAllSelected || selectedStates.includes(st.code);
+    const icon = getStateIcon(st.code);
+    html += `
+      <div class="state-scope-item ${isChecked ? 'selected' : ''}" onclick="handleStateItemClick('${escapeHtml(st.code)}', event)">
+        <input type="checkbox" class="state-scope-checkbox" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); handleStateItemClick('${escapeHtml(st.code)}', event)">
+        <div class="state-scope-item-body">
+          <span class="state-scope-item-name">${icon} ${escapeHtml(st.name)} (${escapeHtml(st.code)})</span>
+          <span class="state-scope-item-count">${(st.active_cases || 0).toLocaleString()}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  optionsContainer.innerHTML = html;
+}
+
+function updateStateScopeTriggerLabel() {
+  const labelEl = document.getElementById('stateScopeLabel');
+  if (!labelEl) return;
+
+  const isAllSelected = selectedStates.includes('ALL') ||
+    (availableStatesData.length > 0 && availableStatesData.every(st => selectedStates.includes(st.code)));
+
+  if (isAllSelected) {
+    const natCount = nationalSummaryData?.active_cases || 0;
+    labelEl.textContent = `🇺🇸 National (${natCount.toLocaleString()} matters)`;
+  } else if (selectedStates.length === 1) {
+    const code = selectedStates[0];
+    const st = availableStatesData.find(s => s.code === code);
+    const name = st ? st.name : code;
+    const count = st?.active_cases || 0;
+    labelEl.textContent = `${getStateIcon(code)} ${name} (${count.toLocaleString()} matters)`;
+  } else if (selectedStates.length > 1) {
+    const tags = selectedStates.map(c => `${getStateIcon(c)} ${c}`).join(', ');
+    labelEl.textContent = `${tags} (${selectedStates.length} states)`;
+  } else {
+    selectedStates = ['FL'];
+    const st = availableStatesData.find(s => s.code === 'FL');
+    const count = st?.active_cases || 0;
+    labelEl.textContent = `🌴 Florida (${count.toLocaleString()} matters)`;
+  }
+}
+
+function selectFloridaOnly(e) {
+  if (e) e.stopPropagation();
+  selectedStates = ['FL'];
+  renderStateScopeDropdown();
+  updateStateScopeTriggerLabel();
+  onStateScopeChange();
+}
+
+function selectAllStates(e) {
+  if (e) e.stopPropagation();
+  selectedStates = ['ALL'];
+  renderStateScopeDropdown();
+  updateStateScopeTriggerLabel();
+  onStateScopeChange();
+}
+
+function handleStateItemClick(code, e) {
+  if (e) e.stopPropagation();
+
+  if (code === 'ALL') {
+    const isAllSelected = selectedStates.includes('ALL') ||
+      (availableStatesData.length > 0 && availableStatesData.every(st => selectedStates.includes(st.code)));
+    if (isAllSelected) {
+      selectedStates = ['FL'];
+    } else {
+      selectedStates = ['ALL'];
+    }
+  } else {
+    if (selectedStates.includes('ALL')) {
+      selectedStates = availableStatesData.map(st => st.code);
+    }
+
+    if (selectedStates.includes(code)) {
+      selectedStates = selectedStates.filter(c => c !== code);
+      if (!selectedStates.length) {
+        selectedStates = ['FL'];
+      }
+    } else {
+      selectedStates.push(code);
+      if (availableStatesData.length > 0 && availableStatesData.every(st => selectedStates.includes(st.code))) {
+        selectedStates = ['ALL'];
+      }
+    }
+  }
+
+  renderStateScopeDropdown();
+  updateStateScopeTriggerLabel();
+  onStateScopeChange();
+}
+
+function onStateScopeChange() {
+  localStorage.setItem('litpulse_active_states', JSON.stringify(selectedStates));
 
   // Invalidate caches so fresh state-filtered data is retrieved
   cachedOutreachData = null;
@@ -87,7 +228,10 @@ function onStateScopeChange(newVal) {
     citySelect.innerHTML = '<option value="ALL">All Metro Cities</option>';
   }
 
-  showToast(`Jurisdiction set to: ${newVal === 'ALL' ? 'National (All States)' : newVal}`);
+  const label = selectedStates.includes('ALL')
+    ? 'National (All States)'
+    : (selectedStates.length === 1 ? (selectedStates[0] === 'FL' ? 'Florida' : selectedStates[0]) : `${selectedStates.length} states (${selectedStates.join(', ')})`);
+  showToast(`Operating jurisdiction: ${label}`);
 
   loadActiveCities();
   loadOverviewPage();
@@ -671,7 +815,8 @@ function renderClustersMap(buildings, targetCity = null, preserveView = false) {
   }
 
   if (!filteredBuildings.length) {
-    const vp = STATE_VIEWPORTS[activeJurisdictionState] || STATE_VIEWPORTS.FL;
+    const primaryState = (selectedStates && selectedStates.length === 1) ? selectedStates[0] : 'ALL';
+    const vp = STATE_VIEWPORTS[primaryState] || STATE_VIEWPORTS.FL;
     if (clusterLeafletMap) clusterLeafletMap.setView(vp.center, vp.zoom);
     return;
   }
@@ -4480,8 +4625,8 @@ function exportActiveCsv() {
     window: win
   });
 
-  if (activeJurisdictionState && activeJurisdictionState !== 'ALL') {
-    params.set('state', activeJurisdictionState);
+  if (selectedStates && selectedStates.length && !selectedStates.includes('ALL')) {
+    params.set('state', selectedStates.join(','));
   }
 
   showToast('Generating filtered CSV export...');
@@ -4675,7 +4820,7 @@ window.addEventListener('DOMContentLoaded', () => {
   loadAvailableStates();
   loadActiveCities();
 
-  navigateToPage('deliveries');
+  navigateToPage('overview');
   loadOverviewPage();
   loadAdminStats();
   prefetchAllTabs();

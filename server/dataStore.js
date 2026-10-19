@@ -1255,15 +1255,26 @@ class DataStore {
     };
   }
 
+  parseStateFilter(stateFilter) {
+    if (!stateFilter || stateFilter === 'ALL') return null;
+    if (Array.isArray(stateFilter)) {
+      const arr = stateFilter.map(s => String(s).trim().toUpperCase()).filter(s => s && s !== 'ALL');
+      return arr.length ? new Set(arr) : null;
+    }
+    const raw = decodeURIComponent(String(stateFilter));
+    const parts = raw.split(',').map(s => s.trim().toUpperCase()).filter(s => s && s !== 'ALL');
+    return parts.length ? new Set(parts) : null;
+  }
+
   getDashboardOverview(stateFilter = null) {
     const allTargets = this.getCases();
-    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
-    const scopedTargets = stateCode ? allTargets.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allTargets;
+    const stateSet = this.parseStateFilter(stateFilter);
+    const scopedTargets = stateSet ? allTargets.filter(c => stateSet.has((c.venue_state || 'FL').toUpperCase())) : allTargets;
     const activeTargets = scopedTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
     const historicalTargets = scopedTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
     
     const allBuildings = this.getBuildings();
-    const buildings = stateCode ? allBuildings.filter(b => (b.state || 'FL').toUpperCase() === stateCode) : allBuildings;
+    const buildings = stateSet ? allBuildings.filter(b => stateSet.has((b.state || 'FL').toUpperCase())) : allBuildings;
 
     // High priority active outreach: Priority score >= 45 (Red or Orange Tier)
     const highPriority = activeTargets.filter(c => (c.priority_score || 0) >= 45);
@@ -1328,9 +1339,14 @@ class DataStore {
       p90: Math.round(f.val * 1.3)
     }));
 
+    const stateStr = stateSet ? Array.from(stateSet).join(',') : 'ALL';
+    const stateName = stateSet
+      ? (stateSet.size === 1 ? (US_STATE_NAMES[Array.from(stateSet)[0]] || Array.from(stateSet)[0]) : `${stateSet.size} States (${Array.from(stateSet).join(', ')})`)
+      : 'National (All States)';
+
     return {
-      active_state: stateCode || 'ALL',
-      active_state_name: stateCode ? (US_STATE_NAMES[stateCode] || stateCode) : 'National (All States)',
+      active_state: stateStr,
+      active_state_name: stateName,
       totalCases: activeTargets.length,
       historicalCount: historicalTargets.length,
       kpis: {
@@ -1375,13 +1391,13 @@ class DataStore {
 
   getDrillData(key, stateFilter = null) {
     const allTargets = this.getCases();
-    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
-    const scopedTargets = stateCode ? allTargets.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allTargets;
+    const stateSet = this.parseStateFilter(stateFilter);
+    const scopedTargets = stateSet ? allTargets.filter(c => stateSet.has((c.venue_state || 'FL').toUpperCase())) : allTargets;
     const activeTargets = scopedTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
     const historicalTargets = scopedTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
     
     const allBuildings = this.getBuildings();
-    const buildings = stateCode ? allBuildings.filter(b => (b.state || 'FL').toUpperCase() === stateCode) : allBuildings;
+    const buildings = stateSet ? allBuildings.filter(b => stateSet.has((b.state || 'FL').toUpperCase())) : allBuildings;
 
     if (key === 'outreach') {
       return {
@@ -1464,8 +1480,8 @@ class DataStore {
 
   getJudgeAnalytics(stateFilter = null) {
     const allCases = this.getCases();
-    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
-    const cases = stateCode ? allCases.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allCases;
+    const stateSet = this.parseStateFilter(stateFilter);
+    const cases = stateSet ? allCases.filter(c => stateSet.has((c.venue_state || 'FL').toUpperCase())) : allCases;
     const judgeMap = new Map();
 
     cases.forEach(c => {
@@ -1512,8 +1528,8 @@ class DataStore {
 
   getActiveCities(stateFilter = null) {
     const allCases = this.getCases();
-    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
-    const cases = stateCode ? allCases.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allCases;
+    const stateSet = this.parseStateFilter(stateFilter);
+    const cases = stateSet ? allCases.filter(c => stateSet.has((c.venue_state || 'FL').toUpperCase())) : allCases;
     const cityMap = {};
     let totalActive = 0;
     cases.forEach(c => {
@@ -1531,7 +1547,7 @@ class DataStore {
       .map(([city, count]) => ({ city, count }))
       .sort((a, b) => b.count - a.count);
 
-    return { totalActiveTrials: totalActive, cities, active_state: stateCode || 'ALL' };
+    return { totalActiveTrials: totalActive, cities, active_state: stateSet ? Array.from(stateSet).join(',') : 'ALL' };
   }
 
   getCase(id) {
@@ -1720,8 +1736,8 @@ class DataStore {
 
   getWalkableClusters(cityName = null, stateFilter = null) {
     const allBuildings = this.getBuildings();
-    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
-    const scoped = stateCode ? allBuildings.filter(b => (b.state || 'FL').toUpperCase() === stateCode) : allBuildings;
+    const stateSet = this.parseStateFilter(stateFilter);
+    const scoped = stateSet ? allBuildings.filter(b => stateSet.has((b.state || 'FL').toUpperCase())) : allBuildings;
     const buildings = cityName && cityName !== 'ALL'
       ? scoped.filter(b => b.city && b.city.toLowerCase() === cityName.toLowerCase())
       : scoped;
@@ -2284,8 +2300,8 @@ class DataStore {
 
   getTrialTendency(minClosed = 3, stateFilter = null) {
     const allCases = this.getCases();
-    const stateCode = stateFilter && stateFilter !== 'ALL' ? stateFilter.trim().toUpperCase() : null;
-    const cases = stateCode ? allCases.filter(c => (c.venue_state || 'FL').toUpperCase() === stateCode) : allCases;
+    const stateSet = this.parseStateFilter(stateFilter);
+    const cases = stateSet ? allCases.filter(c => stateSet.has((c.venue_state || 'FL').toUpperCase())) : allCases;
     const firmMap = new Map();
 
     const cleanFirmDisplay = (rawFirm) => {

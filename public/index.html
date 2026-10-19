@@ -16,14 +16,20 @@
 <body>
   <div class="bg-glow"></div>
 
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
+
   <!-- Left Sidebar (Artifact Layout) -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="mainSidebar">
     <div class="brand">
       <div class="brand-monogram">T</div>
-      <div>
+      <div style="flex:1;">
         <div class="brand-text">TRIS</div>
         <div class="brand-sub">Lit&amp;More Intelligence</div>
       </div>
+      <button type="button" class="sidebar-mobile-close" onclick="closeMobileSidebar()" aria-label="Close Navigation">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
     </div>
 
     <nav class="nav">
@@ -118,7 +124,14 @@
   <main class="main">
     <!-- Topbar (Artifact Style, Clean) -->
     <header class="topbar">
-      <div>
+      <button type="button" class="mobile-nav-toggle" id="mobileNavToggle" onclick="toggleMobileSidebar()" aria-label="Open Navigation">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="topbar-title-wrap">
         <div class="page-title" id="topTitle">Overview</div>
         <div class="page-crumbs" id="topCrumbs">Overview / Executive Summary / Litigation Pulse</div>
       </div>

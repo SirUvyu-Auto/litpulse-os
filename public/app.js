@@ -300,9 +300,33 @@ function handleLockedNavMore() {
   // Retained in place as unresponsive
 }
 
+// Mobile Sidebar Drawer Handlers
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('mainSidebar') || document.querySelector('.sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  if (!sidebar) return;
+  const isOpen = sidebar.classList.contains('open');
+  if (isOpen) {
+    closeMobileSidebar();
+  } else {
+    sidebar.classList.add('open');
+    backdrop?.classList.add('open');
+  }
+}
+
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('mainSidebar') || document.querySelector('.sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  sidebar?.classList.remove('open');
+  backdrop?.classList.remove('open');
+}
+
 // Navigation between Sidebar Pages
 function navigateToPage(pageKey) {
   activePage = pageKey;
+
+  // Auto-close mobile drawer on navigation
+  closeMobileSidebar();
 
   // Update Sidebar
   document.querySelectorAll('.sidebar .nav-item').forEach(el => {

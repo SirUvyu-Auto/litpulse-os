@@ -1,0 +1,108 @@
+{
+  "version": "1.2.0",
+  "system": "LitPulse OS / LitnMore Enterprise Pipeline",
+  "last_updated": "2026-10-21",
+  "governance_standard": "CP-ARCH-001 Section V.4 Non-Destructive Filtering",
+  "rules": {
+    "category_1_permanent_government": {
+      "action": "PERMANENT_EXCLUSION",
+      "description": "Excludes genuine sovereign entities (salaried government attorneys with zero commercial print budgets).",
+      "email_domains": [
+        "usdoj.gov",
+        "usa.doj.gov",
+        "sec.gov",
+        "ftc.gov",
+        "irs.gov",
+        "eeoc.gov",
+        "fd.org",
+        "myfloridalegal.com",
+        "miamidade.gov",
+        "broward.org",
+        "tampa.gov",
+        "orlando.gov",
+        "talgov.com",
+        "sa13.org"
+      ],
+      "entity_keywords": [
+        "department of justice",
+        "united states attorney",
+        "usao",
+        "securities and exchange commission",
+        "federal trade commission",
+        "equal employment opportunity commission",
+        "state attorney",
+        "public defender",
+        "city attorney",
+        "county attorney"
+      ]
+    },
+    "category_4_suffix_standardization": {
+      "action": "AUTO_STANDARDIZE_AND_DELIVER",
+      "description": "Never drops leads missing a standard street suffix. Auto-standardizes abbreviations and recognizes iconic thoroughfares.",
+      "auto_suffix_expansions": {
+        "150 West Jefferson": "150 West Jefferson Ave",
+        "150 W Jefferson": "150 W Jefferson Ave",
+        "910 Louisiana": "910 Louisiana St",
+        "201 E Las Olas": "201 E Las Olas Blvd",
+        "201 E. Las Olas": "201 E Las Olas Blvd",
+        "2625 Stonewood Pk Lp": "2625 Stonewood Park Loop",
+        "Stonewood Pk Lp": "Stonewood Park Loop"
+      },
+      "suffix_free_thoroughfares": [
+        "Miracle Mile",
+        "Las Olas",
+        "The Embarcadero",
+        "Broadway",
+        "Avenue of the Americas"
+      ]
+    },
+    "category_6_accredited_commercial_buildings": {
+      "action": "WHITELIST_COMMERCIAL_PRIVATE_TENANT",
+      "description": "Private law firms located in legal office towers named after proximity to courthouses are recognized as private commercial offices, never government entities.",
+      "accredited_buildings": [
+        {
+          "name": "Courthouse Tower",
+          "street_address": "44 West Flagler Street",
+          "city": "Miami",
+          "state": "FL",
+          "zip": "33130",
+          "type": "Commercial Office Tower",
+          "status": "Accredited Commercial Private Tenant Hub"
+        },
+        {
+          "name": "Courthouse Plaza",
+          "type": "Commercial Office Complex",
+          "status": "Accredited Commercial Private Tenant Hub"
+        },
+        {
+          "name": "Courthouse Square",
+          "type": "Commercial Office Complex",
+          "status": "Accredited Commercial Private Tenant Hub"
+        },
+        {
+          "name": "Courthouse Center",
+          "type": "Commercial Office Complex",
+          "status": "Accredited Commercial Private Tenant Hub"
+        },
+        {
+          "name": "Turnberry Plaza",
+          "street_address": "2875 NE 191st St",
+          "city": "Aventura",
+          "state": "FL",
+          "zip": "33180",
+          "type": "Commercial Office Tower",
+          "status": "Accredited Commercial Private Tenant Hub"
+        },
+        {
+          "name": "Museum Tower",
+          "street_address": "150 W Flagler St",
+          "city": "Miami",
+          "state": "FL",
+          "zip": "33130",
+          "type": "Commercial Office Tower",
+          "status": "Accredited Commercial Private Tenant Hub"
+        }
+      ]
+    }
+  }
+}

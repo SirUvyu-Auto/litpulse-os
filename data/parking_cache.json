@@ -2883,5 +2883,60 @@
     "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
     "security_notes": "Standard office reception check-in required.",
     "facility_source": "Suburban Office Baseline"
+  },
+  "chicago-555 w adams st chicago chicago il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "flushing-68 29 main st flushing ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "richmond-919 east main st richmond richmond va": {
+    "parking_notes": "Attached / adjacent multi-level garage (Cary & 14th Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "costa mesa-600 anton blvd costa mesa costa mesa ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "aliso viejo-209 las aliso viejo aliso viejo ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "uniondale-333 earle ovington blvd uniondale uniondale ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "austin-7320 n mopac expressway austin austin tx": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "plano-5801 tennyson pkwy plano plano tx": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "scottsdale-8095 n 85th way scottsdale scottsdale az": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "san jose-12276 san jose blvd jacskonville san jose fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "charlotte-225 east worthington ave charlotte charlotte nc": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
   }
 }

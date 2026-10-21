@@ -3430,7 +3430,25 @@ async function handleFileSelected(files) {
     const result = await res.json();
     if (result.success) {
       showToast(`Success: ${result.message}`);
+      await loadAvailableStates();
       await refreshAllData();
+
+      // If newly ingested cases belong to a state not currently in selectedStates, auto-include it
+      if (result.detectedStates && result.detectedStates.length) {
+        let changed = false;
+        result.detectedStates.forEach(st => {
+          if (st && st !== 'ALL' && !selectedStates.includes(st)) {
+            selectedStates.push(st);
+            changed = true;
+          }
+        });
+        if (changed) {
+          localStorage.setItem('litpulse_active_states', JSON.stringify(selectedStates));
+          updateStateScopeTriggerLabel();
+          renderStateScopeDropdown();
+          onStateScopeChange();
+        }
+      }
     } else {
       alert(`Ingestion error: ${result.error}`);
     }
@@ -3466,6 +3484,7 @@ async function clearAllDataPrompt() {
 }
 
 async function refreshAllData() {
+  await loadAvailableStates();
   await loadAdminStats();
   await loadDeliveriesPage();
   await loadOverviewPage();

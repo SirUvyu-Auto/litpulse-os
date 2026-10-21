@@ -22,6 +22,8 @@ const {
   buildAttorneyPhone,
   isProSeLitigant,
   isGovernmentEntity,
+  classifyAddressDeliverability,
+  ACCREDITED_COMMERCIAL_LEGAL_BUILDINGS,
   FLORIDA_VENUE_COORDINATES
 } = require('./normalizer');
 const geocoder = require('./geocoder');
@@ -75,7 +77,11 @@ const KNOWN_STATE_CITIES = {
   // New York
   'new york': 'NY', manhattan: 'NY', brooklyn: 'NY', albany: 'NY', buffalo: 'NY',
   // California
-  'los angeles': 'CA', 'san francisco': 'CA', 'san diego': 'CA', sacramento: 'CA'
+  'los angeles': 'CA', 'san francisco': 'CA', 'san diego': 'CA', sacramento: 'CA',
+  'san jose': 'CA', oakland: 'CA', fresno: 'CA', 'santa ana': 'CA', riverside: 'CA',
+  irvine: 'CA', 'beverly hills': 'CA', 'century city': 'CA', pasadena: 'CA', glendale: 'CA',
+  'long beach': 'CA', bakersfield: 'CA', anaheim: 'CA', 'santa monica': 'CA', 'newport beach': 'CA',
+  'palo alto': 'CA', 'mountain view': 'CA', sunnyvale: 'CA', 'redwood city': 'CA', 'san mateo': 'CA'
 };
 
 function deriveVenueState(city, court, division) {
@@ -83,6 +89,9 @@ function deriveVenueState(city, court, division) {
   if (KNOWN_STATE_CITIES[cleanCity]) return KNOWN_STATE_CITIES[cleanCity];
 
   const fullStr = `${court || ''} ${division || ''} ${city || ''}`.toUpperCase();
+  if (/\b(CALIFORNIA|CAL|C\.D\.\s*CAL|N\.D\.\s*CAL|S\.D\.\s*CAL|E\.D\.\s*CAL)\b/i.test(fullStr)) {
+    return 'CA';
+  }
   const match = fullStr.match(/\b([A-Z]{2})\b/);
   if (match && US_STATE_NAMES[match[1]]) {
     return match[1];
@@ -678,7 +687,8 @@ function classifyDeliveryStatus(c, hasDeliveryEvent = false) {
   if (hasDeliveryEvent || c.outreach_status === 'downloaded') {
     return 'delivered';
   }
-  const hasAddr = c.address && c.address.trim() && !c.address.toLowerCase().includes('unknown');
+  const delivCheck = classifyAddressDeliverability(c.address);
+  const hasAddr = delivCheck.isDeliverable;
   const hasAtty = c.lead_attorney && c.lead_attorney.trim() && !c.lead_attorney.toLowerCase().includes('unknown');
   const hasFirm = c.firm && c.firm.trim() && !c.firm.toLowerCase().includes('unknown');
   const hasContact = (c.email && c.email.includes('@')) || (c.phone && c.phone.trim().length >= 7);
@@ -820,12 +830,21 @@ class DataStore {
         if (c.case_id) proSeCaseIds.add(c.case_id);
       }
 
+      if (c.address) {
+        c.address = standardizeAddress(c.address, c.trial_city || c.city);
+      }
+
       const gov = isGovernmentEntity(c.lead_attorney, c.firm, c.email, c.address, c.caption);
       c.is_government = gov.isGovernment;
       if (gov.isGovernment) {
         c.is_excluded = true;
         c.exclusion_code = gov.exclusion_code;
         c.exclusion_reason = gov.reason;
+      } else if (c.exclusion_code && (c.exclusion_code.startsWith('EXCL_GOV_') || c.exclusion_code === 'EXCL_ADDR_COURTHOUSE')) {
+        // Clear false positive government / courthouse exclusion
+        c.is_excluded = false;
+        c.exclusion_code = null;
+        c.exclusion_reason = null;
       } else if (!c.is_excluded) {
         c.is_excluded = false;
         c.exclusion_code = null;
@@ -1158,17 +1177,17 @@ class DataStore {
     if (sync) {
       if (this._saveTimer) clearTimeout(this._saveTimer);
       try {
-        fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf8');
+        fs.writeFileSync(DB_FILE, JSON.stringify(this.data), 'utf8');
       } catch (err) {
         console.error('Failed to save synchronous local backup database file:', err.message);
       }
       return;
     }
 
-    // 2. Local JSON backup (debounced non-blocking write to avoid event-loop stalls on 44MB file)
+    // 2. Local JSON backup (debounced non-blocking write to avoid event-loop stalls)
     if (this._saveTimer) clearTimeout(this._saveTimer);
     this._saveTimer = setTimeout(() => {
-      fs.promises.writeFile(DB_FILE, JSON.stringify(this.data, null, 2), 'utf8').catch(err => {
+      fs.promises.writeFile(DB_FILE, JSON.stringify(this.data), 'utf8').catch(err => {
         console.error('Failed to save local backup database file:', err.message);
       });
     }, 350);
@@ -1949,6 +1968,7 @@ class DataStore {
     
     const logId = `log-${Date.now()}`;
     let addedCount = 0;
+    const detectedStates = new Set();
     const existingMap = new Map(this.data.cases.map(c => [c.target_id || c.case_id, c]));
 
     newCases.forEach(nc => {
@@ -1996,6 +2016,7 @@ class DataStore {
 
       const trialCity = normalizeCity(nc.division, '', nc.division, nc.court, baseCaseId);
       const venueState = (nc.venue_state || nc.court_state || nc.trial_state || nc.state || deriveVenueState(trialCity, nc.court, nc.division) || 'FL').toUpperCase();
+      detectedStates.add(venueState);
 
       const commonFields = {
         case_id: baseCaseId,
@@ -2289,6 +2310,7 @@ class DataStore {
       source_type: fileType || 'Spreadsheet Upload'
     };
     this.data.ingestion_logs.unshift(log);
+    this._lastIngestedStates = Array.from(detectedStates);
 
     this.save();
 
@@ -2296,6 +2318,10 @@ class DataStore {
     this.startAutoGeocoding();
 
     return addedCount;
+  }
+
+  getLastIngestedStates() {
+    return this._lastIngestedStates || [];
   }
 
   getTrialTendency(minClosed = 3, stateFilter = null) {

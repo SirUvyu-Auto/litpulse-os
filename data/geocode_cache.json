@@ -8125,5 +8125,75 @@
     "is_precise": true,
     "source": "photon",
     "geocoded_at": "2026-10-16T15:22:26.472Z"
+  },
+  "chicago-555 w adams st chicago chicago il": {
+    "lat": 41.878939,
+    "lng": -87.641555,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:06:12.010Z"
+  },
+  "flushing-68 29 main st flushing ny": {
+    "lat": 40.732567,
+    "lng": -73.824476,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:06:15.626Z"
+  },
+  "richmond-919 east main st richmond richmond va": {
+    "lat": 37.534304,
+    "lng": -77.429415,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:06:16.765Z"
+  },
+  "costa mesa-600 anton blvd costa mesa costa mesa ca": {
+    "lat": 33.690752,
+    "lng": -117.881428,
+    "is_precise": true,
+    "source": "nominatim",
+    "geocoded_at": "2026-10-21T07:07:02.398Z"
+  },
+  "aliso viejo-209 las aliso viejo aliso viejo ca": {
+    "lat": 33.553105,
+    "lng": -117.723255,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:07:04.877Z"
+  },
+  "uniondale-333 earle ovington blvd uniondale uniondale ny": {
+    "lat": 40.72527,
+    "lng": -73.59374,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:07:38.928Z"
+  },
+  "austin-7320 n mopac expressway austin austin tx": {
+    "lat": 30.356068,
+    "lng": -97.74789,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:07:40.024Z"
+  },
+  "plano-5801 tennyson pkwy plano plano tx": {
+    "lat": 33.071796,
+    "lng": -96.820586,
+    "is_precise": true,
+    "source": "nominatim",
+    "geocoded_at": "2026-10-21T07:08:26.958Z"
+  },
+  "scottsdale-8095 n 85th way scottsdale scottsdale az": {
+    "lat": 33.66984,
+    "lng": -111.894851,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:09:04.034Z"
+  },
+  "san jose-12276 san jose blvd jacskonville san jose fl": {
+    "lat": 30.14692,
+    "lng": -81.635854,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:09:36.186Z"
   }
 }

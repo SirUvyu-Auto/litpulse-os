@@ -74,8 +74,29 @@ function mapRowToCase(rowObj, idx) {
 
   const caseId = getVal('caseid', 'docket', 'docketno', 'docketnumber', 'caseno', 'casenumber') || `dkt-${Date.now()}-${idx}`;
   const caption = getVal('caption', 'title', 'casetitle', 'casename', 'style', 'mattername') || 'Litigation Matter';
-  const court = getVal('court', 'courthouse', 'jurisdiction') || 'S.D. Fla.';
-  const division = getVal('division', 'city', 'branch', 'district') || 'Miami';
+
+  const rawState = getVal('venuestate', 'courtstate', 'trialstate', 'state', 'jurisdiction');
+  const rawCourt = getVal('court', 'courthouse', 'jurisdiction');
+  const rawDivision = getVal('division', 'city', 'branch', 'district');
+
+  // Detect State Context for appropriate Court and Division Defaults
+  const combinedContext = `${rawState} ${rawCourt} ${rawDivision}`.toLowerCase();
+  const isCalifornia = /^(ca|cal|california)$/i.test(rawState) || /california|\bcal\b|c\.d\.\s*cal|n\.d\.\s*cal|s\.d\.\s*cal|e\.d\.\s*cal/i.test(combinedContext) || /los angeles|san francisco|san diego|sacramento|san jose|oakland/i.test((rawDivision || '').toLowerCase());
+
+  let defaultCourt = 'S.D. Fla.';
+  let defaultDivision = 'Miami';
+  let defaultState = 'FL';
+
+  if (isCalifornia) {
+    defaultCourt = 'C.D. Cal.';
+    defaultDivision = 'Los Angeles';
+    defaultState = 'CA';
+  }
+
+  const court = rawCourt || defaultCourt;
+  const division = rawDivision || defaultDivision;
+  const venueState = rawState || defaultState;
+
   const judge = getVal('judge', 'presidingjudge', 'judgename', 'magistrate') || 'Honorable Judge';
   const nosLabel = getVal('noslabel', 'nos', 'natureofsuit', 'casetype', 'causeofaction') || 'Civil Litigation';
   const rawDate = getVal('trialdate', 'trialsetfor', 'jurytrialdate', 'hearingdate', 'date');
@@ -124,7 +145,6 @@ function mapRowToCase(rowObj, idx) {
   const outcome = getVal('outcome', 'caseoutcome', 'case_outcome', 'disposition', 'verdict', 'result', 'judgment') || '';
   const rawContactDate = getVal('lastcontactdate', 'lastcontact', 'contactdate', 'contactedat', 'lastvisit', 'visitdate', 'lasttouch', 'activitydate');
   const lastContactDate = parseTrialDate(rawContactDate) || '';
-  const rawState = getVal('venuestate', 'courtstate', 'trialstate', 'state', 'jurisdiction');
 
   return {
     case_id: caseId,
@@ -135,7 +155,7 @@ function mapRowToCase(rowObj, idx) {
     nos_label: nosLabel,
     trial_date: trialDate,
     est_value: estValue,
-    venue_state: rawState || '',
+    venue_state: venueState,
 
     // Plaintiff
     plaintiff_attorney: leadAttorney,
@@ -273,11 +293,18 @@ function parseExcel(filePath) {
         }
       }
 
+      const rawDktCourt = d.Court || d.court || '';
+      const rawDktDiv = d.Division || d.division || '';
+      const rawDktState = d.State || d.state || d.VenueState || d.venue_state || '';
+      const combinedDkt = `${rawDktCourt} ${rawDktDiv} ${rawDktState}`.toLowerCase();
+      const isDktCal = /^(ca|cal|california)$/i.test(rawDktState) || /california|\bcal\b|c\.d\.\s*cal|n\.d\.\s*cal|s\.d\.\s*cal|e\.d\.\s*cal/i.test(combinedDkt) || /los angeles|san francisco|san diego|sacramento|san jose|oakland/i.test(rawDktDiv.toLowerCase());
+
       const caseObj = {
         case_id: dkt,
         caption: d.Title || d.title || d.Caption || d.caption || 'Litigation Matter',
-        court: d.Court || d.court || 'S.D. Fla.',
-        division: d.Division || d.division || 'Miami',
+        court: rawDktCourt || (isDktCal ? 'C.D. Cal.' : 'S.D. Fla.'),
+        division: rawDktDiv || (isDktCal ? 'Los Angeles' : 'Miami'),
+        venue_state: rawDktState || (isDktCal ? 'CA' : 'FL'),
         judge: d.Judge || d.judge || 'Honorable Judge',
         nos_label: d['Nature of Suit / Type'] || d.NatureOfSuit || d.casetype || 'Civil Action',
         trial_date: trialDate || '2026-11-20',
@@ -288,7 +315,7 @@ function parseExcel(filePath) {
         plaintiff_phone: pltfAtty['Attorney Phone'] || pltfAtty.phone || '',
         plaintiff_email: pltfAtty['Attorney Email'] || pltfAtty.email || '',
         plaintiff_address: pltfAtty['Attorney Address'] || pltfAtty.address || '',
-        plaintiff_city: d.Division || 'Miami',
+        plaintiff_city: rawDktDiv || (isDktCal ? 'Los Angeles' : 'Miami'),
 
         // Defense Counsel & Address
         opposing_attorney: defAtty['Attorney Name'] || defAtty.attorney || '',
@@ -296,7 +323,7 @@ function parseExcel(filePath) {
         defense_phone: defAtty['Attorney Phone'] || defAtty.phone || '',
         defense_email: defAtty['Attorney Email'] || defAtty.email || '',
         defense_address: defAtty['Attorney Address'] || defAtty.address || '',
-        defense_city: d.Division || 'Miami'
+        defense_city: rawDktDiv || (isDktCal ? 'Los Angeles' : 'Miami')
       };
 
       parsedCases.push(mapRowToCase(caseObj, idx + 1));
@@ -364,11 +391,19 @@ app.post('/api/admin/upload', upload.single('file'), (req, res) => {
     }
 
     const insertedCount = db.addIngestedCases(parsedRows, req.file.originalname, ext === '.xlsx' || ext === '.xls' ? 'Excel Spreadsheet' : 'Court Docket CSV');
+    const detectedStates = db.getLastIngestedStates ? db.getLastIngestedStates() : [];
+
+    // Clean up temporary upload file to conserve ephemeral disk space
+    try {
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    } catch (_) {}
+
     res.json({
       success: true,
       message: `Successfully ingested and normalized ${insertedCount} litigation cases.`,
       recordsCount: insertedCount,
-      fileName: req.file.originalname
+      fileName: req.file.originalname,
+      detectedStates: detectedStates
     });
   } catch (err) {
     console.error('Ingestion error:', err);

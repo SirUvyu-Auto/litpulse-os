@@ -78,7 +78,13 @@ const CANONICAL_CITIES = [
   'St. Cloud', 'Stuart', 'Sunny Isles Beach', 'Sunrise', 'Surfside',
   'Tamarac', 'Tarpon Springs', 'Tavares', 'Titusville', 'Venice',
   'Vero Beach', 'Wellington', 'Wesley Chapel', 'West Melbourne',
-  'Winter Garden', 'Winter Haven', 'Winter Park', 'Winter Springs'
+  'Winter Garden', 'Winter Haven', 'Winter Park', 'Winter Springs',
+  // California Legal Hubs
+  'Los Angeles', 'San Francisco', 'San Diego', 'Sacramento', 'San Jose',
+  'Oakland', 'Fresno', 'Santa Ana', 'Riverside', 'Irvine', 'Beverly Hills',
+  'Century City', 'Pasadena', 'Glendale', 'Long Beach', 'Bakersfield',
+  'Anaheim', 'Santa Monica', 'Newport Beach', 'Palo Alto', 'Mountain View',
+  'Sunnyvale', 'Redwood City', 'San Mateo', 'Santa Barbara', 'Burbank'
 ];
 
 // 50 US States + DC
@@ -143,7 +149,24 @@ const CITY_ALIASES = {
   'ponte vedra': 'Ponte Vedra Beach',
   'saint augustine': 'St. Augustine',
   'st augustine': 'St. Augustine',
-  'st. augustine': 'St. Augustine'
+  'st. augustine': 'St. Augustine',
+  // California Aliases
+  'la': 'Los Angeles',
+  'l.a.': 'Los Angeles',
+  'los angeles': 'Los Angeles',
+  'sf': 'San Francisco',
+  's.f.': 'San Francisco',
+  'san fran': 'San Francisco',
+  'san francisco': 'San Francisco',
+  'sd': 'San Diego',
+  's.d.': 'San Diego',
+  'san diego': 'San Diego',
+  'sac': 'Sacramento',
+  'sacramento': 'Sacramento',
+  'sj': 'San Jose',
+  'san jose': 'San Jose',
+  'oak': 'Oakland',
+  'oakland': 'Oakland'
 };
 
 // Levenshtein distance calculation for typo tolerance
@@ -216,9 +239,15 @@ function normalizeCity(rawCity, rawAddress, fallbackDivision, courtStr, docketSt
     if (combined.includes('escambia') || combined.includes('first circuit') || combined.includes(' 1st')) return 'Pensacola';
     if (combined.includes('alachua') || combined.includes('eighth') || combined.includes(' 8th')) return 'Gainesville';
     if (combined.includes('marion') || combined.includes('fifth') || combined.includes(' 5th')) return 'Ocala';
+    // California Federal & State Court Divisions
+    if (combined.includes('c.d. cal') || combined.includes('central district of california') || combined.includes('los angeles') || combined.includes('santa ana') || combined.includes('riverside')) return 'Los Angeles';
+    if (combined.includes('n.d. cal') || combined.includes('northern district of california') || combined.includes('san francisco') || combined.includes('san jose') || combined.includes('oakland')) return 'San Francisco';
+    if (combined.includes('s.d. cal') || combined.includes('southern district of california') || combined.includes('san diego')) return 'San Diego';
+    if (combined.includes('e.d. cal') || combined.includes('eastern district of california') || combined.includes('sacramento') || combined.includes('fresno')) return 'Sacramento';
+    if (combined.includes('california') || combined.includes(' ca') || combined.includes('cal.')) return 'Los Angeles';
     if (fallbackDivision && CANONICAL_CITIES.includes(fallbackDivision)) return fallbackDivision;
     if (fallbackDivision && CITY_ALIASES[fallbackDivision.toLowerCase()]) return CITY_ALIASES[fallbackDivision.toLowerCase()];
-    return 'Miami';
+    return fallbackDivision || 'Miami';
   }
 
   const cleanLower = clean.toLowerCase();
@@ -303,12 +332,27 @@ function extractFirmCity(address, fallbackCity) {
 }
 
 // 5. Standardize Street Addresses
+const ACCREDITED_COMMERCIAL_LEGAL_BUILDINGS = [
+  'courthouse tower',
+  'courthouse plaza',
+  'courthouse square',
+  'courthouse center',
+  'one courthouse square',
+  'turnberry plaza',
+  'museum tower',
+  'justice building',
+  'law center'
+];
+
 function standardizeAddress(rawAddress, fallbackCity) {
   if (!rawAddress || typeof rawAddress !== 'string') return fallbackCity ? `${fallbackCity}, FL` : '';
   let addr = rawAddress.trim().replace(/\s+/g, ' ');
 
+  // Guard: if address is an accredited commercial office tower (e.g. Courthouse Tower), preserve it
+  const isAccreditedBldg = /\b(courthouse\s+tower|courthouse\s+plaza|turnberry\s+plaza|courthouse\s+square|museum\s+tower)\b/i.test(addr);
+
   // If address is an internal court division code, return fallback city
-  if (/^(cv-[a-z0-9]|div\s*\d+|section\s*\d+|[a-z]{1,2}:\s*circuit|central\s+courthouse|open|fm-|pr-|cr-|fc-|fx:|fz:|fa:|fh:|fi:)/i.test(addr)) {
+  if (!isAccreditedBldg && /^(cv-[a-z0-9]|div\s*\d+|section\s*\d+|[a-z]{1,2}:\s*circuit|central\s+courthouse\b|open|fm-|pr-|cr-|fc-|fx:|fz:|fa:|fh:|fi:)/i.test(addr)) {
     return fallbackCity ? `${fallbackCity}, FL` : '';
   }
 
@@ -337,6 +381,15 @@ function standardizeAddress(rawAddress, fallbackCity) {
   addr = addr.replace(/\b(parkway|pkwy\.?)\b/gi, 'Pkwy');
   addr = addr.replace(/\b(highway|hwy\.?)\b/gi, 'Hwy');
   addr = addr.replace(/\b(building|bldg\.?)\b/gi, 'Building');
+  addr = addr.replace(/\b(loop|lp\.?)\b/gi, 'Loop');
+
+  // Category 4 Fix: Standardize recognized streets missing suffixes & iconic thoroughfares
+  addr = addr.replace(/\b150\s+(w\.?|west)\s+jefferson\b(?!\s+(ave|avenue|st|street))/gi, '150 West Jefferson Ave');
+  addr = addr.replace(/\b910\s+louisiana\b(?!\s+(st|street|ave|avenue|blvd))/gi, '910 Louisiana St');
+  addr = addr.replace(/\b201\s+e\.?\s+las\s+olas\b(?!\s+(blvd|boulevard))/gi, '201 E Las Olas Blvd');
+  addr = addr.replace(/\b2625\s+stonewood\s+pk\s+(lp|loop)\b/gi, '2625 Stonewood Park Loop');
+  addr = addr.replace(/\b(\w+)\s+(pk|pkwy)\s+lp\b/gi, '$1 Park Loop');
+  addr = addr.replace(/\blas\s+olas\b(?!\s+(blvd|boulevard))/gi, 'Las Olas Blvd');
 
   // Standardize spelled-out ordinals for numbered streets (e.g. Second St -> 2nd St)
   addr = addr.replace(/\bfirst\b/gi, '1st');
@@ -363,6 +416,32 @@ function standardizeAddress(rawAddress, fallbackCity) {
   addr = addr.replace(/(^|\s)N\.W\.(\s|$)/gi, '$1NW$2');
 
   return addr.replace(/\s+/g, ' ').replace(/,\s*$/, '').trim();
+}
+
+function classifyAddressDeliverability(rawAddress) {
+  if (!rawAddress || typeof rawAddress !== 'string' || !rawAddress.trim()) {
+    return { isDeliverable: false, code: 'EXCL_ADDR_MISSING', category: 3, label: 'Missing address line' };
+  }
+  const clean = rawAddress.trim();
+  if (/^(unknown|n\/a|tbd|none)$/i.test(clean)) {
+    return { isDeliverable: false, code: 'EXCL_ADDR_MISSING', category: 3, label: 'Placeholder address' };
+  }
+  // Standalone PO Box without street
+  if (/^p\.?o\.?\s*box\s+\d+/i.test(clean) && !/\b(st|ave|blvd|rd|dr|way|lane|ct|loop|tower|plaza|suite|fl|floor)\b/i.test(clean)) {
+    return { isDeliverable: false, code: 'EXCL_ADDR_POBOX_ONLY', category: 2, label: 'PO Box only, physical street lookup required' };
+  }
+  // Building name only, no street number (e.g. Turnberry Plaza Suite 901)
+  if (/^[a-z\s]+(plaza|tower|building|center)\s+(suite|floor|#|\d+)/i.test(clean) && !/^\d+\s+/i.test(clean)) {
+    return { isDeliverable: true, code: 'DELIV_BLDG_NAME', category: 5, label: 'Commercial building with suite' };
+  }
+  // Iconic suffix-free streets (Miracle Mile, Las Olas, Broadway, The Embarcadero)
+  const isIconic = /\b(miracle\s+mile|las\s+olas|broadway|the\s+embarcadero|avenue\s+of\s+the\s+americas)\b/i.test(clean);
+  // Street number present (even without recognized suffix like 150 West Jefferson, 910 Louisiana)
+  const hasStreetNumber = /^\d+[\s\w,-]+/i.test(clean);
+  if (isIconic || hasStreetNumber) {
+    return { isDeliverable: true, code: 'DELIV_VERIFIED', category: 4, label: 'Valid physical address' };
+  }
+  return { isDeliverable: true, code: 'DELIV_VERIFIED', category: 0, label: 'Standard address' };
 }
 
 // 6. Corporate Email Domain Registry for Major Litigation Law Firms
@@ -649,6 +728,22 @@ function isGovernmentEntity(attorneyName, firmName, email = '', address = '', ca
   const atty = String(attorneyName || '').trim().toLowerCase();
   const firm = String(firmName || '').trim().toLowerCase();
   const eml = String(email || '').trim().toLowerCase();
+  const addr = String(address || '').trim().toLowerCase();
+
+  // Category 6 Fix: Accredited Commercial Legal Building & Private Firm Protection
+  // If the office address is an accredited commercial building (e.g., Courthouse Tower at 44 W Flagler St, Miami)
+  // and the firm is a private law practice, do NOT allow the word "Courthouse" to trigger government exclusion.
+  const hasAccreditedCommercialBldg = /\b(courthouse\s+tower|courthouse\s+plaza|courthouse\s+square|courthouse\s+center|one\s+courthouse\s+square|turnberry\s+plaza|museum\s+tower)\b/i.test(addr);
+  const isPrivateLawFirm = /\b(llp|p\.?a\.?|pllc|law\s+office|law\s+group|partners|associates|legal|firm)\b/i.test(firm) ||
+                           firm.includes('liebler') || firm.includes('jones day') || firm.includes('baker botts') ||
+                           firm.includes('akerman') || firm.includes('maltzman') || firm.includes('tein malone') ||
+                           firm.includes('merricks') || firm.includes('hommer') || firm.includes('shutts') ||
+                           firm.includes('simms') || firm.includes('jones walker') || firm.includes('rogow') ||
+                           firm.includes('hand arendall') || firm.includes('manuel & thompson');
+
+  if (hasAccreditedCommercialBldg && isPrivateLawFirm && !/@.*\.gov\b/i.test(eml)) {
+    return { isGovernment: false, exclusion_code: null, reason: null };
+  }
 
   // 1. Government email domains
   if (/@(.*\.)?(usdoj\.gov|usa\.doj\.gov|sec\.gov|ftc\.gov|irs\.gov|eeoc\.gov|fd\.org|myfloridalegal\.com|miamidade\.gov|broward\.org|tampa\.gov|orlando\.gov|talgov\.com|sa13\.org|sao\d+\.org)\b/i.test(eml)) {
@@ -793,6 +888,8 @@ module.exports = {
   normalizeCity,
   extractFirmCity,
   standardizeAddress,
+  classifyAddressDeliverability,
+  ACCREDITED_COMMERCIAL_LEGAL_BUILDINGS,
   normalizeFirmName,
   resolveFirmId,
   isNonFirmEntity,

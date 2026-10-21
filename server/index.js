@@ -185,16 +185,26 @@ function mapRowToCase(rowObj, idx) {
   };
 }
 
-// Simple CSV text line parser
+// Resilient CSV text line parser supporting metadata header lines
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   if (lines.length < 2) return [];
 
-  const delimiter = lines[0].includes('\t') ? '\t' : ',';
-  const headers = lines[0].split(delimiter).map(h => h.replace(/^["']|["']$/g, '').trim());
+  let headerIdx = 0;
+  for (let i = 0; i < Math.min(5, lines.length); i++) {
+    const lLower = lines[i].toLowerCase();
+    if (/docket|case|attorney|plaintiff|counsel|caption|matter|court/i.test(lLower)) {
+      headerIdx = i;
+      break;
+    }
+  }
+
+  const headerLine = lines[headerIdx];
+  const delimiter = headerLine.includes('\t') ? '\t' : (headerLine.includes(';') ? ';' : ',');
+  const headers = headerLine.split(delimiter).map(h => h.replace(/^["']|["']$/g, '').trim());
 
   const rows = [];
-  for (let i = 1; i < lines.length; i++) {
+  for (let i = headerIdx + 1; i < lines.length; i++) {
     const rawValues = lines[i].split(delimiter).map(v => v.replace(/^["']|["']$/g, '').trim());
     if (rawValues.length < 2) continue;
 
@@ -339,22 +349,43 @@ function parseExcel(filePath) {
 
   // Otherwise, find the best sheet that actually contains docket records (skip summary/cover tabs)
   let targetSheetName = sheetNames[0];
+  let detectedHeaderIdx = -1;
+
   for (const name of sheetNames) {
     if (/summary|cover|readme|index|metadata/i.test(name)) continue;
     const ws = workbook.Sheets[name];
     const sample = XLSX.utils.sheet_to_json(ws, { defval: '', header: 1 });
-    if (sample.length > 0) {
-      const headerLine = (sample[0] || []).map(String).join(' ').toLowerCase();
-      if (headerLine.includes('docket') || headerLine.includes('case') || headerLine.includes('attorney') || headerLine.includes('plaintiff')) {
+    for (let r = 0; r < Math.min(10, sample.length); r++) {
+      const headerLine = (sample[r] || []).map(String).join(' ').toLowerCase();
+      if (/docket|case|attorney|plaintiff|counsel|caption|matter|court/i.test(headerLine)) {
         targetSheetName = name;
+        detectedHeaderIdx = r;
         break;
       }
     }
+    if (detectedHeaderIdx !== -1) break;
   }
 
   const worksheet = workbook.Sheets[targetSheetName];
   fillMergedCells(worksheet);
-  const rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+  let rawRows = [];
+  if (detectedHeaderIdx > 0) {
+    const rawArrays = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+    const headers = (rawArrays[detectedHeaderIdx] || []).map(h => String(h || '').trim());
+    for (let r = detectedHeaderIdx + 1; r < rawArrays.length; r++) {
+      const rowVals = rawArrays[r] || [];
+      if (!rowVals.some(v => v !== '' && v !== null && v !== undefined)) continue;
+      const obj = {};
+      headers.forEach((h, cIdx) => {
+        if (h) obj[h] = rowVals[cIdx] !== undefined ? rowVals[cIdx] : '';
+      });
+      rawRows.push(obj);
+    }
+  } else {
+    rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+  }
+
   const mapped = rawRows.map((r, idx) => mapRowToCase(r, idx + 1));
 
   try {

@@ -1108,43 +1108,55 @@ class DataStore {
 
   deleteDocument(logId) {
     const logs = this.data.ingestion_logs || [];
-    const logIdx = logs.findIndex(l => l.log_id === logId || l.file_name === logId);
-    if (logIdx === -1) {
-      return { success: false, error: 'Document log record not found.' };
-    }
-
-    const targetLog = logs[logIdx];
-    const targetLogId = targetLog.log_id;
-    const targetFileName = targetLog.file_name;
+    const cleanId = String(logId || '').trim();
+    const cleanIdLower = cleanId.toLowerCase();
+    
+    // Look up by log_id or file_name (case-insensitive and URL-decoded)
+    const logIdx = logs.findIndex(l => {
+      if (!l) return false;
+      const lId = String(l.log_id || '').trim();
+      const lFile = String(l.file_name || '').trim();
+      return lId === cleanId || 
+             lFile === cleanId || 
+             lId.toLowerCase() === cleanIdLower || 
+             lFile.toLowerCase() === cleanIdLower ||
+             lFile === decodeURIComponent(cleanId) ||
+             lFile.toLowerCase() === decodeURIComponent(cleanId).toLowerCase();
+    });
 
     const initialCaseCount = (this.data.cases || []).length;
+    let targetLogId = cleanId;
+    let targetFileName = cleanId;
 
-    // Filter out cases linked to this document
+    if (logIdx !== -1) {
+      const targetLog = logs[logIdx];
+      targetLogId = targetLog.log_id || cleanId;
+      targetFileName = targetLog.file_name || cleanId;
+      this.data.ingestion_logs.splice(logIdx, 1);
+    }
+
+    // Filter out cases linked to this document (by log ID or file name)
+    const targetFileLower = targetFileName.toLowerCase();
     this.data.cases = (this.data.cases || []).filter(c => {
-      // 1. Direct match on source_log_id or source_file
-      if (c.source_log_id && c.source_log_id === targetLogId) return false;
-      if (c.source_file && c.source_file === targetFileName) return false;
-
-      // 2. Fallback check for test cases if legacy records lacked source tags
+      if (c.source_log_id && (c.source_log_id === targetLogId || c.source_log_id === cleanId)) return false;
+      if (c.source_file) {
+        const sf = String(c.source_file).toLowerCase();
+        if (sf === targetFileLower || sf === cleanIdLower) return false;
+      }
       if (targetFileName === 'test_ingest.csv' && c.case_id && c.case_id.includes('9990')) {
         return false;
       }
-
       return true;
     });
 
     const deletedCasesCount = initialCaseCount - this.data.cases.length;
-
-    // Remove log entry
-    this.data.ingestion_logs.splice(logIdx, 1);
 
     // Sync deletion to PostgreSQL primary store
     pgStore.deleteDocumentRecords(targetLogId, targetFileName).catch(err => {
       console.error('[TRIS PG] Error deleting document records:', err.message);
     });
 
-    // Recompute Florida delivery buildings, scoring matrices, and building indices
-    this.recomputeScoresAndBuildings(true);
+    this.rebuildBuildingIndex();
     this.save();
 
     console.log(`[TRIS Admin] Deleted document "${targetFileName}" (log ${targetLogId}). Removed ${deletedCasesCount} cases. Remaining: ${this.data.cases.length} cases.`);

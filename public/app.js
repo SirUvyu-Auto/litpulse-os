@@ -3389,7 +3389,7 @@ async function loadAdminStats() {
         <td class="cell-mono" style="color:var(--status-emerald);">${log.rows_clean}</td>
         <td><span class="status-pill clean">${log.status}</span></td>
         <td style="text-align:right;">
-          <button class="filter-chip" style="background:rgba(239,68,68,0.12);color:#FCA5A5;border-color:rgba(239,68,68,0.3);cursor:pointer;padding:4px 10px;font-size:11px;display:inline-flex;align-items:center;gap:4px;" onclick="deleteDocumentRecord('${log.log_id}', '${escapeHtml(log.file_name)}', ${log.rows_clean})" title="Delete this document and all its ingested cases">
+          <button class="filter-chip" style="background:rgba(239,68,68,0.12);color:#FCA5A5;border-color:rgba(239,68,68,0.3);cursor:pointer;padding:4px 10px;font-size:11px;display:inline-flex;align-items:center;gap:4px;" onclick="deleteDocumentRecord(this, '${log.log_id}', '${escapeHtml(log.file_name)}', ${log.rows_clean})" title="Delete this document and all its ingested cases">
             <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             Delete
           </button>
@@ -3418,20 +3418,31 @@ if (dropzone) {
 }
 
 async function handleFileSelected(files) {
-  if (!files || !files.length) return;
+  const inputEl = document.getElementById('fileUploadInput');
+  if (!files || !files.length) {
+    if (inputEl) inputEl.value = '';
+    return;
+  }
   const file = files[0];
 
   const formData = new FormData();
   formData.append('file', file);
 
+  const dropzoneTitle = document.querySelector('#dropzoneBox .dropzone-title');
+  const originalTitle = dropzoneTitle ? dropzoneTitle.innerText : 'Drop Court Docket or Appearance Matrix (.xlsx, .csv)';
+  if (dropzoneTitle) dropzoneTitle.innerText = `Ingesting and normalizing ${file.name}...`;
+
   showToast(`Ingesting and standardizing ${file.name}...`);
   try {
     const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
     const result = await res.json();
+    if (inputEl) inputEl.value = '';
+    if (dropzoneTitle) dropzoneTitle.innerText = originalTitle;
+
     if (result.success) {
       showToast(`Success: ${result.message}`);
+      await loadAdminStats();
       await loadAvailableStates();
-      await refreshAllData();
 
       // If newly ingested cases belong to a state not currently in selectedStates, auto-include it
       if (result.detectedStates && result.detectedStates.length) {
@@ -3449,32 +3460,63 @@ async function handleFileSelected(files) {
           onStateScopeChange();
         }
       }
+      await refreshAllData();
     } else {
       alert(`Ingestion error: ${result.error}`);
     }
   } catch (err) {
+    if (inputEl) inputEl.value = '';
+    if (dropzoneTitle) dropzoneTitle.innerText = originalTitle;
     console.error('Upload failed:', err);
+    showToast('Upload failed: ' + err.message);
   }
 }
 
-async function deleteDocumentRecord(logId, fileName, rowCount) {
+async function deleteDocumentRecord(btnEl, logId, fileName, rowCount) {
   const confirmMsg = `Are you sure you want to delete "${fileName}"?\n\nThis will permanently remove this document's log entry and all associated litigation cases (${rowCount} records) from the system, and recompute all delivery clusters and priorities.`;
   if (!confirm(confirmMsg)) return;
+
+  const row = btnEl ? btnEl.closest('tr') : null;
+  if (row) {
+    row.style.opacity = '0.35';
+    row.style.pointerEvents = 'none';
+  }
 
   try {
     showToast(`Removing document ${fileName}...`);
     const res = await fetch(`/api/admin/document/${encodeURIComponent(logId)}`, {
       method: 'DELETE'
     });
-    const data = await res.json();
-    if (data.success) {
+    const data = await res.json().catch(() => ({}));
+
+    // If server reports success, or already deleted / not found, remove row seamlessly
+    if (data.success || res.status === 404 || (data.error && data.error.includes('not found'))) {
+      if (row) row.remove();
+      const countEl = document.getElementById('adminFilesCount');
+      if (countEl) countEl.innerText = Math.max(0, parseInt(countEl.innerText || '1') - 1);
+
+      const tbody = document.getElementById('adminLogsTbody');
+      if (tbody && !tbody.querySelectorAll('tr').length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted);">No files ingested yet. Drag &amp; drop a .csv or .xlsx file above to begin testing.</td></tr>`;
+      }
+
       showToast(`Removed "${fileName}" and cleared ${data.deletedCasesCount || 0} associated cases.`);
+      await loadAdminStats();
+      await loadAvailableStates();
       await refreshAllData();
     } else {
+      if (row) {
+        row.style.opacity = '1';
+        row.style.pointerEvents = 'auto';
+      }
       alert('Error deleting document: ' + (data.error || 'Unknown error'));
     }
   } catch (err) {
     console.error('Failed to delete document:', err);
+    if (row) {
+      row.style.opacity = '1';
+      row.style.pointerEvents = 'auto';
+    }
     showToast('Failed to delete document: ' + err.message);
   }
 }

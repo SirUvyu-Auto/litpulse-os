@@ -101,25 +101,26 @@ function renderStateScopeDropdown() {
   const optionsContainer = document.getElementById('stateScopeOptions');
   if (!optionsContainer) return;
 
-  const isAllExplicitlySelected = selectedStates.includes('ALL');
+  const currentCode = (selectedStates && selectedStates.length) ? selectedStates[0] : 'FL';
+  const isAllSelected = currentCode === 'ALL';
   const nationalMatters = nationalSummaryData?.active_cases || 0;
 
   let html = `
-    <div class="state-scope-item ${isAllExplicitlySelected ? 'selected' : ''}" onclick="handleStateItemClick('ALL', event)">
-      <input type="checkbox" class="state-scope-checkbox" ${isAllExplicitlySelected ? 'checked' : ''} onclick="event.stopPropagation(); handleStateItemClick('ALL', event)">
+    <div class="state-scope-item ${isAllSelected ? 'selected' : ''}" onclick="handleStateItemClick('ALL', event)">
+      <div class="state-scope-radio-dot ${isAllSelected ? 'active' : ''}"></div>
       <div class="state-scope-item-body">
-        <span class="state-scope-item-name">🌐 All States</span>
+        <span class="state-scope-item-name">🌐 All States (National)</span>
         <span class="state-scope-item-count">${nationalMatters.toLocaleString()}</span>
       </div>
     </div>
   `;
 
   availableStatesData.forEach(st => {
-    const isChecked = isAllExplicitlySelected || selectedStates.includes(st.code);
+    const isSelected = !isAllSelected && currentCode === st.code;
     const icon = getStateIcon(st.code);
     html += `
-      <div class="state-scope-item ${isChecked ? 'selected' : ''}" onclick="handleStateItemClick('${escapeHtml(st.code)}', event)">
-        <input type="checkbox" class="state-scope-checkbox" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); handleStateItemClick('${escapeHtml(st.code)}', event)">
+      <div class="state-scope-item ${isSelected ? 'selected' : ''}" onclick="handleStateItemClick('${escapeHtml(st.code)}', event)">
+        <div class="state-scope-radio-dot ${isSelected ? 'active' : ''}"></div>
         <div class="state-scope-item-body">
           <span class="state-scope-item-name">${icon} ${escapeHtml(st.name)} (${escapeHtml(st.code)})</span>
           <span class="state-scope-item-count">${(st.active_cases || st.total_cases || 0).toLocaleString()}</span>
@@ -135,54 +136,26 @@ function updateStateScopeTriggerLabel() {
   const labelEl = document.getElementById('stateScopeLabel');
   if (!labelEl) return;
 
-  if (selectedStates.includes('ALL')) {
+  const code = (selectedStates && selectedStates.length) ? selectedStates[0] : 'FL';
+
+  if (code === 'ALL') {
     const natCount = nationalSummaryData?.active_cases || 0;
     labelEl.textContent = `🌐 All States (${natCount.toLocaleString()} matters)`;
-  } else if (selectedStates.length === 1) {
-    const code = selectedStates[0];
+  } else {
     const st = availableStatesData.find(s => s.code === code);
-    const name = st ? st.name : (code === 'FL' ? 'Florida' : code);
+    const name = st ? st.name : (code === 'FL' ? 'Florida' : (code === 'CA' ? 'California' : code));
     const count = st?.active_cases || st?.total_cases || (code === 'FL' ? (nationalSummaryData?.active_cases || 0) : 0);
     labelEl.textContent = `${getStateIcon(code)} ${name} (${count.toLocaleString()} matters)`;
-  } else if (selectedStates.length > 1) {
-    const tags = selectedStates.map(c => `${getStateIcon(c)} ${c}`).join(', ');
-    labelEl.textContent = `${tags} (${selectedStates.length} states)`;
-  } else {
-    selectedStates = ['FL'];
-    const st = availableStatesData.find(s => s.code === 'FL');
-    const count = st?.active_cases || (nationalSummaryData?.active_cases || 0);
-    labelEl.textContent = `🌴 Florida (${count.toLocaleString()} matters)`;
   }
 }
 
 function handleStateItemClick(code, e) {
   if (e) e.stopPropagation();
 
-  if (code === 'ALL') {
-    if (selectedStates.includes('ALL')) {
-      // Toggle off All States: fall back to Florida as default
-      selectedStates = ['FL'];
-    } else {
-      selectedStates = ['ALL'];
-    }
-  } else {
-    // Individual state clicked
-    if (selectedStates.includes('ALL')) {
-      // If was previously in ALL mode, user clicked a specific state: select only that state
-      selectedStates = [code];
-    } else {
-      if (selectedStates.includes(code)) {
-        selectedStates = selectedStates.filter(c => c !== code);
-        // If nothing selected, default back to Florida
-        if (!selectedStates.length) {
-          selectedStates = ['FL'];
-        }
-      } else {
-        selectedStates.push(code);
-      }
-    }
-  }
+  // Single-select jurisdiction: clicking a state makes it the exclusive active scope
+  selectedStates = [code || 'FL'];
 
+  closeStateScopeDropdown();
   renderStateScopeDropdown();
   updateStateScopeTriggerLabel();
   onStateScopeChange();

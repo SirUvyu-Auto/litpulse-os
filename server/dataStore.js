@@ -871,7 +871,13 @@ class DataStore {
 
     cases.forEach(c => {
       // Trial City (the court venue location)
-      c.trial_city = normalizeCity(c.division, '', c.division, c.court, c.case_id);
+      const cleanDiv = (c.division || '').replace(/\s*\([^)]*\)/g, '').trim();
+      c.trial_city = normalizeCity(cleanDiv || c.division, '', cleanDiv || c.division, c.court, c.case_id);
+
+      // Clean address if it was populated with court division artifacts
+      if (c.address && (/\([^)]*division[^)]*\)/i.test(c.address) || (!/\d+/.test(c.address) && c.lead_attorney === 'Awaiting Appearance'))) {
+        c.address = '';
+      }
 
       // Firm City (the physical city/state of the law firm from office address)
       c.firm_city = extractFirmCity(c.address, c.city || c.trial_city);
@@ -2032,11 +2038,16 @@ class DataStore {
       const scores = calculatePriorityScore(nc.trial_date || '2026-12-01', nc.is_local !== false, nc.nos_label || 'General Litigation');
       const isConcluded = scores.isHistorical;
 
+      const cleanDiv = (nc.division || '').replace(/\s*\([^)]*\)/g, '').trim();
+      const trialCity = normalizeCity(cleanDiv || nc.division, '', cleanDiv || nc.division, nc.court, baseCaseId);
+      const venueState = (nc.venue_state || nc.court_state || nc.trial_state || nc.state || deriveVenueState(trialCity, nc.court, nc.division) || 'FL').toUpperCase();
+      detectedStates.add(venueState);
+
       // 1. Plaintiff Details with advanced normalization
-      const rawPltfCity = nc.plaintiff_city || nc.city || nc.division || 'Miami';
-      const rawPltfAddr = nc.plaintiff_address || nc.address || `${nc.division || 'Miami'}, FL`;
+      const rawPltfCity = nc.plaintiff_city || nc.city || cleanDiv || 'Miami';
+      const rawPltfAddr = nc.plaintiff_address || nc.address || '';
       const pltfCity = normalizeCity(rawPltfCity, rawPltfAddr, nc.division, nc.court, baseCaseId);
-      const pltfAddr = standardizeAddress(rawPltfAddr);
+      const pltfAddr = rawPltfAddr ? standardizeAddress(rawPltfAddr) : '';
       const pltfEmail = nc.plaintiff_email || nc.email || '';
       const rawPltfAtty = nc.plaintiff_attorney || nc.lead_attorney || '';
       const pltfAtty = !rawPltfAtty || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(rawPltfAtty) ? 'Awaiting Appearance' : rawPltfAtty;
@@ -2044,10 +2055,10 @@ class DataStore {
       const pltfPhone = nc.plaintiff_phone || nc.phone || '';
 
       // 2. Defense Details with advanced normalization
-      const rawDefCity = nc.defense_city || nc.opposing_city || nc.city || nc.division || 'Miami';
-      const rawDefAddr = nc.defense_address || nc.opposing_address || nc.address || `${nc.division || 'Miami'}, FL`;
+      const rawDefCity = nc.defense_city || nc.opposing_city || nc.city || cleanDiv || 'Miami';
+      const rawDefAddr = nc.defense_address || nc.opposing_address || nc.address || '';
       const defCity = normalizeCity(rawDefCity, rawDefAddr, nc.division, nc.court, baseCaseId);
-      const defAddr = standardizeAddress(rawDefAddr);
+      const defAddr = rawDefAddr ? standardizeAddress(rawDefAddr) : '';
       const defEmail = nc.defense_email || nc.opposing_email || '';
       const rawDefAtty = nc.defense_attorney || nc.opposing_attorney || '';
       const defAtty = !rawDefAtty || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(rawDefAtty) ? 'Awaiting Appearance' : rawDefAtty;
@@ -2069,10 +2080,6 @@ class DataStore {
       const rawCaseStatus = (nc.case_status || '').toLowerCase();
       const isDisposedEarly = rawCaseStatus.includes('settl') || rawCaseStatus.includes('dismiss') || rawCaseStatus.includes('closed') || rawCaseStatus.includes('verdict') || rawCaseStatus.includes('concluded');
       const isHistorical = isConcluded || isDisposedEarly;
-
-      const trialCity = normalizeCity(nc.division, '', nc.division, nc.court, baseCaseId);
-      const venueState = (nc.venue_state || nc.court_state || nc.trial_state || nc.state || deriveVenueState(trialCity, nc.court, nc.division) || 'FL').toUpperCase();
-      detectedStates.add(venueState);
 
       const commonFields = {
         case_id: baseCaseId,

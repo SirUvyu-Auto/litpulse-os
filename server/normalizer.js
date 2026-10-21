@@ -219,7 +219,9 @@ function normalizeCity(rawCity, rawAddress, fallbackDivision, courtStr, docketSt
   }
 
   // Step 3: Check if input string is an internal court division code (Cv-a, Div 33, Section 7, etc.)
-  let clean = (rawCity || '').trim().replace(/,?\s+(FL|FLORIDA)$/i, '').trim();
+  let clean = (rawCity || '').trim().replace(/,?\s+([A-Za-z]{2}|FLORIDA|CALIFORNIA|GEORGIA|TEXAS|NEW YORK)$/i, '').trim();
+  // Strip parentheticals like (Southern Division), (Northern Division), etc.
+  clean = clean.replace(/\s*\([^)]*\)/g, '').trim();
   const isDivisionCode = !clean || /^(cv-[a-z0-9]|div\s*\d+|division\s*[a-z0-9]+|section\s*\d+|central\s+courthouse|open|unknown|[a-z]{1,2}:\s*circuit|fm-|pr-|cr-|fc-|fx:|fz:|s:\s*felony|fa:|fi:|fh:)/i.test(clean);
 
   if (isDivisionCode) {
@@ -303,14 +305,9 @@ function extractFirmCity(address, fallbackCity) {
       // Strip any lingering suite/unit prefix in the city token
       rawCity = rawCity.replace(/^(suite|ste|unit|apt|room|rm|floor|fl|bldg|building|tower|plaza|ph|penthouse)\s*[a-z0-9#-]*\s+/i, '').trim();
 
-      if (st === 'FL' || st === 'FLORIDA') {
-        const normalized = normalizeCity(rawCity, address);
-        if (normalized) return normalized;
-        return rawCity.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-      } else {
-        const cityTitle = rawCity.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-        return `${cityTitle}, ${st}`;
-      }
+      const normalized = normalizeCity(rawCity, address);
+      if (normalized) return normalized;
+      return rawCity.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
     }
   }
 

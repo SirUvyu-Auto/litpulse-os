@@ -3765,12 +3765,12 @@ function renderDrawerTable(rows, key) {
       ${isHistoricalKey ? `<td>${renderOutcomeBadge(c)}</td>` : ''}
       <td>${renderPriorityBadge(c)}</td>
       <td class="cell-bold">${attyDisplay}${rehitBadge}${warRoomBadge}</td>
-      <td>${firmDisplay} ${clientBadge}</td>
+      <td>${firmDisplay}${clientBadge ? ' ' + clientBadge : ''}</td>
       <td style="white-space:nowrap;">
         <span style="font-weight:600;color:var(--text-white);">${escapeHtml(firmCityDisplay)}</span>${localityPill}
       </td>
-      <td style="font-size:11.5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(firmAddressDisplay)}">
-        ${escapeHtml(firmAddressDisplay)}
+      <td style="font-size:11.5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(addrObj.text)}">
+        ${addrObj.html}
       </td>
       <td>
         <div style="font-weight:600;color:var(--text-white);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(c.caption || '')}">
@@ -3979,13 +3979,18 @@ async function openDossier(caseId) {
       timelineHtml = '<div style="color:var(--text-muted);font-size:12px;padding:10px 0;">No prior interactions logged for this lead.</div>';
     }
 
-    const isClientDossier = Boolean(c.is_client) || (fin.total_billed > 0) || c.hubspot_status === 'Booked' || c.hubspot_status === 'Won' || c.hubspot_status === 'Signed';
-    const clientStatusBadge = isClientDossier
-      ? `<span class="badge-client" style="font-size:11px;padding:3px 9px;">● EXISTING CLIENT</span>`
-      : `<span class="badge-prospect" style="font-size:11px;padding:3px 9px;">NEW PROSPECT</span>`;
+    const isAwaitingAttyDossier = !c.lead_attorney || c.lead_attorney === 'Awaiting Appearance' || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(c.lead_attorney);
+    const isAwaitingFirmDossier = !c.firm || c.firm === 'Awaiting Appearance' || /^(plaintiff|defense|unknown firm)$/i.test(c.firm);
+    const isProSeDossier = Boolean(c.is_pro_se) || c.firm === 'Pro Se / Self-Represented';
 
-    const clientCallout = isClientDossier
-      ? `<div style="padding:10px 12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:6px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+    const isClientDossier = !isAwaitingFirmDossier && !isProSeDossier && (Boolean(c.is_client) || (fin.total_billed > 0) || c.hubspot_status === 'Booked' || c.hubspot_status === 'Won' || c.hubspot_status === 'Signed');
+
+    let clientStatusBadge = '';
+    let clientCallout = '';
+
+    if (isClientDossier) {
+      clientStatusBadge = `<span class="badge-client" style="font-size:11px;padding:3px 9px;">● EXISTING CLIENT</span>`;
+      clientCallout = `<div style="padding:10px 12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:6px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
            <div>
              <span style="font-weight:700;color:#34D399;font-size:12px;">Active Client Account (QuickBooks Verified)</span>
              <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">Prior business history on file. Approach as existing client relationship.</div>
@@ -3994,14 +3999,35 @@ async function openDossier(caseId) {
              <span style="font-size:10px;color:var(--text-muted);text-transform:uppercase;">Lifetime Invoiced</span>
              <div style="font-size:14px;font-weight:700;color:#34D399;font-family:var(--font-mono);">${formatCurrency(fin.total_billed || 0)}</div>
            </div>
-         </div>`
-      : `<div style="padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+         </div>`;
+    } else if (isProSeDossier) {
+      clientStatusBadge = `<span class="badge-prospect" style="font-size:11px;padding:3px 9px;background:rgba(239,68,68,0.15);color:#F87171;border:1px solid rgba(239,68,68,0.3);">PRO SE LITIGANT</span>`;
+      clientCallout = `<div style="padding:10px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:6px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+           <div>
+             <span style="font-weight:700;color:#F87171;font-size:12px;">Self-Represented Claimant</span>
+             <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">Litigant appearing pro se without outside retained commercial counsel.</div>
+           </div>
+           <span class="status-pill clean" style="font-size:10.5px;color:#F87171;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);">Unqualified</span>
+         </div>`;
+    } else if (isAwaitingFirmDossier || isAwaitingAttyDossier) {
+      clientStatusBadge = `<span class="badge-prospect" style="font-size:11px;padding:3px 9px;background:rgba(255,255,255,0.06);color:var(--text-muted);border:1px solid var(--border);">PENDING APPEARANCE</span>`;
+      clientCallout = `<div style="padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+           <div>
+             <span style="font-weight:700;color:var(--text-white);font-size:12px;">Appearance Pending</span>
+             <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">Notice of appearance pending on trial docket. Monitored for lead attorney entry.</div>
+           </div>
+           <span class="status-pill clean" style="font-size:10.5px;">Docket Tracking</span>
+         </div>`;
+    } else {
+      clientStatusBadge = `<span class="badge-prospect" style="font-size:11px;padding:3px 9px;">NEW PROSPECT</span>`;
+      clientCallout = `<div style="padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
            <div>
              <span style="font-weight:700;color:var(--text-white);font-size:12px;">New Prospect Account</span>
              <div style="font-size:11px;color:var(--text-sub);margin-top:2px;">No prior billing history in QuickBooks. Pitch trial readiness package.</div>
            </div>
            <span class="status-pill clean" style="font-size:10.5px;">First-Time Outreach</span>
          </div>`;
+    }
 
     const integrationsCard = `
       <div class="dossier-grid" style="margin-top:14px;">
@@ -4183,8 +4209,8 @@ async function openBuildingDossier(buildingId) {
 
     currentBuildingData = data.building;
     currentBuildingCases = data.cases || [];
-    currentBuildingActiveCases = data.activeCases || currentBuildingCases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until >= 0) && (!c.is_oos && (!c.state || c.state === 'FL')));
-    currentBuildingHistoricalCases = data.historicalCases || currentBuildingCases.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until < 0) || (c.is_oos || (c.state && c.state !== 'FL')));
+    currentBuildingActiveCases = data.activeCases || currentBuildingCases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until >= 0) && !isCaseOos(c));
+    currentBuildingHistoricalCases = data.historicalCases || currentBuildingCases.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until < 0) || isCaseOos(c));
 
     const b = data.building;
     const activeDrops = currentBuildingActiveCases.length;

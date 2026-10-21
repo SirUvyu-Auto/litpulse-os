@@ -2096,6 +2096,9 @@ class DataStore {
         locality_score: isHistorical ? 0 : scores.locality
       };
 
+      // Defect #44 fix: Detect if same law firm is listed for Plaintiff and Defense
+      const isSameFirmBothSides = Boolean(resolvedPltfFirm && resolvedDefFirm && resolvedPltfFirm !== 'Awaiting Appearance' && resolvedDefFirm !== 'Awaiting Appearance' && resolvedPltfFirm !== 'Pro Se / Self-Represented' && resolvedPltfFirm.toLowerCase() === resolvedDefFirm.toLowerCase());
+
       const rawPartyType = String(nc.party_type || '').toLowerCase();
       const isOnlyDef = /def|respondent/i.test(rawPartyType) && !/pltf|plaintiff/i.test(rawPartyType);
       const isOnlyPltf = /pltf|plaintiff|petitioner|claimant/i.test(rawPartyType) && !/def|respondent/i.test(rawPartyType);
@@ -2131,9 +2134,6 @@ class DataStore {
         const finalPltfAddr = pltfAddr || existingPltf?.address || '';
         const pltfFirmCity = extractFirmCity(rawPltfAddr, pltfCity);
         const finalPltfCity = pltfFirmCity || existingPltf?.firm_city || existingPltf?.city || pltfCity;
-
-        // Defect #44 fix: Detect if same law firm is listed for Plaintiff and Defense
-        const isSameFirmBothSides = Boolean(resolvedPltfFirm && resolvedDefFirm && resolvedPltfFirm !== 'Awaiting Appearance' && resolvedDefFirm !== 'Awaiting Appearance' && resolvedPltfFirm !== 'Pro Se / Self-Represented' && resolvedPltfFirm.toLowerCase() === resolvedDefFirm.toLowerCase());
 
         const pltfContactDate = nc.last_contact_date || existingPltf?.last_contact_date || existingPltf?.rehit_date || '';
         const isPltfRehit = Boolean(existingPltf?.is_rehit || pltfContactDate || (existingPltf && existingPltf.case_id !== baseCaseId));

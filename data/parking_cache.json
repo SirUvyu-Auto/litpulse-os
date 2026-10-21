@@ -3403,5 +3403,10 @@
     "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
     "security_notes": "Standard office reception check-in required.",
     "facility_source": "Suburban Office Baseline"
+  },
+  "fort lauderdale-800 corporate dr ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
   }
 }

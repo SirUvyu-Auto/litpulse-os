@@ -3375,74 +3375,261 @@ async function loadAdminStats() {
   }
 }
 
-// File Drag & Drop
+// File Drag & Drop and Real-Time Ingestion Engine
+let isIngesting = false;
+window.lastIngestedStates = [];
+
+function resetDropzone() {
+  isIngesting = false;
+  const inputEl = document.getElementById('fileUploadInput');
+  if (inputEl) inputEl.value = '';
+
+  const dropzoneBox = document.getElementById('dropzoneBox');
+  if (dropzoneBox) {
+    dropzoneBox.classList.add('is-idle');
+    dropzoneBox.classList.remove('dragover');
+  }
+
+  const idleState = document.getElementById('dropzoneIdleState');
+  const progressState = document.getElementById('dropzoneProgressState');
+  const successState = document.getElementById('dropzoneSuccessState');
+  const errorState = document.getElementById('dropzoneErrorState');
+
+  if (idleState) idleState.style.display = 'flex';
+  if (progressState) progressState.style.display = 'none';
+  if (successState) successState.style.display = 'none';
+  if (errorState) errorState.style.display = 'none';
+}
+
+function handleGoToOutreachAfterIngest() {
+  if (window.lastIngestedStates && window.lastIngestedStates.length) {
+    selectedStates = [...window.lastIngestedStates];
+    localStorage.setItem('litpulse_active_states', JSON.stringify(selectedStates));
+    updateStateScopeTriggerLabel();
+    renderStateScopeDropdown();
+    onStateScopeChange();
+  }
+  navigateToPage('outreach');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setPipelineStep(stepNum) {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('pipeStep' + i);
+    if (!el) continue;
+    if (i < stepNum) {
+      el.className = 'pipeline-step done';
+    } else if (i === stepNum) {
+      el.className = 'pipeline-step active';
+    } else {
+      el.className = 'pipeline-step';
+    }
+  }
+}
+
+function formatBytes(bytes) {
+  if (!bytes || bytes === 0) return '0 KB';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
 const dropzone = document.getElementById('dropzoneBox');
 if (dropzone) {
   ['dragenter', 'dragover'].forEach(name => {
-    dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener(name, (e) => {
+      e.preventDefault();
+      if (!isIngesting) dropzone.classList.add('dragover');
+    });
   });
   ['dragleave', 'drop'].forEach(name => {
-    dropzone.addEventListener(name, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+    dropzone.addEventListener(name, (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+    });
   });
   dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    if (isIngesting) return;
     const files = e.dataTransfer.files;
     if (files.length) handleFileSelected(files);
   });
 }
 
-async function handleFileSelected(files) {
+function handleFileSelected(files) {
   const inputEl = document.getElementById('fileUploadInput');
   if (!files || !files.length) {
     if (inputEl) inputEl.value = '';
     return;
   }
+  if (isIngesting) return;
+
   const file = files[0];
+  isIngesting = true;
+
+  const dropzoneBox = document.getElementById('dropzoneBox');
+  const idleState = document.getElementById('dropzoneIdleState');
+  const progressState = document.getElementById('dropzoneProgressState');
+  const successState = document.getElementById('dropzoneSuccessState');
+  const errorState = document.getElementById('dropzoneErrorState');
+
+  const filenameEl = document.getElementById('ingestFilename');
+  const filesizeEl = document.getElementById('ingestFilesize');
+  const percentEl = document.getElementById('ingestPercent');
+  const progressBar = document.getElementById('ingestProgressBar');
+  const stageTextEl = document.getElementById('ingestStageText');
+
+  if (dropzoneBox) dropzoneBox.classList.remove('is-idle');
+  if (idleState) idleState.style.display = 'none';
+  if (successState) successState.style.display = 'none';
+  if (errorState) errorState.style.display = 'none';
+  if (progressState) progressState.style.display = 'block';
+
+  if (filenameEl) filenameEl.innerText = file.name;
+  if (filesizeEl) filesizeEl.innerText = formatBytes(file.size);
+  if (percentEl) percentEl.innerText = '0%';
+  if (progressBar) progressBar.style.width = '0%';
+  if (stageTextEl) stageTextEl.innerText = 'Uploading document to secure processing server...';
+  setPipelineStep(1);
+
+  showToast('Uploading and analyzing ' + file.name + '...');
 
   const formData = new FormData();
   formData.append('file', file);
 
-  const dropzoneTitle = document.querySelector('#dropzoneBox .dropzone-title');
-  const originalTitle = dropzoneTitle ? dropzoneTitle.innerText : 'Drop Court Docket or Appearance Matrix (.xlsx, .csv)';
-  if (dropzoneTitle) dropzoneTitle.innerText = `Ingesting and normalizing ${file.name}...`;
+  const xhr = new XMLHttpRequest();
+  let serverSimInterval = null;
+  let currentVisualPercent = 0;
 
-  showToast(`Ingesting and standardizing ${file.name}...`);
-  try {
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
-    const result = await res.json();
-    if (inputEl) inputEl.value = '';
-    if (dropzoneTitle) dropzoneTitle.innerText = originalTitle;
-
-    if (result.success) {
-      showToast(`Success: ${result.message}`);
-      await loadAdminStats();
-      await loadAvailableStates();
-
-      // If newly ingested cases belong to a state not currently in selectedStates, auto-include it
-      if (result.detectedStates && result.detectedStates.length) {
-        let changed = false;
-        result.detectedStates.forEach(st => {
-          if (st && st !== 'ALL' && !selectedStates.includes(st)) {
-            selectedStates.push(st);
-            changed = true;
-          }
-        });
-        if (changed) {
-          localStorage.setItem('litpulse_active_states', JSON.stringify(selectedStates));
-          updateStateScopeTriggerLabel();
-          renderStateScopeDropdown();
-          onStateScopeChange();
-        }
-      }
-      await refreshAllData();
-    } else {
-      alert(`Ingestion error: ${result.error}`);
-    }
-  } catch (err) {
-    if (inputEl) inputEl.value = '';
-    if (dropzoneTitle) dropzoneTitle.innerText = originalTitle;
-    console.error('Upload failed:', err);
-    showToast('Upload failed: ' + err.message);
+  function updateVisualProgress(targetPercent, stageText, stepNum) {
+    currentVisualPercent = Math.max(currentVisualPercent, targetPercent);
+    if (percentEl) percentEl.innerText = Math.round(currentVisualPercent) + '%';
+    if (progressBar) progressBar.style.width = Math.round(currentVisualPercent) + '%';
+    if (stageText && stageTextEl) stageTextEl.innerText = stageText;
+    if (stepNum) setPipelineStep(stepNum);
   }
+
+  // Network Upload Progress (Maps 0% to 45%)
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) {
+      const uploadRatio = e.loaded / e.total;
+      const mappedPercent = Math.round(uploadRatio * 45);
+      updateVisualProgress(mappedPercent, 'Uploading document (' + formatBytes(e.loaded) + ' / ' + formatBytes(e.total) + ')...', 1);
+    }
+  };
+
+  // When network upload completes, progress through server ingestion pipeline (45% -> 96%)
+  xhr.upload.onload = () => {
+    updateVisualProgress(48, 'Parsing multi-district dockets and appearance schedules...', 2);
+
+    serverSimInterval = setInterval(() => {
+      if (currentVisualPercent < 62) {
+        updateVisualProgress(currentVisualPercent + 2, 'Parsing multi-district dockets and appearance schedules...', 2);
+      } else if (currentVisualPercent < 78) {
+        updateVisualProgress(currentVisualPercent + 1.5, 'Normalizing law firms, counsel, and party entities...', 3);
+      } else if (currentVisualPercent < 92) {
+        updateVisualProgress(currentVisualPercent + 0.8, 'Computing TRIS priority scores and delivery windows...', 4);
+      } else if (currentVisualPercent < 97) {
+        updateVisualProgress(currentVisualPercent + 0.3, 'Integrating into database and structuring cluster matrices...', 5);
+      }
+    }, 280);
+  };
+
+  xhr.onload = async () => {
+    if (serverSimInterval) clearInterval(serverSimInterval);
+    if (inputEl) inputEl.value = '';
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const result = JSON.parse(xhr.responseText);
+        if (result.success) {
+          updateVisualProgress(100, 'Ingestion and validation complete!', 5);
+
+          // Smooth transition to completion card
+          setTimeout(async () => {
+            if (progressState) progressState.style.display = 'none';
+            if (successState) successState.style.display = 'flex';
+
+            const casesCountEl = document.getElementById('ingestCasesCount');
+            const statesDetectedEl = document.getElementById('ingestStatesDetected');
+            const successMsgEl = document.getElementById('ingestSuccessMessage');
+
+            if (casesCountEl) casesCountEl.innerText = (result.recordsCount || 0).toLocaleString();
+            if (statesDetectedEl) {
+              const detected = result.detectedStates && result.detectedStates.length ? result.detectedStates.join(', ') : 'CA';
+              statesDetectedEl.innerText = detected;
+            }
+            if (successMsgEl && result.message) {
+              successMsgEl.innerText = result.message;
+            }
+
+            window.lastIngestedStates = result.detectedStates || [];
+
+            showToast('Ingestion complete: ' + (result.recordsCount || 0).toLocaleString() + ' cases imported');
+            await loadAdminStats();
+            await loadAvailableStates();
+
+            // Auto-include newly detected states in scope if not already selected
+            if (result.detectedStates && result.detectedStates.length) {
+              let changed = false;
+              result.detectedStates.forEach(st => {
+                if (st && st !== 'ALL' && !selectedStates.includes(st)) {
+                  selectedStates.push(st);
+                  changed = true;
+                }
+              });
+              if (changed) {
+                localStorage.setItem('litpulse_active_states', JSON.stringify(selectedStates));
+                updateStateScopeTriggerLabel();
+                renderStateScopeDropdown();
+                onStateScopeChange();
+              }
+            }
+            await refreshAllData();
+            isIngesting = false;
+          }, 500);
+        } else {
+          isIngesting = false;
+          if (progressState) progressState.style.display = 'none';
+          if (errorState) errorState.style.display = 'flex';
+          const errMsgEl = document.getElementById('ingestErrorMessage');
+          if (errMsgEl) errMsgEl.innerText = result.error || 'Server rejected the file format.';
+        }
+      } catch (err) {
+        isIngesting = false;
+        if (progressState) progressState.style.display = 'none';
+        if (errorState) errorState.style.display = 'flex';
+        const errMsgEl = document.getElementById('ingestErrorMessage');
+        if (errMsgEl) errMsgEl.innerText = 'Failed to parse server response: ' + err.message;
+      }
+    } else {
+      isIngesting = false;
+      if (progressState) progressState.style.display = 'none';
+      if (errorState) errorState.style.display = 'flex';
+      let errorMsg = 'Server returned status ' + xhr.status;
+      try {
+        const errorJson = JSON.parse(xhr.responseText);
+        if (errorJson.error) errorMsg = errorJson.error;
+      } catch (_) {}
+      const errMsgEl = document.getElementById('ingestErrorMessage');
+      if (errMsgEl) errMsgEl.innerText = errorMsg;
+    }
+  };
+
+  xhr.onerror = () => {
+    if (serverSimInterval) clearInterval(serverSimInterval);
+    isIngesting = false;
+    if (inputEl) inputEl.value = '';
+    if (progressState) progressState.style.display = 'none';
+    if (errorState) errorState.style.display = 'flex';
+    const errMsgEl = document.getElementById('ingestErrorMessage');
+    if (errMsgEl) errMsgEl.innerText = 'Network error during upload. Please verify your connection and try again.';
+  };
+
+  xhr.open('POST', '/api/admin/upload');
+  xhr.send(formData);
 }
 
 async function deleteDocumentRecord(btnEl, logId, fileName, rowCount) {

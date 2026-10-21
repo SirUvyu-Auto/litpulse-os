@@ -789,14 +789,109 @@
           <div class="kpi"><div class="kpi-label">Counsel Entities Mapped</div><div class="kpi-value" id="adminCounselCount">0</div><div class="kpi-sub">Canonical FNS records</div></div>
         </div>
 
-        <!-- Drag & Drop Upload Zone (No technical buttons) -->
-        <div class="dropzone" id="dropzoneBox" onclick="document.getElementById('fileUploadInput').click()">
+        <!-- Drag & Drop Upload Zone with Real-Time Progress & Completion States -->
+        <div class="dropzone is-idle" id="dropzoneBox">
           <input type="file" id="fileUploadInput" style="display:none" accept=".csv,.xlsx,.xls,.txt" onchange="handleFileSelected(this.files)">
-          <div class="dropzone-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          
+          <!-- Idle / Default State -->
+          <div id="dropzoneIdleState" class="dropzone-state-view" onclick="document.getElementById('fileUploadInput').click()">
+            <div class="dropzone-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="dropzone-title">Drop Court Docket or Appearance Matrix (.xlsx, .csv)</div>
+            <div class="dropzone-sub">Files are automatically parsed, normalized, and integrated into the priority engine.</div>
+            <div class="dropzone-hint">Supports Excel workbooks with multiple district sheets and CSV dockets</div>
           </div>
-          <div class="dropzone-title">Drop Court Docket or Appearance Matrix (.xlsx, .csv)</div>
-          <div class="dropzone-sub">Files are automatically parsed, normalized, and integrated into the priority engine.</div>
+
+          <!-- Active Processing / Progress State -->
+          <div id="dropzoneProgressState" class="dropzone-state-view" style="display:none;">
+            <div class="dropzone-progress-card">
+              <div class="dropzone-progress-header">
+                <div class="dropzone-file-info">
+                  <div class="dropzone-file-icon">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  </div>
+                  <div class="dropzone-file-meta">
+                    <div class="dropzone-filename" id="ingestFilename">document.xlsx</div>
+                    <div class="dropzone-filesize" id="ingestFilesize">0.0 MB</div>
+                  </div>
+                </div>
+                <div class="dropzone-percent-badge" id="ingestPercent">0%</div>
+              </div>
+
+              <!-- Animated Progress Bar -->
+              <div class="dropzone-progressbar-track">
+                <div class="dropzone-progressbar-fill" id="ingestProgressBar" style="width: 0%;"></div>
+              </div>
+
+              <!-- Current Pipeline Stage -->
+              <div class="dropzone-stage-row">
+                <div class="dropzone-stage-pulse"></div>
+                <div class="dropzone-stage-text" id="ingestStageText">Uploading file to secure processing server...</div>
+              </div>
+
+              <!-- Pipeline Stages -->
+              <div class="dropzone-pipeline-steps">
+                <span class="pipeline-step active" id="pipeStep1">1. Upload</span>
+                <span class="pipeline-arrow">&rsaquo;</span>
+                <span class="pipeline-step" id="pipeStep2">2. Parse Sheets</span>
+                <span class="pipeline-arrow">&rsaquo;</span>
+                <span class="pipeline-step" id="pipeStep3">3. Normalize</span>
+                <span class="pipeline-arrow">&rsaquo;</span>
+                <span class="pipeline-step" id="pipeStep4">4. Score TRIS</span>
+                <span class="pipeline-arrow">&rsaquo;</span>
+                <span class="pipeline-step" id="pipeStep5">5. Database</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ingestion Completed State -->
+          <div id="dropzoneSuccessState" class="dropzone-state-view" style="display:none;">
+            <div class="ingest-success-badge">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="ingest-success-title">Ingestion and Normalization Complete</div>
+            <div class="ingest-success-desc" id="ingestSuccessMessage">Successfully integrated and normalized litigation cases into LitPulse OS.</div>
+            
+            <div class="ingest-metrics-grid">
+              <div class="ingest-metric-card">
+                <div class="ingest-metric-label">Cases Ingested</div>
+                <div class="ingest-metric-value" id="ingestCasesCount">0</div>
+              </div>
+              <div class="ingest-metric-card">
+                <div class="ingest-metric-label">Jurisdictions</div>
+                <div class="ingest-metric-value" id="ingestStatesDetected">ALL</div>
+              </div>
+              <div class="ingest-metric-card">
+                <div class="ingest-metric-label">Engine Status</div>
+                <div class="ingest-metric-value text-emerald">TRIS Scored</div>
+              </div>
+            </div>
+
+            <div class="ingest-actions-row">
+              <button type="button" class="btn btn-primary" id="btnGoToOutreach" onclick="handleGoToOutreachAfterIngest()">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px;margin-right:6px;"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+                Explore Ingested Matters in Outreach Queue
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="resetDropzone()">
+                Upload Another File
+              </button>
+            </div>
+          </div>
+
+          <!-- Ingestion Failed State -->
+          <div id="dropzoneErrorState" class="dropzone-state-view" style="display:none;">
+            <div class="ingest-error-badge">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="ingest-error-title">Ingestion Encountered An Error</div>
+            <div class="ingest-error-desc" id="ingestErrorMessage">An error occurred while parsing the uploaded document.</div>
+            <div class="ingest-actions-row">
+              <button type="button" class="btn btn-secondary" onclick="resetDropzone()">
+                Try Another File
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="card" style="padding:0;overflow:hidden;">

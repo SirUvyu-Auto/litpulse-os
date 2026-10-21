@@ -2938,5 +2938,470 @@
     "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
     "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
     "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "richmond-1001 haxall point richmond richmond va": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "dallas-2001 bryan st dallas dallas tx": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "metairie-3838 n causeway blvd metairie metairie la": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-1441 boardway new york ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york-1040 ave of the americas new york ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "washington-2099 pennsylvania ave nw washington washington dc": {
+    "parking_notes": "Attached / adjacent multi-level garage (Colonial Parking) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-250 west 55th st new york ny": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "atlanta-3340 peachtree rd ne atlanta atlanta ga": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "chicago-500 west madison st chicago chicago il": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "washington-2112 pennsylvania ave nw washington washington dc": {
+    "parking_notes": "Attached / adjacent multi-level garage (Colonial Parking) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "washington-columbia square 555 thirteenth st nw washington washington dc": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "washington-1300 i st nw washington washington dc": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-599 lexington ave new york ny": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "chicago-203 n lasalle st chicago chicago il": {
+    "parking_notes": "Attached / adjacent multi-level garage (Government Center Self Park) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-accounting 1633 broadway new york ny": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-295 5th ave new york ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "philadelphia-1845 walnut st philadelphia philadelphia pa": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "dallas-5802 tremont st dallas dallas tx": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "washington dc-paul hastings llp 2050 m st nw washington dc washington dc dc": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "brooklyn-147 prince st brooklyn brooklyn ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "atlanta-1221 peachtree st n e atlanta atlanta ga": {
+    "parking_notes": "Attached / adjacent multi-level garage (Lanier Parking System) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-875 3rd ave new york ny": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Commercial office building. Lobby reception check-in required.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "columbus-columbus oh 191 west nationwide blvd columbus columbus oh": {
+    "parking_notes": "Attached / adjacent multi-level garage (Express Live Parking Lots) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "canton-212 whitestone dr canton canton ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new orleans-201 st charles ave new orleans new orleans la": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "birmingham-211 22 st n bi birmingham al": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "arvada-6067 dudley ct arvada arvada co": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "austin-3412 mount bonnell dr austin austin tx": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "washington-975 f st n w washington washington dc": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "philadelphia-1835 market st philadelphia philadelphia pa": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "washington-2001 l st nw washington washington dc": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "los angeles-601 s figueroa st los angeles los angeles ca": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "san diego-770 1st ave san diego san diego ca": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "salt lake city-201 s main st salt lake city salt lake city ut": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "st louis-7700 bonhomme ave st louis st louis mo": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "washington-600 new hampshire ave nw washington washington dc": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "alpharetta-love consumer law 2500 northwinds pkwy 30009 alpharetta alpharetta ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york-270 madison ave 8th new york ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "birmingham-1901 6th ave n bi birmingham al": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "dallas-2323 ross ave dallas dallas tx": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "duluth-4855 river green pkwy duluth duluth ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "culver city-6700 s centinela ave 2nd culver city culver city ca": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "atlanta-1180 peachtree st atlanta atlanta ga": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "washington-1909 k st nw 12th washington washington dc": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "philadelphia-1 liberty place 1650 market st philadelphia philadelphia pa": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "inverness-88 inverness circle east l107 englewood inverness co": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "atlanta-1075 peachtree st n e atlanta atlanta ga": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "plano-7160 dallas pkwy plano plano tx": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "chicago-70 west madison st 48th chicago chicago il": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "atlanta-3475 piedmont rd atlanta atlanta ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "west chester-9050 centre pointe dr west che west chester oh": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york-7 times square new york ny": {
+    "parking_notes": "Attached / adjacent multi-level garage (City Parking) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "louisville-400 west market st louisville louisville ky": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "chicago-233 s wacker dr chicago chicago il": {
+    "parking_notes": "Attached / adjacent multi-level garage (Tower Self Park) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "pittsburgh-1133 penn ave 5th pittsburgh pittsburgh pa": {
+    "parking_notes": "Attached / adjacent multi-level garage (David L. Lawrence Convention Center Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "chicago-333 w wacker dr chicago chicago il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "weston-53 state st boston weston ma": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "phoenix-2325 e camelback rd phoenix phoenix az": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new orleans-601 poydras st new orleans new orleans la": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "charlotte-122 n mcdowell st charlotte charlotte nc": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "cincinnati-1470 apple hill rd cincinnati cincinnati oh": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "san diego-421 broadway pmb san diego san diego ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "tampa-8112 w bluemound rd wauwatosa tampa wi": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "atlanta-1075 peachtree st ne atlanta atlanta ga": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "chicago-200 w madison st chicago chicago il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york-1 state st 35th new york ny": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-640 5th ave 9th new york ny": {
+    "parking_notes": "Attached / adjacent multi-level garage (Commercial Parking Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "heath-457 laurence dr heath heath tx": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "chicago-2602 w diversey ave chicago chicago il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "mclean-1765 greensboro station place mclean mclean va": {
+    "parking_notes": "Attached / adjacent multi-level garage (Booz Allen Hamilton | HQ - Allen Garage) within 100m. Covered public parking.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "tacoma-washington 861 s 40th st tacoma tacoma wa": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "flushing-41 25 kissena blvd flushing ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "burlington-30 elmwood ave p o box 1112 burlington burlington vt": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "weston-20 city square boston weston ma": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "washington-1350 i st nw washington washington dc": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "salem-27 congress st salem salem ma": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "atlanta-3560 lenox rd two alliance ctr atlanta atlanta ga": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "birmingham-420 20th st north bi birmingham al": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "washington-1919 m st nw 8th washington washington dc": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "portsmouth-127 parrot ave portsmouth portsmouth nh": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "san antonio-19031 ridgewood pkwy san antonio san antonio tx": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "birmingham-400 20th st n bi birmingham al": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york-99 wall st new york ny": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "phoenix-2415 e camelback rd phoenix phoenix az": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "denver-3000 lawrence st denver denver co": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-447 broadway 2nd new york ny": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "new york-250 park ave 7th new york ny": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "lombard-2500 highland ave lombard lombard il": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "new york-1 battery park plz new york ny": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "los angeles-355 s grand ave los angeles los angeles ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "los angeles-333 s grand ave los angeles los angeles ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "san francisco-425 market st san francisco san francisco ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "san francisco-3 embarcadero center san francisco san francisco ca": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
   }
 }

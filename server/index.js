@@ -228,7 +228,7 @@ function fillMergedCells(worksheet) {
 
 // Parse Excel XLSX / XLS files
 function parseExcel(filePath) {
-  const workbook = XLSX.readFile(filePath);
+  const workbook = XLSX.readFile(filePath, { dense: true, cellFormula: false, cellHTML: false, cellStyles: false, sheetStubs: false });
   const sheetNames = workbook.SheetNames;
 
   // Check for multi-sheet workbooks with separate Dockets and Attorneys tabs
@@ -329,6 +329,11 @@ function parseExcel(filePath) {
       parsedCases.push(mapRowToCase(caseObj, idx + 1));
     });
 
+    try {
+      sheetNames.forEach(s => { delete workbook.Sheets[s]; });
+    } catch (_) {}
+    if (global.gc) global.gc();
+
     return parsedCases;
   }
 
@@ -350,7 +355,14 @@ function parseExcel(filePath) {
   const worksheet = workbook.Sheets[targetSheetName];
   fillMergedCells(worksheet);
   const rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-  return rawRows.map((r, idx) => mapRowToCase(r, idx + 1));
+  const mapped = rawRows.map((r, idx) => mapRowToCase(r, idx + 1));
+
+  try {
+    sheetNames.forEach(s => { delete workbook.Sheets[s]; });
+  } catch (_) {}
+  if (global.gc) global.gc();
+
+  return mapped;
 }
 
 // ----------------- API ROUTES ----------------- //
@@ -367,12 +379,13 @@ app.get('/api/admin/stats', (req, res) => {
 
 // Admin File Upload (CSV, XLSX, XLS, TXT)
 app.post('/api/admin/upload', upload.single('file'), (req, res) => {
+  if (global.gc) global.gc();
+  let filePath = req.file ? req.file.path : null;
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: 'No delivery file uploaded.' });
     }
 
-    const filePath = req.file.path;
     const ext = path.extname(req.file.originalname).toLowerCase();
     let parsedRows = [];
 
@@ -381,6 +394,11 @@ app.post('/api/admin/upload', upload.single('file'), (req, res) => {
     } else {
       const rawContent = fs.readFileSync(filePath, 'utf8');
       parsedRows = parseCSV(rawContent);
+    }
+
+    // Clean up temporary upload file immediately to conserve disk and memory
+    if (filePath && fs.existsSync(filePath)) {
+      try { fs.unlinkSync(filePath); filePath = null; } catch (_) {}
     }
 
     if (!parsedRows.length) {
@@ -392,11 +410,7 @@ app.post('/api/admin/upload', upload.single('file'), (req, res) => {
 
     const insertedCount = db.addIngestedCases(parsedRows, req.file.originalname, ext === '.xlsx' || ext === '.xls' ? 'Excel Spreadsheet' : 'Court Docket CSV');
     const detectedStates = db.getLastIngestedStates ? db.getLastIngestedStates() : [];
-
-    // Clean up temporary upload file to conserve ephemeral disk space
-    try {
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    } catch (_) {}
+    if (global.gc) global.gc();
 
     res.json({
       success: true,
@@ -406,6 +420,10 @@ app.post('/api/admin/upload', upload.single('file'), (req, res) => {
       detectedStates: detectedStates
     });
   } catch (err) {
+    if (filePath && fs.existsSync(filePath)) {
+      try { fs.unlinkSync(filePath); } catch (_) {}
+    }
+    if (global.gc) global.gc();
     console.error('Ingestion error:', err);
     res.status(500).json({ success: false, error: err.message });
   }

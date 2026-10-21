@@ -8195,5 +8195,663 @@
     "is_precise": true,
     "source": "photon",
     "geocoded_at": "2026-10-21T07:09:36.186Z"
+  },
+  "charlotte-225 east worthington ave charlotte charlotte nc": {
+    "lat": 35.210365,
+    "lng": -80.857817,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:09:37.975Z"
+  },
+  "richmond-1001 haxall point richmond richmond va": {
+    "lat": 37.533475,
+    "lng": -77.438051,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:10:18.496Z"
+  },
+  "dallas-2001 bryan st dallas dallas tx": {
+    "lat": 32.785306,
+    "lng": -96.796453,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:11:10.674Z"
+  },
+  "metairie-3838 n causeway blvd metairie metairie la": {
+    "lat": 30.018311,
+    "lng": -90.155679,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:11:11.374Z"
+  },
+  "new york-1441 boardway new york ny": {
+    "lat": 42.844987,
+    "lng": -78.852294,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:11:54.905Z"
+  },
+  "new york-1040 ave of the americas new york ny": {
+    "lat": 40.752992,
+    "lng": -73.985043,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:12:20.274Z"
+  },
+  "washington-2099 pennsylvania ave nw washington washington dc": {
+    "lat": 38.893596,
+    "lng": -77.023531,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:13:00.686Z"
+  },
+  "new york-250 west 55th st new york ny": {
+    "lat": 40.764869,
+    "lng": -73.983489,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:13:30.355Z"
+  },
+  "atlanta-3340 peachtree rd ne atlanta atlanta ga": {
+    "lat": 33.821535,
+    "lng": -84.388071,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:14:07.326Z"
+  },
+  "chicago-500 west madison st chicago chicago il": {
+    "lat": 41.882567,
+    "lng": -87.640492,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:14:41.860Z"
+  },
+  "washington-2112 pennsylvania ave nw washington washington dc": {
+    "lat": 38.893596,
+    "lng": -77.023531,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:15:16.688Z"
+  },
+  "washington-columbia square 555 thirteenth st nw washington washington dc": {
+    "lat": 38.928879,
+    "lng": -77.03001,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:16:02.126Z"
+  },
+  "washington-1300 i st nw washington washington dc": {
+    "lat": 38.901086,
+    "lng": -77.030413,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:16:38.597Z"
+  },
+  "new york-599 lexington ave new york ny": {
+    "lat": 40.757854,
+    "lng": -73.970723,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:17:20.769Z"
+  },
+  "chicago-203 n lasalle st chicago chicago il": {
+    "lat": 41.883829,
+    "lng": -87.63195,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:18:09.886Z"
+  },
+  "new york-accounting 1633 broadway new york ny": {
+    "lat": 40.762093,
+    "lng": -73.984656,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:18:44.278Z"
+  },
+  "new york-295 5th ave new york ny": {
+    "lat": 40.734764,
+    "lng": -73.994538,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:19:15.127Z"
+  },
+  "philadelphia-1845 walnut st philadelphia philadelphia pa": {
+    "lat": 39.95041,
+    "lng": -75.171622,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:19:50.217Z"
+  },
+  "dallas-5802 tremont st dallas dallas tx": {
+    "lat": 32.805337,
+    "lng": -96.755886,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:20:32.511Z"
+  },
+  "washington dc-paul hastings llp 2050 m st nw washington dc washington dc dc": {
+    "lat": 38.897643,
+    "lng": -77.006146,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:20:33.727Z"
+  },
+  "brooklyn-147 prince st brooklyn brooklyn ny": {
+    "lat": 40.692773,
+    "lng": -73.982345,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:20:35.647Z"
+  },
+  "atlanta-1221 peachtree st n e atlanta atlanta ga": {
+    "lat": 33.75944,
+    "lng": -84.388376,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:20:36.327Z"
+  },
+  "new york-875 3rd ave new york ny": {
+    "lat": 40.749807,
+    "lng": -73.975178,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:21:24.237Z"
+  },
+  "columbus-columbus oh 191 west nationwide blvd columbus columbus oh": {
+    "lat": 39.968227,
+    "lng": -83.007845,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:22:12.329Z"
+  },
+  "canton-212 whitestone dr canton canton ga": {
+    "lat": 34.170286,
+    "lng": -84.464436,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:22:54.379Z"
+  },
+  "new orleans-201 st charles ave new orleans new orleans la": {
+    "lat": 29.952016,
+    "lng": -90.070364,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:23:34.068Z"
+  },
+  "birmingham-211 22 st n bi birmingham al": {
+    "lat": 37.362309,
+    "lng": -118.395792,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:23:37.061Z"
+  },
+  "arvada-6067 dudley ct arvada arvada co": {
+    "lat": 39.807108,
+    "lng": -105.094893,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:24:17.058Z"
+  },
+  "austin-3412 mount bonnell dr austin austin tx": {
+    "lat": 30.317065,
+    "lng": -97.774439,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:24:46.969Z"
+  },
+  "washington-975 f st n w washington washington dc": {
+    "lat": 38.899497,
+    "lng": -77.0482,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:25:27.171Z"
+  },
+  "philadelphia-1835 market st philadelphia philadelphia pa": {
+    "lat": 39.953707,
+    "lng": -75.17111,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:25:56.250Z"
+  },
+  "washington-2001 l st nw washington washington dc": {
+    "lat": 38.925343,
+    "lng": -77.068013,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:26:37.921Z"
+  },
+  "los angeles-601 s figueroa st los angeles los angeles ca": {
+    "lat": 34.050778,
+    "lng": -118.259302,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:27:13.640Z"
+  },
+  "san diego-770 1st ave san diego san diego ca": {
+    "lat": 32.715615,
+    "lng": -117.164019,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:27:41.460Z"
+  },
+  "salt lake city-201 s main st salt lake city salt lake city ut": {
+    "lat": 40.790066,
+    "lng": -111.979899,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:28:06.651Z"
+  },
+  "st louis-7700 bonhomme ave st louis st louis mo": {
+    "lat": 38.647065,
+    "lng": -90.336443,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:28:45.033Z"
+  },
+  "washington-600 new hampshire ave nw washington washington dc": {
+    "lat": 38.935777,
+    "lng": -77.024575,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:29:20.822Z"
+  },
+  "alpharetta-love consumer law 2500 northwinds pkwy 30009 alpharetta alpharetta ga": {
+    "lat": 34.060286,
+    "lng": -84.285681,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:29:53.251Z"
+  },
+  "new york-270 madison ave 8th new york ny": {
+    "lat": 40.758515,
+    "lng": -73.974607,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:29:54.551Z"
+  },
+  "birmingham-1901 6th ave n bi birmingham al": {
+    "lat": 33.518493,
+    "lng": -86.809845,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:29:55.120Z"
+  },
+  "dallas-2323 ross ave dallas dallas tx": {
+    "lat": 32.787448,
+    "lng": -96.797534,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:29:55.783Z"
+  },
+  "duluth-4855 river green pkwy duluth duluth ga": {
+    "lat": 34.016816,
+    "lng": -84.165286,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:30:33.710Z"
+  },
+  "culver city-6700 s centinela ave 2nd culver city culver city ca": {
+    "lat": 33.982517,
+    "lng": -118.396495,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:30:35.160Z"
+  },
+  "atlanta-1180 peachtree st atlanta atlanta ga": {
+    "lat": 33.786926,
+    "lng": -84.384203,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:31:22.879Z"
+  },
+  "washington-1909 k st nw 12th washington washington dc": {
+    "lat": 38.902449,
+    "lng": -77.028586,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:31:59.611Z"
+  },
+  "philadelphia-1 liberty place 1650 market st philadelphia philadelphia pa": {
+    "lat": 39.952579,
+    "lng": -75.168134,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:32:44.255Z"
+  },
+  "inverness-88 inverness circle east l107 englewood inverness co": {
+    "lat": 39.576021,
+    "lng": -104.861435,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:32:45.352Z"
+  },
+  "atlanta-1075 peachtree st n e atlanta atlanta ga": {
+    "lat": 33.783888,
+    "lng": -84.382862,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:33:29.301Z"
+  },
+  "plano-7160 dallas pkwy plano plano tx": {
+    "lat": 33.066461,
+    "lng": -96.820964,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:33:59.441Z"
+  },
+  "chicago-70 west madison st 48th chicago chicago il": {
+    "lat": 41.882335,
+    "lng": -87.630002,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:34:31.451Z"
+  },
+  "atlanta-3475 piedmont rd atlanta atlanta ga": {
+    "lat": 33.849857,
+    "lng": -84.375329,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:35:09.382Z"
+  },
+  "west chester-9050 centre pointe dr west che west chester oh": {
+    "lat": 39.326562,
+    "lng": -84.421702,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:35:10.162Z"
+  },
+  "new york-7 times square new york ny": {
+    "lat": 40.755502,
+    "lng": -73.986903,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:35:50.382Z"
+  },
+  "louisville-400 west market st louisville louisville ky": {
+    "lat": 38.254926,
+    "lng": -85.757198,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:36:31.272Z"
+  },
+  "chicago-233 s wacker dr chicago chicago il": {
+    "lat": 41.878738,
+    "lng": -87.635961,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:37:00.082Z"
+  },
+  "pittsburgh-1133 penn ave 5th pittsburgh pittsburgh pa": {
+    "lat": 40.445433,
+    "lng": -79.993104,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:37:40.492Z"
+  },
+  "chicago-333 w wacker dr chicago chicago il": {
+    "lat": 41.886173,
+    "lng": -87.635861,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:38:34.823Z"
+  },
+  "weston-53 state st boston weston ma": {
+    "lat": 42.38522,
+    "lng": -71.321262,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:38:36.523Z"
+  },
+  "phoenix-2325 e camelback rd phoenix phoenix az": {
+    "lat": 33.473814,
+    "lng": -111.967117,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:38:37.064Z"
+  },
+  "new orleans-601 poydras st new orleans new orleans la": {
+    "lat": 29.947291,
+    "lng": -90.063457,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:38:37.741Z"
+  },
+  "charlotte-122 n mcdowell st charlotte charlotte nc": {
+    "lat": 35.106074,
+    "lng": -81.015383,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:39:10.391Z"
+  },
+  "cincinnati-1470 apple hill rd cincinnati cincinnati oh": {
+    "lat": 39.081752,
+    "lng": -84.403663,
+    "is_precise": true,
+    "source": "nominatim",
+    "geocoded_at": "2026-10-21T07:39:50.813Z"
+  },
+  "san diego-421 broadway pmb san diego san diego ca": {
+    "lat": 32.729978,
+    "lng": -117.05412,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:40:32.243Z"
+  },
+  "tampa-8112 w bluemound rd wauwatosa tampa wi": {
+    "lat": 28.196901,
+    "lng": -82.477176,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:40:35.281Z"
+  },
+  "atlanta-1075 peachtree st ne atlanta atlanta ga": {
+    "lat": 33.783569,
+    "lng": -84.382768,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:41:30.514Z"
+  },
+  "chicago-200 w madison st chicago chicago il": {
+    "lat": 41.882171,
+    "lng": -87.628681,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:42:01.979Z"
+  },
+  "new york-1 state st 35th new york ny": {
+    "lat": 40.750632,
+    "lng": -73.968788,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:42:03.261Z"
+  },
+  "new york-640 5th ave 9th new york ny": {
+    "lat": 40.760321,
+    "lng": -73.990833,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:42:49.974Z"
+  },
+  "heath-457 laurence dr heath heath tx": {
+    "lat": 32.85078,
+    "lng": -96.470274,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:43:28.237Z"
+  },
+  "chicago-2602 w diversey ave chicago chicago il": {
+    "lat": 41.932061,
+    "lng": -87.704365,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:43:59.186Z"
+  },
+  "mclean-1765 greensboro station place mclean mclean va": {
+    "lat": 38.922148,
+    "lng": -77.233232,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:44:39.067Z"
+  },
+  "tacoma-washington 861 s 40th st tacoma tacoma wa": {
+    "lat": 47.221121,
+    "lng": -122.445569,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:45:15.678Z"
+  },
+  "flushing-41 25 kissena blvd flushing ny": {
+    "lat": 40.758505,
+    "lng": -73.828248,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:45:57.965Z"
+  },
+  "burlington-30 elmwood ave p o box 1112 burlington burlington vt": {
+    "lat": 44.481287,
+    "lng": -73.213335,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:45:59.833Z"
+  },
+  "weston-20 city square boston weston ma": {
+    "lat": 42.372207,
+    "lng": -71.060907,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:06.854Z"
+  },
+  "washington-1350 i st nw washington washington dc": {
+    "lat": 38.901241,
+    "lng": -77.031296,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:10.614Z"
+  },
+  "salem-27 congress st salem salem ma": {
+    "lat": 42.520607,
+    "lng": -70.890022,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:17.735Z"
+  },
+  "atlanta-3560 lenox rd two alliance ctr atlanta atlanta ga": {
+    "lat": 33.851128,
+    "lng": -84.366604,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:19.045Z"
+  },
+  "birmingham-420 20th st north bi birmingham al": {
+    "lat": 33.517682,
+    "lng": -86.808318,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:19.634Z"
+  },
+  "washington-1919 m st nw 8th washington washington dc": {
+    "lat": 38.945473,
+    "lng": -77.023408,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:20.592Z"
+  },
+  "portsmouth-127 parrot ave portsmouth portsmouth nh": {
+    "lat": 43.072033,
+    "lng": -70.759776,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:21.562Z"
+  },
+  "san antonio-19031 ridgewood pkwy san antonio san antonio tx": {
+    "lat": 29.616278,
+    "lng": -98.46282,
+    "is_precise": true,
+    "source": "nominatim",
+    "geocoded_at": "2026-10-21T07:46:23.745Z"
+  },
+  "birmingham-400 20th st n bi birmingham al": {
+    "lat": 33.51448,
+    "lng": -86.80528,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:24.974Z"
+  },
+  "new york-99 wall st new york ny": {
+    "lat": 40.750632,
+    "lng": -73.968788,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:25.875Z"
+  },
+  "phoenix-2415 e camelback rd phoenix phoenix az": {
+    "lat": 33.508186,
+    "lng": -112.028833,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:46:46.335Z"
+  },
+  "denver-3000 lawrence st denver denver co": {
+    "lat": 39.73929,
+    "lng": -104.997172,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:47:22.257Z"
+  },
+  "new york-447 broadway 2nd new york ny": {
+    "lat": 40.720641,
+    "lng": -74.001186,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:48:16.186Z"
+  },
+  "new york-250 park ave 7th new york ny": {
+    "lat": 42.746674,
+    "lng": -73.680567,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:48:57.461Z"
+  },
+  "lombard-2500 highland ave lombard lombard il": {
+    "lat": 41.840183,
+    "lng": -88.011146,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:49:45.304Z"
+  },
+  "new york-1 battery park plz new york ny": {
+    "lat": 40.702786,
+    "lng": -74.015773,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:49:52.386Z"
+  },
+  "los angeles-355 s grand ave los angeles los angeles ca": {
+    "lat": 34.052104,
+    "lng": -118.252935,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:50:36.142Z"
+  },
+  "los angeles-333 s grand ave los angeles los angeles ca": {
+    "lat": 34.052746,
+    "lng": -118.251954,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:50:37.760Z"
+  },
+  "san francisco-425 market st san francisco san francisco ca": {
+    "lat": 37.791204,
+    "lng": -122.398153,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:50:38.677Z"
+  },
+  "san francisco-3 embarcadero center san francisco san francisco ca": {
+    "lat": 37.795128,
+    "lng": -122.397374,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-10-21T07:50:39.784Z"
   }
 }

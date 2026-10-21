@@ -4,8 +4,8 @@
   "description": "LitPulse OS - Trial Revenue Intelligence System for Lit&More",
   "main": "server/index.js",
   "scripts": {
-    "start": "node --max-old-space-size=450 server/index.js",
-    "dev": "node --max-old-space-size=450 server/index.js"
+    "start": "node --max-old-space-size=350 --expose-gc server/index.js",
+    "dev": "node --max-old-space-size=350 --expose-gc server/index.js"
   },
   "dependencies": {
     "dotenv": "^18.0.5",

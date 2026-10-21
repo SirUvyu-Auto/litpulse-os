@@ -1168,29 +1168,68 @@ class DataStore {
     return true;
   }
 
+  _saveStreaming(sync = false) {
+    const tmpPath = `${DB_FILE}.tmp`;
+    const data = this.data;
+    try {
+      const ws = fs.createWriteStream(tmpPath, { encoding: 'utf8' });
+      ws.on('error', (err) => {
+        try { if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath); } catch (_) {}
+        console.error('Streaming save error:', err.message);
+      });
+      ws.on('finish', () => {
+        try {
+          fs.renameSync(tmpPath, DB_FILE);
+          if (global.gc) global.gc();
+        } catch (renameErr) {
+          console.error('Failed to rename tmp database file:', renameErr.message);
+        }
+      });
+
+      ws.write('{"cases":[');
+      const cases = data.cases || [];
+      for (let i = 0; i < cases.length; i++) {
+        if (i > 0) ws.write(',');
+        ws.write(JSON.stringify(cases[i]));
+      }
+      ws.write('],"buildings":[');
+      const bldgs = data.buildings || [];
+      for (let i = 0; i < bldgs.length; i++) {
+        if (i > 0) ws.write(',');
+        ws.write(JSON.stringify(bldgs[i]));
+      }
+      ws.write('],"ingestion_logs":' + JSON.stringify(data.ingestion_logs || []));
+      ws.write(',"weights":' + JSON.stringify(data.weights || { urgency: 30, revenue: 25, locality: 20, caseType: 15, engagement: 15 }));
+      ws.write(',"conversions":' + JSON.stringify(data.conversions || []));
+      ws.write(',"forecast_log":' + JSON.stringify(data.forecast_log || []));
+      ws.end('}');
+    } catch (err) {
+      console.error('Streaming save failed, falling back:', err.message);
+      try {
+        fs.writeFileSync(DB_FILE, JSON.stringify(data), 'utf8');
+      } catch (fallbackErr) {
+        console.error('Fallback save failed:', fallbackErr.message);
+      }
+    }
+  }
+
   save(sync = false) {
     // 1. Primary PostgreSQL persistence (non-blocking)
     pgStore.syncAll(this.data).catch(err => {
       console.error('[TRIS PG] Background sync error:', err.message);
     });
 
+    if (this._saveTimer) clearTimeout(this._saveTimer);
+
     if (sync) {
-      if (this._saveTimer) clearTimeout(this._saveTimer);
-      try {
-        fs.writeFileSync(DB_FILE, JSON.stringify(this.data), 'utf8');
-      } catch (err) {
-        console.error('Failed to save synchronous local backup database file:', err.message);
-      }
+      this._saveStreaming(true);
       return;
     }
 
-    // 2. Local JSON backup (debounced non-blocking write to avoid event-loop stalls)
-    if (this._saveTimer) clearTimeout(this._saveTimer);
+    // 2. Debounced streaming write to prevent event-loop stalls and memory spikes
     this._saveTimer = setTimeout(() => {
-      fs.promises.writeFile(DB_FILE, JSON.stringify(this.data), 'utf8').catch(err => {
-        console.error('Failed to save local backup database file:', err.message);
-      });
-    }, 350);
+      this._saveStreaming(false);
+    }, 300);
   }
 
   getCases() {
@@ -1969,7 +2008,12 @@ class DataStore {
     const logId = `log-${Date.now()}`;
     let addedCount = 0;
     const detectedStates = new Set();
-    const existingMap = new Map(this.data.cases.map(c => [c.target_id || c.case_id, c]));
+    const caseIndex = new Map();
+    const cases = this.data.cases;
+    for (let i = 0; i < cases.length; i++) {
+      caseIndex.set(cases[i].target_id || cases[i].case_id, i);
+    }
+    const newActiveTargets = [];
 
     newCases.forEach(nc => {
       const baseCaseId = nc.case_id || `case-${Date.now()}-${Math.floor(Math.random()*1000)}`;
@@ -2042,7 +2086,8 @@ class DataStore {
 
       // Create or Merge Plaintiff Target (Preserve CRM ownership and enriched contact details)
       const pltfTargetId = `${baseCaseId}-PLTF`;
-      const existingPltf = existingMap.get(pltfTargetId);
+      const existingPltfIdx = caseIndex.get(pltfTargetId);
+      const existingPltf = existingPltfIdx !== undefined ? cases[existingPltfIdx] : null;
 
       const pltfAssignedTo = nc.assigned_to || existingPltf?.assigned_to || null;
       const pltfStatus = nc.hubspot_status || existingPltf?.hubspot_status || 'Unassigned';
@@ -2126,13 +2171,22 @@ class DataStore {
         last_contact_date: pltfContactDate,
         notes: pltfNotes
       };
-      existingMap.set(pltfTargetId, pltfRecord);
+      if (existingPltfIdx !== undefined) {
+        cases[existingPltfIdx] = pltfRecord;
+      } else {
+        cases.push(pltfRecord);
+        caseIndex.set(pltfTargetId, cases.length - 1);
+      }
       addedCount++;
+      if (pltfRecord.status !== 'Historical' && !pltfRecord.is_pro_se && !pltfRecord.is_government && !pltfRecord.is_excluded) {
+        newActiveTargets.push(pltfRecord);
+      }
 
       // Create or Merge Defense Target if defense counsel or firm is provided
       if (defAtty || defFirm) {
         const defTargetId = `${baseCaseId}-DEF`;
-        const existingDef = existingMap.get(defTargetId);
+        const existingDefIdx = caseIndex.get(defTargetId);
+        const existingDef = existingDefIdx !== undefined ? cases[existingDefIdx] : null;
 
         const defAssignedTo = nc.assigned_to || existingDef?.assigned_to || null;
         const defStatus = nc.hubspot_status || existingDef?.hubspot_status || 'Unassigned';
@@ -2212,18 +2266,28 @@ class DataStore {
           last_contact_date: defContactDate,
           notes: defNotes
         };
-        existingMap.set(defTargetId, defRecord);
+        if (existingDefIdx !== undefined) {
+          cases[existingDefIdx] = defRecord;
+        } else {
+          cases.push(defRecord);
+          caseIndex.set(defTargetId, cases.length - 1);
+        }
         addedCount++;
+        if (defRecord.status !== 'Historical' && !defRecord.is_pro_se && !defRecord.is_government && !defRecord.is_excluded) {
+          newActiveTargets.push(defRecord);
+        }
       }
     });
 
-    this.data.cases = Array.from(existingMap.values());
-
-    // Dynamically aggregate active building clusters from active targets
+    // Incrementally aggregate building clusters for newly ingested active targets
     const bldgMap = new Map();
-    const activeTargets = this.data.cases.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
+    (this.data.buildings || []).forEach(b => {
+      const bldgStreet = extractBuildingAddress(b.address);
+      const key = `${b.city}-${bldgStreet}`.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      bldgMap.set(key, b);
+    });
 
-    activeTargets.forEach(c => {
+    newActiveTargets.forEach(c => {
       if (c.is_pro_se || c.is_government || c.is_excluded || c.firm === 'Pro Se / Self-Represented') return;
       const state = (c.state || c.venue_state || 'FL').toUpperCase();
       if (!US_STATE_NAMES[state]) return;
@@ -2233,69 +2297,47 @@ class DataStore {
       city = normalizeCity(city, c.address) || city;
 
       const bldgStreet = extractBuildingAddress(c.address);
-      // Only form a physical building cluster if there is an actual street address (contains number)
       const hasStreetNumber = /\d+/.test(bldgStreet) && !bldgStreet.toLowerCase().startsWith('po box');
-      if (!hasStreetNumber) {
-        return; // Bare city entries like "Miami, FL" remain unassigned to physical courier buildings
-      }
+      if (!hasStreetNumber) return;
 
       const key = `${city}-${bldgStreet}`.toLowerCase().replace(/[^a-z0-9]/g, '-');
-      if (!bldgMap.has(key)) {
-        bldgMap.set(key, {
+      let b = bldgMap.get(key);
+      if (!b) {
+        const cached = geocoder.getCachedCoordinates(`${bldgStreet}, ${city}, ${state}`, city);
+        const access = parkingService.resolveKnownAccess(`${bldgStreet}, ${city}, ${state}`, city) || parkingService._getRegionalFallback(`${bldgStreet}, ${city}, ${state}`, city);
+        b = {
           building_id: `bldg-${key.slice(0, 24)}`,
-          building_name: `${bldgStreet}`,
+          building_name: bldgStreet,
           address: `${bldgStreet}, ${city}, ${state}`,
           city: city,
           state: state,
           attorneys_count: 0,
-          firms: new Set(),
+          firms_count: 0,
+          tenants: [],
           active_trials: 0,
-          parking_notes: 'Standard garage / valet parking',
-          security_notes: 'Lobby check-in required',
+          lat: cached ? cached.lat : null,
+          lng: cached ? cached.lng : null,
+          is_precise: Boolean(cached),
+          geocoded: Boolean(cached),
+          parking_notes: access.parking_notes || 'Standard garage / valet parking',
+          security_notes: access.security_notes || 'Lobby check-in required',
+          facility_source: access.facility_source || 'Commercial Facility Registry',
           runner_status: 'Ready for Drop',
           last_drop: 'Pending Dispatch'
-        });
+        };
+        bldgMap.set(key, b);
       }
-      const b = bldgMap.get(key);
-      b.attorneys_count += 1;
-      b.firms.add(`${c.firm} (${c.party_badge})`);
-      b.active_trials += 1;
+      b.attorneys_count = (b.attorneys_count || 0) + 1;
+      b.active_trials = (b.active_trials || 0) + 1;
+      if (!Array.isArray(b.tenants)) b.tenants = [];
+      const tenantTag = `${c.firm} (${c.party_badge})`;
+      if (!b.tenants.includes(tenantTag)) {
+        b.tenants.push(tenantTag);
+        b.firms_count = b.tenants.length;
+      }
     });
 
-    this.data.buildings = Array.from(bldgMap.values()).map((b, idx) => {
-      const cached = geocoder.getCachedCoordinates(b.address, b.city);
-      let lat, lng, isPrecise, isGeocoded;
-      if (cached) {
-        lat = cached.lat;
-        lng = cached.lng;
-        isPrecise = true;
-        isGeocoded = true;
-      } else {
-        const coords = resolveBuildingCoordinates(b, idx);
-        lat = b.lat || coords.lat;
-        lng = b.lng || coords.lng;
-        isPrecise = b.is_precise || false;
-        isGeocoded = b.geocoded || false;
-      }
-
-      const access = parkingService.resolveKnownAccess(b.address, b.city) || parkingService._getRegionalFallback(b.address, b.city);
-      const parkingNotes = (b.parking_notes && b.parking_notes !== 'Standard garage / valet parking') ? b.parking_notes : access.parking_notes;
-      const securityNotes = (b.security_notes && b.security_notes !== 'Lobby check-in required') ? b.security_notes : access.security_notes;
-
-      return {
-        ...b,
-        lat,
-        lng,
-        is_precise: isPrecise,
-        geocoded: isGeocoded,
-        parking_notes: parkingNotes,
-        security_notes: securityNotes,
-        facility_source: access.facility_source || 'Commercial Facility Registry',
-        firms_count: b.firms.size,
-        tenants: Array.from(b.firms)
-      };
-    });
-
+    this.data.buildings = Array.from(bldgMap.values());
     this.rebuildBuildingIndex();
 
     // Record Ingestion Log

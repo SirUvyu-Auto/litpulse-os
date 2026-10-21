@@ -122,7 +122,7 @@ function renderStateScopeDropdown() {
         <input type="checkbox" class="state-scope-checkbox" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); handleStateItemClick('${escapeHtml(st.code)}', event)">
         <div class="state-scope-item-body">
           <span class="state-scope-item-name">${icon} ${escapeHtml(st.name)} (${escapeHtml(st.code)})</span>
-          <span class="state-scope-item-count">${(st.active_cases || 0).toLocaleString()}</span>
+          <span class="state-scope-item-count">${(st.active_cases || st.total_cases || 0).toLocaleString()}</span>
         </div>
       </div>
     `;
@@ -142,7 +142,7 @@ function updateStateScopeTriggerLabel() {
     const code = selectedStates[0];
     const st = availableStatesData.find(s => s.code === code);
     const name = st ? st.name : (code === 'FL' ? 'Florida' : code);
-    const count = st?.active_cases || (code === 'FL' ? (nationalSummaryData?.active_cases || 0) : 0);
+    const count = st?.active_cases || st?.total_cases || (code === 'FL' ? (nationalSummaryData?.active_cases || 0) : 0);
     labelEl.textContent = `${getStateIcon(code)} ${name} (${count.toLocaleString()} matters)`;
   } else if (selectedStates.length > 1) {
     const tags = selectedStates.map(c => `${getStateIcon(c)} ${c}`).join(', ');

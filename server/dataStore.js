@@ -89,7 +89,7 @@ function deriveVenueState(city, court, division) {
   if (KNOWN_STATE_CITIES[cleanCity]) return KNOWN_STATE_CITIES[cleanCity];
 
   const fullStr = `${court || ''} ${division || ''} ${city || ''}`.toUpperCase();
-  if (/\b(CALIFORNIA|CAL|C\.D\.\s*CAL|N\.D\.\s*CAL|S\.D\.\s*CAL|E\.D\.\s*CAL)\b/i.test(fullStr)) {
+  if (/\b(CALIFORNIA|CAL|C\.D\.\s*CAL|N\.D\.\s*CAL|S\.D\.\s*CAL|E\.D\.\s*CAL|CACD|CAED|CAND|CASD)\b/i.test(fullStr)) {
     return 'CA';
   }
   const match = fullStr.match(/\b([A-Z]{2})\b/);
@@ -1309,7 +1309,7 @@ class DataStore {
       }
     });
 
-    const statesList = Array.from(stateMap.values()).sort((a, b) => b.active_cases - a.active_cases);
+    const statesList = Array.from(stateMap.values()).sort((a, b) => (b.active_cases - a.active_cases) || (b.total_cases - a.total_cases));
     const totalActive = statesList.reduce((acc, s) => acc + s.active_cases, 0);
     const totalEar = statesList.reduce((acc, s) => acc + s.total_ear, 0);
 
@@ -2096,106 +2096,112 @@ class DataStore {
         locality_score: isHistorical ? 0 : scores.locality
       };
 
+      const rawPartyType = String(nc.party_type || '').toLowerCase();
+      const isOnlyDef = /def|respondent/i.test(rawPartyType) && !/pltf|plaintiff/i.test(rawPartyType);
+      const isOnlyPltf = /pltf|plaintiff|petitioner|claimant/i.test(rawPartyType) && !/def|respondent/i.test(rawPartyType);
+
       // Create or Merge Plaintiff Target (Preserve CRM ownership and enriched contact details)
-      const pltfTargetId = `${baseCaseId}-PLTF`;
-      const existingPltfIdx = caseIndex.get(pltfTargetId);
-      const existingPltf = existingPltfIdx !== undefined ? cases[existingPltfIdx] : null;
+      if (!isOnlyDef) {
+        const pltfTargetId = `${baseCaseId}-PLTF`;
+        const existingPltfIdx = caseIndex.get(pltfTargetId);
+        const existingPltf = existingPltfIdx !== undefined ? cases[existingPltfIdx] : null;
 
-      const pltfAssignedTo = nc.assigned_to || existingPltf?.assigned_to || null;
-      const pltfStatus = nc.hubspot_status || existingPltf?.hubspot_status || 'Unassigned';
-      let pltfNotes = existingPltf?.notes || '';
-      if (nc.notes && !pltfNotes.includes(nc.notes)) {
-        pltfNotes = pltfNotes ? `${pltfNotes} | ${nc.notes}` : nc.notes;
-      }
-      if (!pltfNotes) {
-        pltfNotes = isHistorical ? 'Concluded or settled matter archived in historical vault.' : 'Imported via Admin Ingestion dropzone.';
-      }
-      const pltfConflict = existingPltf ? Boolean(existingPltf.conflict_flag) : false;
+        const pltfAssignedTo = nc.assigned_to || existingPltf?.assigned_to || null;
+        const pltfStatus = nc.hubspot_status || existingPltf?.hubspot_status || 'Unassigned';
+        let pltfNotes = existingPltf?.notes || '';
+        if (nc.notes && !pltfNotes.includes(nc.notes)) {
+          pltfNotes = pltfNotes ? `${pltfNotes} | ${nc.notes}` : nc.notes;
+        }
+        if (!pltfNotes) {
+          pltfNotes = isHistorical ? 'Concluded or settled matter archived in historical vault.' : 'Imported via Admin Ingestion dropzone.';
+        }
+        const pltfConflict = existingPltf ? Boolean(existingPltf.conflict_flag) : false;
 
-      // Defect #8 & #25 fix: Preserve existing verified phone, email, and address if new file is thin
-      let finalPltfPhone = pltfPhone || existingPltf?.phone || '';
-      if (!finalPltfPhone || /^\(305\)\s*555-0[12]00$/i.test(finalPltfPhone) || /555-0100|555-0200/.test(finalPltfPhone)) {
-        finalPltfPhone = buildAttorneyPhone(resolvedPltfFirm, pltfCity);
-      }
+        // Defect #8 & #25 fix: Preserve existing verified phone, email, and address if new file is thin
+        let finalPltfPhone = pltfPhone || existingPltf?.phone || '';
+        if (!finalPltfPhone || /^\(305\)\s*555-0[12]00$/i.test(finalPltfPhone) || /555-0100|555-0200/.test(finalPltfPhone)) {
+          finalPltfPhone = buildAttorneyPhone(resolvedPltfFirm, pltfCity);
+        }
 
-      let finalPltfEmail = pltfEmail || existingPltf?.email || '';
-      if (!finalPltfEmail || /^(plaintiff@lawfirm\.com|defense@lawfirm\.com|.*@lawfirm\.com|.*@example\.com)$/i.test(finalPltfEmail)) {
-        finalPltfEmail = buildAttorneyEmail(pltfAtty, resolvedPltfFirm);
-      }
+        let finalPltfEmail = pltfEmail || existingPltf?.email || '';
+        if (!finalPltfEmail || /^(plaintiff@lawfirm\.com|defense@lawfirm\.com|.*@lawfirm\.com|.*@example\.com)$/i.test(finalPltfEmail)) {
+          finalPltfEmail = buildAttorneyEmail(pltfAtty, resolvedPltfFirm);
+        }
 
-      const finalPltfAddr = pltfAddr || existingPltf?.address || '';
-      const pltfFirmCity = extractFirmCity(rawPltfAddr, pltfCity);
-      const finalPltfCity = pltfFirmCity || existingPltf?.firm_city || existingPltf?.city || pltfCity;
+        const finalPltfAddr = pltfAddr || existingPltf?.address || '';
+        const pltfFirmCity = extractFirmCity(rawPltfAddr, pltfCity);
+        const finalPltfCity = pltfFirmCity || existingPltf?.firm_city || existingPltf?.city || pltfCity;
 
-      // Defect #44 fix: Detect if same law firm is listed for Plaintiff and Defense
-      const isSameFirmBothSides = Boolean(resolvedPltfFirm && resolvedDefFirm && resolvedPltfFirm !== 'Awaiting Appearance' && resolvedDefFirm !== 'Awaiting Appearance' && resolvedPltfFirm !== 'Pro Se / Self-Represented' && resolvedPltfFirm.toLowerCase() === resolvedDefFirm.toLowerCase());
+        // Defect #44 fix: Detect if same law firm is listed for Plaintiff and Defense
+        const isSameFirmBothSides = Boolean(resolvedPltfFirm && resolvedDefFirm && resolvedPltfFirm !== 'Awaiting Appearance' && resolvedDefFirm !== 'Awaiting Appearance' && resolvedPltfFirm !== 'Pro Se / Self-Represented' && resolvedPltfFirm.toLowerCase() === resolvedDefFirm.toLowerCase());
 
-      const pltfContactDate = nc.last_contact_date || existingPltf?.last_contact_date || existingPltf?.rehit_date || '';
-      const isPltfRehit = Boolean(existingPltf?.is_rehit || pltfContactDate || (existingPltf && existingPltf.case_id !== baseCaseId));
-      const pltfPriorMatter = existingPltf?.caption || existingPltf?.rehit_prior_matter || '';
+        const pltfContactDate = nc.last_contact_date || existingPltf?.last_contact_date || existingPltf?.rehit_date || '';
+        const isPltfRehit = Boolean(existingPltf?.is_rehit || pltfContactDate || (existingPltf && existingPltf.case_id !== baseCaseId));
+        const pltfPriorMatter = existingPltf?.caption || existingPltf?.rehit_prior_matter || '';
 
-      const pltfLoc = resolveLocality(finalPltfAddr, finalPltfCity, trialCity, venueState);
-      const pltfIsGov = Boolean(pltfGov.isGovernment);
-      const pltfRecord = {
-        ...commonFields,
-        is_pro_se: pltfIsProSe,
-        is_government: pltfIsGov,
-        is_excluded: pltfIsGov,
-        exclusion_code: pltfGov.exclusion_code,
-        exclusion_reason: pltfGov.reason,
-        ear: (pltfIsProSe || pltfIsGov) ? 0 : (nc.ear || 0),
-        est_value: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.est_value,
-        full_value: (pltfIsProSe || pltfIsGov) ? 0 : (nc.full_value || 0),
-        priority_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.priority_score,
-        urgency_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.urgency_score,
-        revenue_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.revenue_score,
-        locality_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.locality_score,
-        delivery_status: (pltfIsProSe || pltfIsGov) ? 'ineligible' : 'review',
-        pitch_angle: pltfIsGov ? 'N/A (Sovereign Government Entity)' : (pltfIsProSe ? 'N/A (Pro Se Claimant)' : (defIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.pitch_angle || 'Narrative Demonstratives, Liability Timelines & Blowup Medical Boards'))),
-        is_local: pltfLoc.is_local,
-        is_oot: pltfLoc.is_oot,
-        is_oos: pltfLoc.is_oos,
-        state: pltfLoc.state,
-        locality_badge: pltfLoc.is_local ? `Local ${venueState}` : (pltfLoc.is_oos ? `Out-of-State (${pltfLoc.state})` : `Out-of-Town ${venueState}`),
-        target_id: pltfTargetId,
-        party_side: 'Plaintiff',
-        party_badge: 'PLTF',
-        lead_attorney: pltfAtty,
-        attorney_id: buildAttorneyId(pltfAtty, resolvedPltfFirm),
-        firm: resolvedPltfFirm,
-        firm_id: resolveFirmId(resolvedPltfFirm),
-        opposing_firm: resolvedDefFirm || 'Defense Counsel',
-        opposing_attorney: defAtty || 'Defense Lead',
-        opposing_is_pro_se: defIsProSe,
-        address: finalPltfAddr,
-        city: finalPltfCity,
-        firm_city: finalPltfCity,
-        trial_city: trialCity,
-        phone: pltfIsProSe ? 'N/A' : finalPltfPhone,
-        email: pltfIsProSe ? 'N/A' : finalPltfEmail,
-        assigned_to: pltfAssignedTo,
-        hubspot_status: pltfIsGov ? 'Unqualified / Government' : (pltfIsProSe ? 'Unqualified / Pro Se' : pltfStatus),
-        conflict_flag: pltfConflict,
-        same_firm_both_sides: isSameFirmBothSides,
-        is_rehit: isPltfRehit,
-        rehit_date: pltfContactDate || existingPltf?.rehit_date || '',
-        rehit_prior_matter: pltfPriorMatter,
-        last_contact_date: pltfContactDate,
-        notes: pltfNotes
-      };
-      if (existingPltfIdx !== undefined) {
-        cases[existingPltfIdx] = pltfRecord;
-      } else {
-        cases.push(pltfRecord);
-        caseIndex.set(pltfTargetId, cases.length - 1);
-      }
-      addedCount++;
-      if (pltfRecord.status !== 'Historical' && !pltfRecord.is_pro_se && !pltfRecord.is_government && !pltfRecord.is_excluded) {
-        newActiveTargets.push(pltfRecord);
+        const pltfLoc = resolveLocality(finalPltfAddr, finalPltfCity, trialCity, venueState);
+        const pltfIsGov = Boolean(pltfGov.isGovernment);
+        const pltfRecord = {
+          ...commonFields,
+          is_pro_se: pltfIsProSe,
+          is_government: pltfIsGov,
+          is_excluded: pltfIsGov,
+          exclusion_code: pltfGov.exclusion_code,
+          exclusion_reason: pltfGov.reason,
+          ear: (pltfIsProSe || pltfIsGov) ? 0 : (nc.ear || 0),
+          est_value: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.est_value,
+          full_value: (pltfIsProSe || pltfIsGov) ? 0 : (nc.full_value || 0),
+          priority_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.priority_score,
+          urgency_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.urgency_score,
+          revenue_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.revenue_score,
+          locality_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.locality_score,
+          delivery_status: (pltfIsProSe || pltfIsGov) ? 'ineligible' : 'review',
+          pitch_angle: pltfIsGov ? 'N/A (Sovereign Government Entity)' : (pltfIsProSe ? 'N/A (Pro Se Claimant)' : (defIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.pitch_angle || 'Narrative Demonstratives, Liability Timelines & Blowup Medical Boards'))),
+          is_local: pltfLoc.is_local,
+          is_oot: pltfLoc.is_oot,
+          is_oos: pltfLoc.is_oos,
+          state: pltfLoc.state,
+          locality_badge: pltfLoc.is_local ? `Local ${venueState}` : (pltfLoc.is_oos ? `Out-of-State (${pltfLoc.state})` : `Out-of-Town ${venueState}`),
+          target_id: pltfTargetId,
+          party_side: 'Plaintiff',
+          party_badge: 'PLTF',
+          lead_attorney: pltfAtty,
+          attorney_id: buildAttorneyId(pltfAtty, resolvedPltfFirm),
+          firm: resolvedPltfFirm,
+          firm_id: resolveFirmId(resolvedPltfFirm),
+          opposing_firm: resolvedDefFirm || 'Defense Counsel',
+          opposing_attorney: defAtty || 'Defense Lead',
+          opposing_is_pro_se: defIsProSe,
+          address: finalPltfAddr,
+          city: finalPltfCity,
+          firm_city: finalPltfCity,
+          trial_city: trialCity,
+          phone: pltfIsProSe ? 'N/A' : finalPltfPhone,
+          email: pltfIsProSe ? 'N/A' : finalPltfEmail,
+          assigned_to: pltfAssignedTo,
+          hubspot_status: pltfIsGov ? 'Unqualified / Government' : (pltfIsProSe ? 'Unqualified / Pro Se' : pltfStatus),
+          conflict_flag: pltfConflict,
+          same_firm_both_sides: isSameFirmBothSides,
+          is_rehit: isPltfRehit,
+          rehit_date: pltfContactDate || existingPltf?.rehit_date || '',
+          rehit_prior_matter: pltfPriorMatter,
+          last_contact_date: pltfContactDate,
+          notes: pltfNotes
+        };
+        if (existingPltfIdx !== undefined) {
+          cases[existingPltfIdx] = pltfRecord;
+        } else {
+          cases.push(pltfRecord);
+          caseIndex.set(pltfTargetId, cases.length - 1);
+        }
+        addedCount++;
+        if (pltfRecord.status !== 'Historical' && !pltfRecord.is_pro_se && !pltfRecord.is_government && !pltfRecord.is_excluded) {
+          newActiveTargets.push(pltfRecord);
+        }
       }
 
       // Create or Merge Defense Target if defense counsel or firm is provided
-      if (defAtty || defFirm) {
+      if (!isOnlyPltf && (defAtty || defFirm || !isOnlyDef)) {
         const defTargetId = `${baseCaseId}-DEF`;
         const existingDefIdx = caseIndex.get(defTargetId);
         const existingDef = existingDefIdx !== undefined ? cases[existingDefIdx] : null;

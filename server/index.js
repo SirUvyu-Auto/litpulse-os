@@ -55,7 +55,7 @@ function parseTrialDate(dateVal) {
 }
 
 // Universal record mapper supporting both Plaintiff and Defense counsel
-function mapRowToCase(rowObj, idx) {
+function mapRowToCase(rowObj, idx, hints = {}) {
   // Normalize row keys to lowercase and trim
   const normalized = {};
   Object.keys(rowObj).forEach(k => {
@@ -75,21 +75,24 @@ function mapRowToCase(rowObj, idx) {
   const caseId = getVal('caseid', 'docket', 'docketno', 'docketnumber', 'caseno', 'casenumber') || `dkt-${Date.now()}-${idx}`;
   const caption = getVal('caption', 'title', 'casetitle', 'casename', 'style', 'mattername') || 'Litigation Matter';
 
-  const rawState = getVal('venuestate', 'courtstate', 'trialstate', 'state', 'jurisdiction');
-  const rawCourt = getVal('court', 'courthouse', 'jurisdiction');
-  const rawDivision = getVal('division', 'city', 'branch', 'district');
+  const rawState = getVal('venuestate', 'courtstate', 'trialstate', 'state', 'jurisdiction') || hints.defaultState;
+  const rawCourt = getVal('court', 'courthouse', 'jurisdiction') || hints.defaultCourt;
+  const rawDivision = getVal('division', 'city', 'branch', 'district') || hints.defaultDivision;
 
   // Detect State Context for appropriate Court and Division Defaults
-  const combinedContext = `${rawState} ${rawCourt} ${rawDivision}`.toLowerCase();
-  const isCalifornia = /^(ca|cal|california)$/i.test(rawState) || /california|\bcal\b|c\.d\.\s*cal|n\.d\.\s*cal|s\.d\.\s*cal|e\.d\.\s*cal/i.test(combinedContext) || /los angeles|san francisco|san diego|sacramento|san jose|oakland/i.test((rawDivision || '').toLowerCase());
+  const combinedContext = `${rawState} ${rawCourt} ${rawDivision} ${caption} ${hints.fileName || ''}`.toLowerCase();
+  const isCalifornia = /^(ca|cal|california)$/i.test(rawState) || 
+                       /california|\bcal\b|c\.d\.\s*cal|n\.d\.\s*cal|s\.d\.\s*cal|e\.d\.\s*cal|cacd|caed|cand|casd/i.test(combinedContext) || 
+                       /los angeles|san francisco|san diego|sacramento|san jose|oakland|fresno|santa ana|riverside/i.test((rawDivision || '').toLowerCase()) ||
+                       hints.defaultState === 'CA';
 
   let defaultCourt = 'S.D. Fla.';
   let defaultDivision = 'Miami';
   let defaultState = 'FL';
 
   if (isCalifornia) {
-    defaultCourt = 'C.D. Cal.';
-    defaultDivision = 'Los Angeles';
+    defaultCourt = hints.defaultCourt || 'C.D. Cal.';
+    defaultDivision = hints.defaultDivision || 'Los Angeles';
     defaultState = 'CA';
   }
 
@@ -98,9 +101,23 @@ function mapRowToCase(rowObj, idx) {
   const venueState = rawState || defaultState;
 
   const judge = getVal('judge', 'presidingjudge', 'judgename', 'magistrate') || 'Honorable Judge';
-  const nosLabel = getVal('noslabel', 'nos', 'natureofsuit', 'casetype', 'causeofaction') || 'Civil Litigation';
-  const rawDate = getVal('trialdate', 'trialsetfor', 'jurytrialdate', 'hearingdate', 'date');
-  const trialDate = parseTrialDate(rawDate) || '2026-11-15';
+  const nosLabel = getVal('noslabel', 'nos', 'natureofsuit', 'casetype', 'causeofaction', 'cause') || 'Civil Litigation';
+
+  // Extract scheduled trial date from Extracted Deadlines or Date column
+  let trialDate = '';
+  const deadlines = getVal('extracteddeadlines', 'deadlines', 'deadline', 'events');
+  if (deadlines) {
+    const trialMatch = deadlines.match(/(?:Jury\s+Trial|Bench\s+Trial|Trial|Final\s+Pretrial\s+Conference|Calendar\s+Call)(?:[^\d\n\r]{1,40})(\d{1,2}\/\d{1,2}\/\d{2,4})/i) ||
+                       deadlines.match(/(\d{1,2}\/\d{1,2}\/\d{4})/);
+    if (trialMatch) {
+      trialDate = parseTrialDate(trialMatch[1]);
+    }
+  }
+  if (!trialDate) {
+    const rawDate = getVal('trialdate', 'trialsetfor', 'jurytrialdate', 'hearingdate', 'date', 'fileddate');
+    trialDate = parseTrialDate(rawDate) || '2026-11-15';
+  }
+
   const rawValue = getVal('estvalue', 'casevalue', 'claimamount', 'amount', 'budget');
   const estValue = parseFloat(rawValue) || 250000;
 
@@ -113,7 +130,11 @@ function mapRowToCase(rowObj, idx) {
     return false;
   }
 
-  // Plaintiff Details
+  const partyType = getVal('partytype', 'role', 'side', 'partyside');
+  const isPartyDef = /def|respondent/i.test(partyType);
+  const isPartyPltf = /pltf|plaintiff|petitioner|claimant/i.test(partyType);
+
+  // Plaintiff / Lead Details
   const rawLeadAtty = getVal('leadattorney', 'attorney', 'counsel', 'plaintiffcounsel', 'plaintiffattorney', 'lawyer', 'attyname');
   const leadAttorney = isCorporateOrPlaceholder(rawLeadAtty) ? '' : rawLeadAtty;
   const rawFirm = getVal('firm', 'lawfirm', 'firmname', 'plaintifffirm', 'company');
@@ -134,8 +155,8 @@ function mapRowToCase(rowObj, idx) {
   const defPhone = /555-0100|555-0200/.test(rawDefPhone) ? '' : rawDefPhone;
   const rawDefEmail = getVal('defenseemail', 'opposingemail', 'defemail');
   const defEmail = /lawfirm\.com|example\.com/i.test(rawDefEmail) ? '' : rawDefEmail;
-  const defAddress = getVal('defenseaddress', 'opposingaddress', 'defaddress') || address;
-  const defCity = getVal('defensecity', 'opposingcity', 'defcity') || city;
+  const defAddress = getVal('defenseaddress', 'opposingaddress', 'defaddress') || (isPartyDef ? address : '');
+  const defCity = getVal('defensecity', 'opposingcity', 'defcity') || (isPartyDef ? city : division);
 
   // CRM & HubSpot Ingestion Mapping
   const assignedTo = getVal('assignedto', 'assigned_to', 'contactowner', 'leadowner', 'dealowner', 'owner', 'salesrep', 'rep', 'repname') || '';
@@ -156,22 +177,23 @@ function mapRowToCase(rowObj, idx) {
     trial_date: trialDate,
     est_value: estValue,
     venue_state: venueState,
+    party_type: partyType,
 
     // Plaintiff
-    plaintiff_attorney: leadAttorney,
-    plaintiff_firm: firm,
-    plaintiff_phone: phone,
-    plaintiff_email: email,
-    plaintiff_address: address,
-    plaintiff_city: city,
+    plaintiff_attorney: isPartyDef ? '' : leadAttorney,
+    plaintiff_firm: isPartyDef ? '' : firm,
+    plaintiff_phone: isPartyDef ? '' : phone,
+    plaintiff_email: isPartyDef ? '' : email,
+    plaintiff_address: isPartyDef ? '' : address,
+    plaintiff_city: isPartyDef ? '' : city,
 
     // Defense
-    defense_attorney: opposingAttorney,
-    defense_firm: opposingFirm,
-    defense_phone: defPhone,
-    defense_email: defEmail,
-    defense_address: defAddress,
-    defense_city: defCity,
+    defense_attorney: isPartyDef ? leadAttorney : opposingAttorney,
+    defense_firm: isPartyDef ? firm : opposingFirm,
+    defense_phone: isPartyDef ? phone : defPhone,
+    defense_email: isPartyDef ? email : defEmail,
+    defense_address: isPartyDef ? address : defAddress,
+    defense_city: isPartyDef ? city : defCity,
 
     // CRM & Lifecycle Fields
     assigned_to: assignedTo,
@@ -237,7 +259,7 @@ function fillMergedCells(worksheet) {
 }
 
 // Parse Excel XLSX / XLS files
-function parseExcel(filePath) {
+function parseExcel(filePath, originalFileName = '') {
   const workbook = XLSX.readFile(filePath, { dense: true, cellFormula: false, cellHTML: false, cellStyles: false, sheetStubs: false });
   const sheetNames = workbook.SheetNames;
 
@@ -347,53 +369,85 @@ function parseExcel(filePath) {
     return parsedCases;
   }
 
-  // Otherwise, find the best sheet that actually contains docket records (skip summary/cover tabs)
-  let targetSheetName = sheetNames[0];
-  let detectedHeaderIdx = -1;
+  // Multi-sheet docket support: filter out non-docket sheets (Overview, Summary, Cover, Readme, Metadata, Notes)
+  const candidateSheetNames = sheetNames.filter(name => !/overview|summary|cover|readme|index|metadata|notes|contents|dictionary/i.test(name));
+  const targetSheets = candidateSheetNames.length > 0 ? candidateSheetNames : [sheetNames[0]];
 
-  for (const name of sheetNames) {
-    if (/summary|cover|readme|index|metadata/i.test(name)) continue;
-    const ws = workbook.Sheets[name];
-    const sample = XLSX.utils.sheet_to_json(ws, { defval: '', header: 1 });
+  const allParsedCases = [];
+
+  for (const sheetName of targetSheets) {
+    const worksheet = workbook.Sheets[sheetName];
+    if (!worksheet) continue;
+    fillMergedCells(worksheet);
+
+    const sample = XLSX.utils.sheet_to_json(worksheet, { defval: '', header: 1 });
+    if (!sample || sample.length < 2) {
+      delete workbook.Sheets[sheetName];
+      continue;
+    }
+
+    let detectedHeaderIdx = 0;
     for (let r = 0; r < Math.min(10, sample.length); r++) {
       const headerLine = (sample[r] || []).map(String).join(' ').toLowerCase();
       if (/docket|case|attorney|plaintiff|counsel|caption|matter|court/i.test(headerLine)) {
-        targetSheetName = name;
         detectedHeaderIdx = r;
         break;
       }
     }
-    if (detectedHeaderIdx !== -1) break;
-  }
 
-  const worksheet = workbook.Sheets[targetSheetName];
-  fillMergedCells(worksheet);
-
-  let rawRows = [];
-  if (detectedHeaderIdx > 0) {
-    const rawArrays = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
-    const headers = (rawArrays[detectedHeaderIdx] || []).map(h => String(h || '').trim());
-    for (let r = detectedHeaderIdx + 1; r < rawArrays.length; r++) {
-      const rowVals = rawArrays[r] || [];
-      if (!rowVals.some(v => v !== '' && v !== null && v !== undefined)) continue;
-      const obj = {};
-      headers.forEach((h, cIdx) => {
-        if (h) obj[h] = rowVals[cIdx] !== undefined ? rowVals[cIdx] : '';
-      });
-      rawRows.push(obj);
+    let rawRows = [];
+    if (detectedHeaderIdx > 0) {
+      const headers = (sample[detectedHeaderIdx] || []).map(h => String(h || '').trim());
+      for (let r = detectedHeaderIdx + 1; r < sample.length; r++) {
+        const rowVals = sample[r] || [];
+        if (!rowVals.some(v => v !== '' && v !== null && v !== undefined)) continue;
+        const obj = {};
+        headers.forEach((h, cIdx) => {
+          if (h) obj[h] = rowVals[cIdx] !== undefined ? rowVals[cIdx] : '';
+        });
+        rawRows.push(obj);
+      }
+    } else {
+      rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
     }
-  } else {
-    rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-  }
 
-  const mapped = rawRows.map((r, idx) => mapRowToCase(r, idx + 1));
+    // Determine district context from sheetName or fileName
+    let sheetCourt = '';
+    let sheetDivision = '';
+    let sheetState = '';
+
+    const sNameLower = sheetName.toLowerCase();
+    const fNameLower = (originalFileName || '').toLowerCase();
+    const isCalContext = /california|ca\b|cacd|caed|cand|casd/i.test(sNameLower) || /california|ca\b/i.test(fNameLower);
+
+    if (isCalContext) {
+      sheetState = 'CA';
+      if (/cacd/i.test(sNameLower)) { sheetCourt = 'C.D. Cal.'; sheetDivision = 'Los Angeles'; }
+      else if (/caed/i.test(sNameLower)) { sheetCourt = 'E.D. Cal.'; sheetDivision = 'Sacramento'; }
+      else if (/cand/i.test(sNameLower)) { sheetCourt = 'N.D. Cal.'; sheetDivision = 'San Francisco'; }
+      else if (/casd/i.test(sNameLower)) { sheetCourt = 'S.D. Cal.'; sheetDivision = 'San Diego'; }
+      else { sheetCourt = 'C.D. Cal.'; sheetDivision = 'Los Angeles'; }
+    }
+
+    rawRows.forEach((r, idx) => {
+      allParsedCases.push(mapRowToCase(r, allParsedCases.length + 1, {
+        defaultCourt: sheetCourt,
+        defaultDivision: sheetDivision,
+        defaultState: sheetState,
+        fileName: originalFileName
+      }));
+    });
+
+    delete workbook.Sheets[sheetName];
+    if (global.gc) global.gc();
+  }
 
   try {
     sheetNames.forEach(s => { delete workbook.Sheets[s]; });
   } catch (_) {}
   if (global.gc) global.gc();
 
-  return mapped;
+  return allParsedCases;
 }
 
 // ----------------- API ROUTES ----------------- //
@@ -421,7 +475,7 @@ app.post('/api/admin/upload', upload.single('file'), (req, res) => {
     let parsedRows = [];
 
     if (ext === '.xlsx' || ext === '.xls') {
-      parsedRows = parseExcel(filePath);
+      parsedRows = parseExcel(filePath, req.file.originalname);
     } else {
       const rawContent = fs.readFileSync(filePath, 'utf8');
       parsedRows = parseCSV(rawContent);

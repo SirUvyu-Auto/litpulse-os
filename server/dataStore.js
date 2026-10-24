@@ -14,6 +14,8 @@ const {
   extractFirmCity,
   standardizeAddress,
   normalizeFirmName,
+  normalizePersonName,
+  evaluateAddressCorrectness,
   resolveFirmId,
   isNonFirmEntity,
   isValidJudgeName,
@@ -796,19 +798,11 @@ class DataStore {
     const cases = this.data.cases;
     if (!cases.length) return;
 
-    const needsRecompute = force || cases.some(c => 
-      c.is_pro_se === undefined ||
-      c.is_government === undefined ||
-      c.ear === undefined || 
-      c.is_war_room === undefined ||
-      c.casetype_score === undefined ||
-      !c.likelihood_bucket || 
-      /^(cv-[a-z0-9]|div\s*\d+|section\s*\d+|central\s+courthouse)/i.test(c.city || '') ||
-      /^(plaintiff|defense)$/i.test(c.firm || '') ||
-      /^(plaintiff counsel|defense counsel)$/i.test(c.lead_attorney || '') ||
-      /plaintiff@lawfirm|defense@lawfirm/i.test(c.email || '') ||
-      /^\(305\)\s*555-0[12]00$/i.test(c.phone || '')
-    );
+    const needsRecompute = force || (cases.length > 0 && (
+      cases[0].ear === undefined ||
+      cases[0].priority_score === undefined ||
+      cases[0].is_government === undefined
+    ));
     if (!needsRecompute) {
       this.rebuildBuildingIndex();
       return;
@@ -840,15 +834,29 @@ class DataStore {
         c.is_excluded = true;
         c.exclusion_code = gov.exclusion_code;
         c.exclusion_reason = gov.reason;
-      } else if (c.exclusion_code && (c.exclusion_code.startsWith('EXCL_GOV_') || c.exclusion_code === 'EXCL_ADDR_COURTHOUSE')) {
-        // Clear false positive government / courthouse exclusion
-        c.is_excluded = false;
-        c.exclusion_code = null;
-        c.exclusion_reason = null;
-      } else if (!c.is_excluded) {
-        c.is_excluded = false;
-        c.exclusion_code = null;
-        c.exclusion_reason = null;
+      } else {
+        if (c.exclusion_code && (c.exclusion_code.startsWith('EXCL_GOV_') || c.exclusion_code === 'EXCL_ADDR_COURTHOUSE')) {
+          // Clear false positive government / courthouse exclusion
+          c.is_excluded = false;
+          c.exclusion_code = null;
+          c.exclusion_reason = null;
+        }
+        // Kris Directive 2: Full-record address correctness evaluation
+        if (!c.is_pro_se && c.address) {
+          const addrAudit = evaluateAddressCorrectness(c.address);
+          if (!addrAudit.isValid) {
+            c.is_excluded = true;
+            c.exclusion_code = addrAudit.exclusion_code;
+            c.exclusion_reason = addrAudit.reason;
+          } else {
+            c.address = addrAudit.standardized_address;
+            if (c.exclusion_code && c.exclusion_code.startsWith('EXCL_ADDR_')) {
+              c.is_excluded = false;
+              c.exclusion_code = null;
+              c.exclusion_reason = null;
+            }
+          }
+        }
       }
     });
 
@@ -885,17 +893,30 @@ class DataStore {
       // Ensure city reflects firm city
       c.city = c.firm_city;
 
-      // Clean placeholder attorney
+      // Clean placeholder attorney & apply upstream fuzzy nickname resolution (Kris Directive 1)
       if (!c.lead_attorney || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(c.lead_attorney)) {
         c.lead_attorney = 'Awaiting Appearance';
+      } else {
+        c.lead_attorney = normalizePersonName(c.lead_attorney);
       }
 
-      // Clean placeholder firm
+      // Clean placeholder firm & apply canonical firm matching (Kris Directive 1: Homer Bonner)
+      const rawFirm = c.firm || '';
       if (c.is_pro_se) {
         c.firm = 'Pro Se / Self-Represented';
         c.firm_id = 'firm-pro-se-self-represented';
       } else {
         c.firm = normalizeFirmName(c.firm, c.email, c.lead_attorney);
+      }
+
+      // Kris Directive 3: Target Case Coverage Preservation Gate
+      const hasFirmVariation = Boolean(c.firm && rawFirm && c.firm.toLowerCase() !== rawFirm.toLowerCase());
+      if (hasFirmVariation) {
+        c.case_coverage_status = 'SECURED_TARGET_CASE';
+        c.assignment_audit_tag = 'ATTORNEY_FIRM_VARIATION_PRESERVED';
+      } else if (!c.case_coverage_status) {
+        c.case_coverage_status = 'STANDARD_MATCH';
+        c.assignment_audit_tag = null;
       }
 
       // Scrub and dynamically resolve email and phone if missing or generic placeholder
@@ -959,8 +980,8 @@ class DataStore {
         c.same_firm_both_sides = false;
       }
 
-      if (c.is_pro_se || c.is_government) {
-        // Zero out expected revenue and priority for pro se litigants or sovereign government counsel
+      if (c.is_pro_se || c.is_government || c.is_excluded) {
+        // Zero out expected revenue and priority for pro se litigants, sovereign government, or invalid address
         c.ear = 0;
         c.trial_prob = 0;
         c.full_value = 0;
@@ -975,8 +996,8 @@ class DataStore {
         c.engagement_score = 0;
         c.priority_tier = 'None';
         c.delivery_status = 'ineligible';
-        c.hubspot_status = c.is_government ? 'Unqualified / Government' : 'Unqualified / Pro Se';
-        c.pitch_angle = c.is_government ? 'N/A (Sovereign Government Entity)' : 'N/A (Pro Se Claimant)';
+        c.hubspot_status = c.is_government ? 'Unqualified / Government' : (c.is_pro_se ? 'Unqualified / Pro Se' : 'Unqualified / Address');
+        c.pitch_angle = c.is_government ? 'N/A (Sovereign Government Entity)' : (c.is_pro_se ? 'N/A (Pro Se Claimant)' : 'N/A (Undeliverable Address)');
         c.building_id = null;
       } else {
         const attyCount = (c.counsel_matrix && c.counsel_matrix.length) ? c.counsel_matrix.length : 2;
@@ -2050,7 +2071,7 @@ class DataStore {
       const pltfAddr = rawPltfAddr ? standardizeAddress(rawPltfAddr) : '';
       const pltfEmail = nc.plaintiff_email || nc.email || '';
       const rawPltfAtty = nc.plaintiff_attorney || nc.lead_attorney || '';
-      const pltfAtty = !rawPltfAtty || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(rawPltfAtty) ? 'Awaiting Appearance' : rawPltfAtty;
+      const pltfAtty = !rawPltfAtty || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(rawPltfAtty) ? 'Awaiting Appearance' : normalizePersonName(rawPltfAtty);
       const pltfFirm = normalizeFirmName(nc.plaintiff_firm || nc.firm || '', pltfEmail, pltfAtty);
       const pltfPhone = nc.plaintiff_phone || nc.phone || '';
 
@@ -2061,7 +2082,7 @@ class DataStore {
       const defAddr = rawDefAddr ? standardizeAddress(rawDefAddr) : '';
       const defEmail = nc.defense_email || nc.opposing_email || '';
       const rawDefAtty = nc.defense_attorney || nc.opposing_attorney || '';
-      const defAtty = !rawDefAtty || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(rawDefAtty) ? 'Awaiting Appearance' : rawDefAtty;
+      const defAtty = !rawDefAtty || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(rawDefAtty) ? 'Awaiting Appearance' : normalizePersonName(rawDefAtty);
       const defFirm = normalizeFirmName(nc.defense_firm || nc.opposing_firm || '', defEmail, defAtty);
       const defPhone = nc.defense_phone || nc.opposing_phone || '';
 
@@ -2148,21 +2169,43 @@ class DataStore {
 
         const pltfLoc = resolveLocality(finalPltfAddr, finalPltfCity, trialCity, venueState);
         const pltfIsGov = Boolean(pltfGov.isGovernment);
+        let pltfIsExcluded = pltfIsGov;
+        let pltfExclCode = pltfGov.exclusion_code;
+        let pltfExclReason = pltfGov.reason;
+        let pltfFinalAddress = finalPltfAddr;
+
+        if (!pltfIsGov && !pltfIsProSe && finalPltfAddr) {
+          const addrAudit = evaluateAddressCorrectness(finalPltfAddr);
+          if (!addrAudit.isValid) {
+            pltfIsExcluded = true;
+            pltfExclCode = addrAudit.exclusion_code;
+            pltfExclReason = addrAudit.reason;
+          } else {
+            pltfFinalAddress = addrAudit.standardized_address;
+          }
+        }
+
+        const pltfFirmVariation = Boolean(resolvedPltfFirm && (nc.plaintiff_firm || nc.firm) && resolvedPltfFirm.toLowerCase() !== (nc.plaintiff_firm || nc.firm).toLowerCase());
+        const pltfCaseCoverage = pltfFirmVariation ? 'SECURED_TARGET_CASE' : (existingPltf?.case_coverage_status || 'STANDARD_MATCH');
+        const pltfAuditTag = pltfFirmVariation ? 'ATTORNEY_FIRM_VARIATION_PRESERVED' : (existingPltf?.assignment_audit_tag || null);
+
         const pltfRecord = {
           ...commonFields,
           is_pro_se: pltfIsProSe,
           is_government: pltfIsGov,
-          is_excluded: pltfIsGov,
-          exclusion_code: pltfGov.exclusion_code,
-          exclusion_reason: pltfGov.reason,
-          ear: (pltfIsProSe || pltfIsGov) ? 0 : (nc.ear || 0),
-          est_value: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.est_value,
-          full_value: (pltfIsProSe || pltfIsGov) ? 0 : (nc.full_value || 0),
-          priority_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.priority_score,
-          urgency_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.urgency_score,
-          revenue_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.revenue_score,
-          locality_score: (pltfIsProSe || pltfIsGov) ? 0 : commonFields.locality_score,
-          delivery_status: (pltfIsProSe || pltfIsGov) ? 'ineligible' : 'review',
+          is_excluded: pltfIsExcluded,
+          exclusion_code: pltfExclCode,
+          exclusion_reason: pltfExclReason,
+          case_coverage_status: pltfCaseCoverage,
+          assignment_audit_tag: pltfAuditTag,
+          ear: (pltfIsProSe || pltfIsExcluded) ? 0 : (nc.ear || 0),
+          est_value: (pltfIsProSe || pltfIsExcluded) ? 0 : commonFields.est_value,
+          full_value: (pltfIsProSe || pltfIsExcluded) ? 0 : (nc.full_value || 0),
+          priority_score: (pltfIsProSe || pltfIsExcluded) ? 0 : commonFields.priority_score,
+          urgency_score: (pltfIsProSe || pltfIsExcluded) ? 0 : commonFields.urgency_score,
+          revenue_score: (pltfIsProSe || pltfIsExcluded) ? 0 : commonFields.revenue_score,
+          locality_score: (pltfIsProSe || pltfIsExcluded) ? 0 : commonFields.locality_score,
+          delivery_status: (pltfIsProSe || pltfIsExcluded) ? 'ineligible' : 'review',
           pitch_angle: pltfIsGov ? 'N/A (Sovereign Government Entity)' : (pltfIsProSe ? 'N/A (Pro Se Claimant)' : (defIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.pitch_angle || 'Narrative Demonstratives, Liability Timelines & Blowup Medical Boards'))),
           is_local: pltfLoc.is_local,
           is_oot: pltfLoc.is_oot,
@@ -2244,21 +2287,43 @@ class DataStore {
 
         const defLoc = resolveLocality(finalDefAddr, finalDefCity, trialCity, venueState);
         const defIsGov = Boolean(defGov.isGovernment);
+        let defIsExcluded = defIsGov;
+        let defExclCode = defGov.exclusion_code;
+        let defExclReason = defGov.reason;
+        let defFinalAddress = finalDefAddr;
+
+        if (!defIsGov && !defIsProSe && finalDefAddr) {
+          const addrAudit = evaluateAddressCorrectness(finalDefAddr);
+          if (!addrAudit.isValid) {
+            defIsExcluded = true;
+            defExclCode = addrAudit.exclusion_code;
+            defExclReason = addrAudit.reason;
+          } else {
+            defFinalAddress = addrAudit.standardized_address;
+          }
+        }
+
+        const defFirmVariation = Boolean(resolvedDefFirm && (nc.defense_firm || nc.opposing_firm || nc.firm) && resolvedDefFirm.toLowerCase() !== (nc.defense_firm || nc.opposing_firm || nc.firm).toLowerCase());
+        const defCaseCoverage = defFirmVariation ? 'SECURED_TARGET_CASE' : (existingDef?.case_coverage_status || 'STANDARD_MATCH');
+        const defAuditTag = defFirmVariation ? 'ATTORNEY_FIRM_VARIATION_PRESERVED' : (existingDef?.assignment_audit_tag || null);
+
         const defRecord = {
           ...commonFields,
           is_pro_se: defIsProSe,
           is_government: defIsGov,
-          is_excluded: defIsGov,
-          exclusion_code: defGov.exclusion_code,
-          exclusion_reason: defGov.reason,
-          ear: (defIsProSe || defIsGov) ? 0 : (nc.defense_ear || nc.ear || 0),
-          est_value: (defIsProSe || defIsGov) ? 0 : commonFields.est_value,
-          full_value: (defIsProSe || defIsGov) ? 0 : (nc.defense_full_value || nc.full_value || 0),
-          priority_score: (defIsProSe || defIsGov) ? 0 : commonFields.priority_score,
-          urgency_score: (defIsProSe || defIsGov) ? 0 : commonFields.urgency_score,
-          revenue_score: (defIsProSe || defIsGov) ? 0 : commonFields.revenue_score,
-          locality_score: (defIsProSe || defIsGov) ? 0 : commonFields.locality_score,
-          delivery_status: (defIsProSe || defIsGov) ? 'ineligible' : 'review',
+          is_excluded: defIsExcluded,
+          exclusion_code: defExclCode,
+          exclusion_reason: defExclReason,
+          case_coverage_status: defCaseCoverage,
+          assignment_audit_tag: defAuditTag,
+          ear: (defIsProSe || defIsExcluded) ? 0 : (nc.defense_ear || nc.ear || 0),
+          est_value: (defIsProSe || defIsExcluded) ? 0 : commonFields.est_value,
+          full_value: (defIsProSe || defIsExcluded) ? 0 : (nc.defense_full_value || nc.full_value || 0),
+          priority_score: (defIsProSe || defIsExcluded) ? 0 : commonFields.priority_score,
+          urgency_score: (defIsProSe || defIsExcluded) ? 0 : commonFields.urgency_score,
+          revenue_score: (defIsProSe || defIsExcluded) ? 0 : commonFields.revenue_score,
+          locality_score: (defIsProSe || defIsExcluded) ? 0 : commonFields.locality_score,
+          delivery_status: (defIsProSe || defIsExcluded) ? 'ineligible' : 'review',
           pitch_angle: defIsGov ? 'N/A (Sovereign Government Entity)' : (defIsProSe ? 'N/A (Pro Se Defendant)' : (pltfIsProSe ? 'Summary Judgment Visuals, Timeline Demonstratives & Motion Practice Boards' : (nc.defense_pitch_angle || 'Impeachment Callouts, Medical Board Exhibits & Expert Cross Tabs'))),
           is_local: defLoc.is_local,
           is_oot: defLoc.is_oot,
@@ -2790,6 +2855,96 @@ class DataStore {
     this.recomputeScoresAndBuildings(true);
     this.save();
     return conversionRecord;
+  }
+
+  processDocketRecord(record) {
+    const rawAtty = record.lead_counsel || record.attorney_name || record.attorney || record.lead_attorney || '';
+    const rawFirm = record.law_firm || record.firm_name || record.firm || '';
+    const rawEmail = record.email || '';
+    const rawAddr = record.firm_address || record.address || '';
+
+    const canonicalAtty = normalizePersonName(rawAtty);
+    const canonicalFirm = normalizeFirmName(rawFirm, rawEmail, canonicalAtty);
+
+    const processed = { ...record };
+    processed.canonical_attorney = canonicalAtty;
+    processed.canonical_firm = canonicalFirm;
+
+    const govAudit = isGovernmentEntity(canonicalAtty, canonicalFirm, rawEmail, rawAddr);
+    if (govAudit.isGovernment) {
+      processed.is_excluded = true;
+      processed.exclusion_code = govAudit.exclusion_code;
+      processed.exclusion_reason = govAudit.reason;
+      processed.delivery_status = 'ineligible';
+      processed.ear = 0.0;
+      processed.priority_score = 0;
+      return processed;
+    }
+
+    const addrAudit = evaluateAddressCorrectness(rawAddr);
+    if (!addrAudit.isValid) {
+      processed.is_excluded = true;
+      processed.exclusion_code = addrAudit.exclusion_code;
+      processed.exclusion_reason = addrAudit.reason;
+      processed.delivery_status = 'ineligible';
+      processed.ear = 0.0;
+      processed.priority_score = 0;
+      return processed;
+    }
+
+    processed.standardized_address = addrAudit.standardized_address;
+
+    // Target Case Coverage Preservation Gate (Kris Directive 3)
+    const firmVariation = Boolean(canonicalFirm && rawFirm && canonicalFirm.toLowerCase() !== rawFirm.toLowerCase());
+    if (firmVariation) {
+      processed.case_coverage_status = 'SECURED_TARGET_CASE';
+      processed.assignment_audit_tag = 'ATTORNEY_FIRM_VARIATION_PRESERVED';
+    } else {
+      processed.case_coverage_status = 'STANDARD_MATCH';
+      processed.assignment_audit_tag = null;
+    }
+
+    processed.is_excluded = false;
+    processed.exclusion_code = null;
+    processed.exclusion_reason = null;
+    processed.delivery_status = 'eligible';
+
+    return processed;
+  }
+
+  runBatchAudit(records) {
+    if (!Array.isArray(records)) return { summary: { total_records: 0 }, records: [] };
+    const results = [];
+    const stats = {
+      total_records: records.length,
+      eligible: 0,
+      excluded_government: 0,
+      excluded_address: 0,
+      cases_preserved: 0
+    };
+
+    for (const r of records) {
+      const audited = this.processDocketRecord(r);
+      results.push(audited);
+      if (audited.is_excluded) {
+        const code = audited.exclusion_code || '';
+        if (code.includes('GOV')) {
+          stats.excluded_government += 1;
+        } else {
+          stats.excluded_address += 1;
+        }
+      } else {
+        stats.eligible += 1;
+        if (audited.case_coverage_status === 'SECURED_TARGET_CASE') {
+          stats.cases_preserved += 1;
+        }
+      }
+    }
+
+    return {
+      summary: stats,
+      records: results
+    };
   }
 }
 

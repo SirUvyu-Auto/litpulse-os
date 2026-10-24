@@ -462,6 +462,22 @@ app.get('/api/admin/stats', (req, res) => {
   }
 });
 
+// Pipeline Exclusion Audit (Kris Davis Directives: Canonical Matching, Address Correctness, Target Case Preservation)
+app.post('/api/pipeline/exclusion-audit', (req, res) => {
+  try {
+    const records = Array.isArray(req.body) ? req.body : (req.body?.records || []);
+    const report = db.runBatchAudit(records);
+    res.json({
+      status: 'SUCCESS',
+      summary: report.summary,
+      records: report.records
+    });
+  } catch (err) {
+    console.error('Exclusion audit error:', err);
+    res.status(500).json({ status: 'ERROR', error: err.message });
+  }
+});
+
 // Admin File Upload (CSV, XLSX, XLS, TXT)
 app.post('/api/admin/upload', upload.single('file'), (req, res) => {
   if (global.gc) global.gc();

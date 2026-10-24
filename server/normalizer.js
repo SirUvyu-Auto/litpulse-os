@@ -338,8 +338,122 @@ const ACCREDITED_COMMERCIAL_LEGAL_BUILDINGS = [
   'turnberry plaza',
   'museum tower',
   'justice building',
-  'law center'
+  'law center',
+  'bacardi building',
+  'wells fargo center',
+  'southeast financial center',
+  'brickell city tower',
+  'suntrust international center',
+  'one biscayne tower'
 ];
+
+// Common attorney nickname to formal name variants (Kris Directive 1)
+const COMMON_NAME_VARIANTS = {
+  'bob': 'robert',
+  'bobby': 'robert',
+  'rob': 'robert',
+  'bill': 'william',
+  'billy': 'william',
+  'jim': 'james',
+  'jimmy': 'james',
+  'dan': 'daniel',
+  'danny': 'daniel',
+  'mike': 'michael',
+  'dave': 'david',
+  'tom': 'thomas',
+  'tommy': 'thomas',
+  'dick': 'richard',
+  'rick': 'richard',
+  'chris': 'christopher',
+  'tony': 'anthony',
+  'al': 'albert',
+  'alex': 'alexander',
+  'steve': 'stephen',
+  'ken': 'kenneth'
+};
+
+// Canonical firm stem keywords (Kris Directive 1)
+const CANONICAL_FIRM_STEMS = {
+  'homerbonner': 'Homer Bonner Jacobs Ortiz',
+  'homerandbonner': 'Homer Bonner Jacobs Ortiz',
+  'lieblergonzalez': 'Liebler Gonzalez Portuondo',
+  'hollandknight': 'Holland & Knight',
+  'stearnsweaver': 'Stearns Weaver Miller',
+  'shuttsbowen': 'Shutts & Bowen',
+  'greenbergtraurig': 'Greenberg Traurig',
+  'bilzinsumberg': 'Bilzin Sumberg',
+  'colescott': 'Cole, Scott & Kissane',
+  'carltonfields': 'Carlton Fields'
+};
+
+function normalizePersonName(name) {
+  if (!name || typeof name !== 'string') return '';
+  let clean = name.trim();
+  clean = clean.replace(/,?\s*\b(esq|attorney\s+at\s+law|jr|sr|ii|iii|iv|mba|jd)\.?$/gi, '');
+  clean = clean.replace(/,?\s*\b(esq|attorney\s+at\s+law|jr|sr|ii|iii|iv|mba|jd)\b\.?/gi, '');
+  clean = clean.replace(/^(mr\.?|ms\.?|mrs\.?|dr\.?)\s+/gi, '');
+  clean = clean.replace(/[\.,]+$/, '').replace(/\s+/g, ' ').trim();
+  const tokens = clean.split(' ');
+  if (!tokens.length || !tokens[0]) return '';
+  const firstLower = tokens[0].toLowerCase();
+  if (COMMON_NAME_VARIANTS[firstLower]) {
+    const formal = COMMON_NAME_VARIANTS[firstLower];
+    tokens[0] = formal.charAt(0).toUpperCase() + formal.slice(1);
+  }
+  return tokens.join(' ');
+}
+
+function evaluateAddressCorrectness(address) {
+  if (!address || typeof address !== 'string' || address.trim().length < 6) {
+    return {
+      isValid: false,
+      exclusion_code: 'EXCL_ADDR_MISSING',
+      reason: 'Address is empty, null, or fewer than 6 characters.'
+    };
+  }
+  const cleanAddr = address.trim();
+  const addrLower = cleanAddr.toLowerCase();
+
+  // 1. Standalone PO Box Check (Kris Directive 2)
+  const hasPoBox = /\b(p\.?o\.?\s*box|post\s*office\s*box)\b/i.test(addrLower);
+  const hasPhysicalStreet = /\b\d+\s+[a-zA-Z0-9\s]+(st|ave|blvd|rd|dr|ct|pkwy|loop|hwy|way|lane|ln|suite|ste)\b/i.test(addrLower);
+  const hasIconicStreet = /\b(miracle\s+mile|las\s+olas|broadway|the\s+embarcadero|avenue\s+of\s+the\s+americas|ocean\s+drive|brickell\s+avenue|biscayne\s+boulevard)\b/i.test(addrLower);
+
+  if (hasPoBox && !hasPhysicalStreet && !hasIconicStreet) {
+    return {
+      isValid: false,
+      exclusion_code: 'EXCL_ADDR_POBOX_ONLY',
+      reason: 'Address contains PO Box only without physical deliverable street address.'
+    };
+  }
+
+  // 2. Correctional facilities / detention centers
+  if (/\b(correctional|inmate|detention|jail|prison)\b/i.test(addrLower)) {
+    return {
+      isValid: false,
+      exclusion_code: 'EXCL_ADDR_INSTITUTIONAL',
+      reason: 'Address is a correctional or detention facility.'
+    };
+  }
+
+  // 3. Must have a street number, iconic street, or accredited landmark
+  const hasStreetNum = /^\d+\b/.test(addrLower) || /\b\d{2,}\s+[a-zA-Z]/.test(addrLower);
+  const hasAccreditedBldg = ACCREDITED_COMMERCIAL_LEGAL_BUILDINGS.some(b => addrLower.includes(b));
+
+  if (!hasStreetNum && !hasIconicStreet && !hasAccreditedBldg) {
+    return {
+      isValid: false,
+      exclusion_code: 'EXCL_ADDR_MALFORMED',
+      reason: 'Address lacks valid building/street number and is not an accredited commercial landmark.'
+    };
+  }
+
+  return {
+    isValid: true,
+    exclusion_code: null,
+    standardized_address: standardizeAddress(cleanAddr)
+  };
+}
 
 function standardizeAddress(rawAddress, fallbackCity) {
   if (!rawAddress || typeof rawAddress !== 'string') return fallbackCity ? `${fallbackCity}, FL` : '';
@@ -618,6 +732,14 @@ function normalizeFirmName(rawName, email, attorneyName) {
 
   let clean = (rawName || '').trim().replace(/\s+/g, ' ');
 
+  // Canonical stem keywords check (Kris Directive 1: Homer Bonner, Liebler Gonzalez, etc.)
+  const firmAlnum = clean.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  for (const [stem, canonical] of Object.entries(CANONICAL_FIRM_STEMS)) {
+    if (firmAlnum.includes(stem)) {
+      return canonical;
+    }
+  }
+
   // Standardize conjunctions & HTML entities
   clean = clean.replace(/&amp;/gi, '&');
   clean = clean.replace(/\band\b/gi, '&');
@@ -742,19 +864,21 @@ function isGovernmentEntity(attorneyName, firmName, email = '', address = '', ca
     return { isGovernment: false, exclusion_code: null, reason: null };
   }
 
-  // 1. Government email domains
-  if (/@(.*\.)?(usdoj\.gov|usa\.doj\.gov|sec\.gov|ftc\.gov|irs\.gov|eeoc\.gov|fd\.org|myfloridalegal\.com|miamidade\.gov|broward\.org|tampa\.gov|orlando\.gov|talgov\.com|sa13\.org|sao\d+\.org)\b/i.test(eml)) {
+  const combinedName = `${atty} ${firm}`.trim();
+
+  // 1. Department of Justice (DOJ) takes specific precedence
+  if (/\b(doj[- ]?(civ|tax|usao|crm|enrd|atr)?|u\.?s\.?\s*dept(artment)?\s+of\s+justice|united\s+states\s+department\s+of\s+justice|department\s+of\s+justice)\b/i.test(combinedName) || /usdoj\.gov/i.test(eml)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_DOJ', reason: firmName || attorneyName || email };
+  }
+
+  // 2. United States Attorney's Offices (USAO)
+  if (/\b(usao|u\.?s\.?\s*attorney('?s)?\s*office|united\s+states\s+attorney('?s)?\s*office|assistant\s+u\.?s\.?\s*attorney|ausa)\b/i.test(combinedName) || /usa\.doj\.gov/i.test(eml)) {
+    return { isGovernment: true, exclusion_code: 'EXCL_GOV_USAO', reason: firmName || attorneyName || email };
+  }
+
+  // 3. Other Government email domains
+  if (/@(.*\.)?(sec\.gov|ftc\.gov|irs\.gov|eeoc\.gov|fd\.org|myfloridalegal\.com|miamidade\.gov|broward\.org|tampa\.gov|orlando\.gov|talgov\.com|sa13\.org|sao\d+\.org)\b/i.test(eml)) {
     return { isGovernment: true, exclusion_code: 'EXCL_GOV_EMAIL', reason: email };
-  }
-
-  // 2. Department of Justice (DOJ)
-  if (/\b(doj[- ]?(civ|tax|usao|crm|enrd|atr)?|u\.?s\.?\s*dept(artment)?\s+of\s+justice|united\s+states\s+department\s+of\s+justice|department\s+of\s+justice)\b/i.test(firm)) {
-    return { isGovernment: true, exclusion_code: 'EXCL_GOV_DOJ', reason: firmName };
-  }
-
-  // 3. United States Attorney's Offices (USAO)
-  if (/\b(usao|u\.?s\.?\s*attorney('?s)?\s*office|united\s+states\s+attorney('?s)?\s*office|assistant\s+u\.?s\.?\s*attorney|ausa)\b/i.test(firm)) {
-    return { isGovernment: true, exclusion_code: 'EXCL_GOV_USAO', reason: firmName };
   }
 
   // 4. Federal Agencies (SEC, FTC, EEOC, IRS, etc.)
@@ -886,6 +1010,10 @@ module.exports = {
   extractFirmCity,
   standardizeAddress,
   classifyAddressDeliverability,
+  evaluateAddressCorrectness,
+  normalizePersonName,
+  COMMON_NAME_VARIANTS,
+  CANONICAL_FIRM_STEMS,
   ACCREDITED_COMMERCIAL_LEGAL_BUILDINGS,
   normalizeFirmName,
   resolveFirmId,

@@ -1677,13 +1677,16 @@ table.data-table {
   z-index: 101;
 }
 
+.data-table tr {
+  position: relative;
+}
+
 .data-table tr:hover {
   z-index: 100;
 }
 
 .data-table tr:has(.score-tooltip-wrap:hover) {
   z-index: 100000 !important;
-  position: relative;
 }
 
 .data-table tr:has(.score-tooltip-wrap:hover) td:first-child,

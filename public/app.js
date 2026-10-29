@@ -1313,7 +1313,7 @@ function initRunCityMultiSelect(buildings) {
     cityCounts[c] = (cityCounts[c] || 0) + 1;
   });
 
-  availableRunCities = Object.keys(cityCounts).sort().map(name => ({
+  availableRunCities = Object.keys(cityCounts).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })).map(name => ({
     name,
     count: cityCounts[name]
   }));
@@ -2335,7 +2335,7 @@ function initLargeMattersCityMultiSelect(largeMatters) {
     }
   });
 
-  const sortedNames = Object.keys(cityCounts).sort((a, b) => cityCounts[b] - cityCounts[a]);
+  const sortedNames = Object.keys(cityCounts).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
   availableLargeMattersCities = sortedNames.map(name => ({
     name,
     count: cityCounts[name]
@@ -2409,7 +2409,7 @@ function renderLargeMattersCityList() {
         <input type="checkbox" ${isSelected ? 'checked' : ''}>
         <span style="font-weight:${isSelected ? '600' : '400'};color:${isSelected ? '#FFF' : 'var(--text-platinum)'};">${escapeHtml(c.name)}</span>
       </label>
-      <span class="multi-select-item-count">${c.count} ${c.count === 1 ? 'matter' : 'matters'}</span>
+      <span class="multi-select-item-count">${c.count} ${c.count === 1 ? 'large matter' : 'large matters'}</span>
     `;
     listEl.appendChild(item);
   });
@@ -2449,7 +2449,7 @@ function updateLargeMattersCityBadges() {
 
   const totalMatters = largeMattersCache.length;
   if (!selectedLargeMattersCities.length) {
-    badgesEl.innerHTML = `<span class="multi-select-placeholder" id="largeMattersCityPlaceholder">All Cities (${totalMatters} active)</span>`;
+    badgesEl.innerHTML = `<span class="multi-select-placeholder" id="largeMattersCityPlaceholder">All Cities (${totalMatters} large matters)</span>`;
   } else if (selectedLargeMattersCities.length === 1) {
     const city = selectedLargeMattersCities[0];
     const cityObj = availableLargeMattersCities.find(c => c.name === city);

@@ -140,6 +140,9 @@ const CITY_ALIASES = {
   'orl': 'Orlando',
   'tpa': 'Tampa',
   'jax': 'Jacksonville',
+  'tally': 'Tallahassee',
+  'tallahasse': 'Tallahassee',
+  'tallahasee': 'Tallahassee',
   'dania': 'Dania Beach',
   'boynton': 'Boynton Beach',
   'deland': 'DeLand',
@@ -294,7 +297,7 @@ function extractFirmCity(address, fallbackCity) {
     .trim();
 
   // Pattern 1: Match from tail: , City, ST 12345 or , City, ST
-  const tailRegex = /,\s*([^,]+?),\s*([A-Za-z]{2})(?:\s*[-–]\s*\d{4})?(?:\s+(\d{5})(?:-\d{4})?)?\s*$/;
+  const tailRegex = /,\s*([^,]+?),\s*([A-Za-z]{2})(?:\s*[-\u2013]\s*\d{4})?(?:\s+(\d{5})(?:-\d{4})?)?\s*$/;
   const match = clean.match(tailRegex);
   if (match) {
     let rawCity = match[1].trim();
@@ -352,24 +355,71 @@ const COMMON_NAME_VARIANTS = {
   'bob': 'robert',
   'bobby': 'robert',
   'rob': 'robert',
+  'robbie': 'robert',
   'bill': 'william',
   'billy': 'william',
+  'will': 'william',
+  'willie': 'william',
   'jim': 'james',
   'jimmy': 'james',
+  'jamie': 'james',
   'dan': 'daniel',
   'danny': 'daniel',
   'mike': 'michael',
+  'mikey': 'michael',
   'dave': 'david',
+  'davy': 'david',
   'tom': 'thomas',
   'tommy': 'thomas',
   'dick': 'richard',
   'rick': 'richard',
+  'ricky': 'richard',
+  'rich': 'richard',
+  'richie': 'richard',
   'chris': 'christopher',
   'tony': 'anthony',
   'al': 'albert',
+  'bert': 'albert',
   'alex': 'alexander',
+  'alec': 'alexander',
   'steve': 'stephen',
-  'ken': 'kenneth'
+  'stevie': 'stephen',
+  'ken': 'kenneth',
+  'kenny': 'kenneth',
+  'ed': 'edward',
+  'eddie': 'edward',
+  'ned': 'edward',
+  'joe': 'joseph',
+  'joey': 'joseph',
+  'matt': 'matthew',
+  'matty': 'matthew',
+  'ben': 'benjamin',
+  'benny': 'benjamin',
+  'sam': 'samuel',
+  'sammy': 'samuel',
+  'charlie': 'charles',
+  'chuck': 'charles',
+  'greg': 'gregory',
+  'jeff': 'jeffrey',
+  'andy': 'andrew',
+  'drew': 'andrew',
+  'pete': 'peter',
+  'art': 'arthur',
+  'artie': 'arthur',
+  'larry': 'lawrence',
+  'tim': 'timothy',
+  'timmy': 'timothy',
+  'ray': 'raymond',
+  'phil': 'philip',
+  'jon': 'john',
+  'jack': 'john',
+  'nick': 'nicholas',
+  'ted': 'theodore',
+  'teddy': 'theodore',
+  'herb': 'herbert',
+  'herbie': 'herbert',
+  'walt': 'walter',
+  'gene': 'eugene'
 };
 
 // Canonical firm stem keywords (Kris Directive 1)
@@ -393,6 +443,15 @@ function normalizePersonName(name) {
   clean = clean.replace(/,?\s*\b(esq|attorney\s+at\s+law|jr|sr|ii|iii|iv|mba|jd)\b\.?/gi, '');
   clean = clean.replace(/^(mr\.?|ms\.?|mrs\.?|dr\.?)\s+/gi, '');
   clean = clean.replace(/[\.,]+$/, '').replace(/\s+/g, ' ').trim();
+
+  // Handle "Last, First" format when not multi-attorney
+  if (clean.includes(',') && !clean.includes(' and ') && !clean.includes(' & ')) {
+    const parts = clean.split(',').map(p => p.trim());
+    if (parts.length === 2 && parts[0] && parts[1]) {
+      clean = `${parts[1]} ${parts[0]}`;
+    }
+  }
+
   const tokens = clean.split(' ');
   if (!tokens.length || !tokens[0]) return '';
   const firstLower = tokens[0].toLowerCase();
@@ -400,7 +459,7 @@ function normalizePersonName(name) {
     const formal = COMMON_NAME_VARIANTS[firstLower];
     tokens[0] = formal.charAt(0).toUpperCase() + formal.slice(1);
   }
-  return tokens.join(' ');
+  return tokens.map(t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()).join(' ');
 }
 
 function evaluateAddressCorrectness(address) {
@@ -414,18 +473,10 @@ function evaluateAddressCorrectness(address) {
   const cleanAddr = address.trim();
   const addrLower = cleanAddr.toLowerCase();
 
-  // 1. Standalone PO Box Check (Kris Directive 2)
+  // 1. PO Box Handling (Barbrah/Kris Directive: Keep PO Box addresses since USPS can deliver there)
   const hasPoBox = /\b(p\.?o\.?\s*box|post\s*office\s*box)\b/i.test(addrLower);
   const hasPhysicalStreet = /\b\d+\s+[a-zA-Z0-9\s]+(st|ave|blvd|rd|dr|ct|pkwy|loop|hwy|way|lane|ln|suite|ste)\b/i.test(addrLower);
   const hasIconicStreet = /\b(miracle\s+mile|las\s+olas|broadway|the\s+embarcadero|avenue\s+of\s+the\s+americas|ocean\s+drive|brickell\s+avenue|biscayne\s+boulevard)\b/i.test(addrLower);
-
-  if (hasPoBox && !hasPhysicalStreet && !hasIconicStreet) {
-    return {
-      isValid: false,
-      exclusion_code: 'EXCL_ADDR_POBOX_ONLY',
-      reason: 'Address contains PO Box only without physical deliverable street address.'
-    };
-  }
 
   // 2. Correctional facilities / detention centers
   if (/\b(correctional|inmate|detention|jail|prison)\b/i.test(addrLower)) {
@@ -436,15 +487,15 @@ function evaluateAddressCorrectness(address) {
     };
   }
 
-  // 3. Must have a street number, iconic street, or accredited landmark
+  // 3. Must have a street number, iconic street, accredited landmark, or valid PO Box
   const hasStreetNum = /^\d+\b/.test(addrLower) || /\b\d{2,}\s+[a-zA-Z]/.test(addrLower);
   const hasAccreditedBldg = ACCREDITED_COMMERCIAL_LEGAL_BUILDINGS.some(b => addrLower.includes(b));
 
-  if (!hasStreetNum && !hasIconicStreet && !hasAccreditedBldg) {
+  if (!hasStreetNum && !hasIconicStreet && !hasAccreditedBldg && !hasPoBox) {
     return {
       isValid: false,
       exclusion_code: 'EXCL_ADDR_MALFORMED',
-      reason: 'Address lacks valid building/street number and is not an accredited commercial landmark.'
+      reason: 'Address lacks valid building/street number, PO Box, and is not an accredited commercial landmark.'
     };
   }
 
@@ -537,9 +588,9 @@ function classifyAddressDeliverability(rawAddress) {
   if (/^(unknown|n\/a|tbd|none)$/i.test(clean)) {
     return { isDeliverable: false, code: 'EXCL_ADDR_MISSING', category: 3, label: 'Placeholder address' };
   }
-  // Standalone PO Box without street
+  // Standalone PO Box without street (Barbrah/Kris Directive: USPS delivers to PO boxes)
   if (/^p\.?o\.?\s*box\s+\d+/i.test(clean) && !/\b(st|ave|blvd|rd|dr|way|lane|ct|loop|tower|plaza|suite|fl|floor)\b/i.test(clean)) {
-    return { isDeliverable: false, code: 'EXCL_ADDR_POBOX_ONLY', category: 2, label: 'PO Box only, physical street lookup required' };
+    return { isDeliverable: true, code: 'DELIV_POBOX', category: 2, label: 'USPS PO Box deliverable' };
   }
   // Building name only, no street number (e.g. Turnberry Plaza Suite 901)
   if (/^[a-z\s]+(plaza|tower|building|center)\s+(suite|floor|#|\d+)/i.test(clean) && !/^\d+\s+/i.test(clean)) {

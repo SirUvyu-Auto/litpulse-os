@@ -47,8 +47,8 @@ function runTests() {
     console.error('  [FAIL] Expected eligible private tenant, got:', res2);
   }
 
-  // Test 3: Kris Directive 2 - Standalone PO Box Detection
-  console.log('\nTEST 3: Full-Record Address Correctness (Standalone PO Box)');
+  // Test 3: Barbrah & Kris Directive - Keep Standalone PO Box Addresses (USPS Deliverable)
+  console.log('\nTEST 3: Full-Record Address Correctness (Standalone PO Box - USPS Deliverable)');
   const rec3 = {
     attorney_name: 'Michael Vance',
     firm_name: 'Vance Law Group',
@@ -56,11 +56,11 @@ function runTests() {
     address: 'P.O. Box 4902, Miami, FL 33101'
   };
   const res3 = db.processDocketRecord(rec3);
-  if (res3.is_excluded && res3.exclusion_code === 'EXCL_ADDR_POBOX_ONLY') {
-    console.log('  [PASS] Standalone PO box correctly flagged for courier handoff disqualification');
+  if (!res3.is_excluded && res3.delivery_status === 'eligible') {
+    console.log('  [PASS] Standalone PO box correctly preserved as USPS deliverable per Barbrah/Kris directive');
     passed++;
   } else {
-    console.error('  [FAIL] Expected EXCL_ADDR_POBOX_ONLY, got:', res3);
+    console.error('  [FAIL] Expected eligible record, got:', res3);
   }
 
   // Test 4: Kris Directive 1 - Upstream Fuzzy Canonical Matching (Homer Bonner)

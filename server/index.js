@@ -1,6 +1,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const express = require('express');
+const compression = require('compression');
 const multer = require('multer');
 const fs = require('fs');
 const XLSX = require('xlsx');
@@ -10,6 +11,9 @@ const hubspotService = require('./hubspotService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Enable gzip compression for all JSON payloads and static assets
+app.use(compression());
 
 // Setup upload directory for inbound files
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');

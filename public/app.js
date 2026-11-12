@@ -3730,6 +3730,10 @@ async function openDrill(key) {
 
 function closeDrill(e) {
   if (e && e.target !== document.getElementById('drawerBackdrop') && !e.target.closest('.close-btn')) return;
+  if (window.drawerRenderTimer) {
+    clearTimeout(window.drawerRenderTimer);
+    window.drawerRenderTimer = null;
+  }
   document.getElementById('drawerBackdrop').classList.remove('open');
 }
 
@@ -3884,115 +3888,151 @@ function renderDrawerTable(rows, key) {
     </tr>
   `;
 
-  const fragment = document.createDocumentFragment();
-  rows.forEach(c => {
-    const tr = document.createElement('tr');
-    tr.className = 'clickable-row';
-    const targetIdentifier = c.target_id || c.case_id;
-    tr.onclick = () => openDossier(targetIdentifier);
+  if (window.drawerRenderTimer) {
+    clearTimeout(window.drawerRenderTimer);
+    window.drawerRenderTimer = null;
+  }
 
-    const sideBadge = (c.party_side || '').toLowerCase() === 'defense'
-      ? '<span class="tag-def">DEF</span>'
-      : '<span class="tag-pltf">PLTF</span>';
+  // Progressive chunked rendering for instantaneous (<50ms) initial paint
+  const INITIAL_CHUNK = 60;
+  const CHUNK_SIZE = 120;
+  let currentIndex = 0;
 
-    const isAwaitingAtty = !c.lead_attorney || c.lead_attorney === 'Awaiting Appearance' || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(c.lead_attorney);
-    const attyDisplay = isAwaitingAtty
-      ? '<span style="color:var(--text-muted);font-style:italic;">Awaiting Appearance</span>'
-      : escapeHtml(c.lead_attorney);
+  function renderNextDrawerChunk() {
+    if (currentIndex >= rows.length) return;
+    const chunk = rows.slice(currentIndex, currentIndex + CHUNK_SIZE);
+    const fragment = document.createDocumentFragment();
+    chunk.forEach(c => {
+      fragment.appendChild(buildTargetRow(c, isHistoricalKey));
+    });
+    tbody.appendChild(fragment);
+    currentIndex += CHUNK_SIZE;
+    updateDualScrolls();
 
-    let firmDisplay = escapeHtml(c.firm || 'Law Firm');
-    if (!c.firm || c.firm === 'Awaiting Appearance' || /^(plaintiff|defense|unknown firm)$/i.test(c.firm)) {
-      firmDisplay = '<span style="color:var(--text-muted);font-style:italic;">Awaiting Appearance</span>';
-    } else if (!isAwaitingAtty && c.firm.replace(/\s*,?\s*esq\.?$/i, '').trim().toLowerCase() === c.lead_attorney.replace(/\s*,?\s*esq\.?$/i, '').trim().toLowerCase()) {
-      const properAtty = c.lead_attorney.replace(/\s*,?\s*esq\.?$/i, '').trim();
-      firmDisplay = escapeHtml(`Law Office of ${properAtty}`);
+    if (currentIndex < rows.length) {
+      window.drawerRenderTimer = setTimeout(renderNextDrawerChunk, 20);
     }
+  }
 
-    const isClient = Boolean(c.is_client) || c.hubspot_status === 'Booked' || c.hubspot_status === 'Won' || c.hubspot_status === 'Signed';
-    const clientBadge = isClient
-      ? `<span class="badge-client" title="QuickBooks Client: Active billing account with Lit&More">● CLIENT</span>`
-      : `<span class="badge-prospect" title="New Prospect: No prior billing account with Lit&More">PROSPECT</span>`;
-
-    const isBadAddr = !c.address || /^(cv-|div|section|[a-z]{1,2}:|central|open)/i.test(c.address);
-    const firmAddressDisplay = isBadAddr ? `${c.firm_city || c.trial_city || 'Miami'}, FL` : c.address;
-    const firmCityDisplay = c.firm_city || c.city || 'Miami';
-    const trialCityDisplay = c.trial_city || c.division || 'Miami';
-    const isMatch = firmCityDisplay.toLowerCase() === trialCityDisplay.toLowerCase();
-    const isOutOfState = c.is_oos || (c.state && c.state !== 'FL' && c.state !== 'Florida') || /, [A-Z]{2}$/.test(firmCityDisplay);
-
-    const localityPill = renderLocalityPill(c, firmCityDisplay, trialCityDisplay) || `<span class="tag-locality tag-local" title="Local Match: Counsel office in ${escapeHtml(firmCityDisplay)} is in the same metropolitan venue as the trial court.">LOCAL</span>`;
-
-    const isRehit = Boolean(c.is_rehit);
-    const rehitBadge = isRehit
-      ? `<span class="badge-rehit" title="Courier Re-Hit: Contacted ${c.rehit_date ? formatDate(c.rehit_date) : 'on prior matter'}${c.rehit_prior_matter ? ' (' + escapeHtml(c.rehit_prior_matter) + ')' : ''}"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>RE-HIT ${c.rehit_date ? `<span style="font-weight:500;opacity:0.95;">(${formatDate(c.rehit_date)})</span>` : ''}</span>`
-      : '';
-
-    const isWarRoom = Boolean(c.is_war_room) || (c.is_local === false && c.days_until !== undefined && c.days_until >= 0 && c.days_until <= 14);
-    const warRoomBadge = isWarRoom
-      ? `<span class="badge-warroom" title="Traveling Counsel War Room: Out-of-Town/Out-of-State counsel within 14 days of trial in ${escapeHtml(trialCityDisplay)}. Full Locality priority boost active.">⚡ WAR ROOM</span>`
-      : '';
-
-    let daysDisplay = '';
-    if (c.days_until !== undefined && c.days_until < 0) {
-      daysDisplay = `<span style="color:var(--text-muted);font-weight:600;">Concluded (${Math.abs(c.days_until)}d ago)</span>`;
-    } else {
-      const daysColor = (c.days_until || 0) <= 30 ? 'var(--status-crimson)' : 'var(--text-white)';
-      daysDisplay = `<strong style="color:${daysColor};">${c.days_until ?? 0}d</strong>`;
-    }
-
-    const phoneHtml = c.phone
-      ? `<a href="tel:${escapeHtml(c.phone)}" style="color:var(--text-platinum);text-decoration:none;display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation();">
-           <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-           <span>${escapeHtml(c.phone)}</span>
-         </a>`
-      : '<span style="color:var(--text-muted);font-size:10.5px;">No Phone</span>';
-
-    const emailHtml = c.email
-      ? `<a href="mailto:${escapeHtml(c.email)}" style="color:var(--text-platinum);text-decoration:none;display:flex;align-items:center;gap:4px;" title="${escapeHtml(c.email)}" onclick="event.stopPropagation();">
-           <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-           <span style="max-width:125px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(c.email)}</span>
-         </a>`
-      : '<span style="color:var(--text-muted);font-size:10.5px;">No Email</span>';
-
-    tr.innerHTML = `
-      <td>${sideBadge}</td>
-      ${isHistoricalKey ? `<td>${renderOutcomeBadge(c)}</td>` : ''}
-      <td>${renderPriorityBadge(c)}</td>
-      <td class="cell-bold">${attyDisplay}${rehitBadge}${warRoomBadge}</td>
-      <td>${firmDisplay}${clientBadge ? ' ' + clientBadge : ''}</td>
-      <td style="white-space:nowrap;">
-        <span style="font-weight:600;color:var(--text-white);">${escapeHtml(firmCityDisplay)}</span>${localityPill}
-      </td>
-      <td style="font-size:11.5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(firmAddressDisplay)}">
-        ${escapeHtml(firmAddressDisplay)}
-      </td>
-      <td>
-        <div style="font-weight:600;color:var(--text-white);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(c.caption || '')}">
-          ${escapeHtml(c.caption || '')}
-        </div>
-        <div class="cell-mono">${escapeHtml(c.case_id || '')}</div>
-      </td>
-      <td>
-        <div style="font-weight:500;color:var(--text-white);white-space:nowrap;">${escapeHtml(c.judge || 'Honorable Judge')}</div>
-        <div style="font-size:11px;color:var(--text-muted);">${escapeHtml(c.court || 'S.D. Fla.')}</div>
-      </td>
-      <td style="white-space:nowrap;color:var(--text-platinum);">${escapeHtml(trialCityDisplay)}</td>
-      <td>${daysDisplay}</td>
-      <td class="cell-mono" style="white-space:nowrap;">${formatDate(c.trial_date)}</td>
-      <td class="cell-mono" style="color:var(--status-emerald);font-weight:700;">${formatCurrency(c.ear || c.est_value)}</td>
-      <td><span class="status-pill clean">${escapeHtml(c.hubspot_status || 'Lead')}</span></td>
-      <td>
-        <div style="font-size:11px;display:flex;flex-direction:column;gap:2px;">
-          ${phoneHtml}
-          ${emailHtml}
-        </div>
-      </td>
-      <td>${escapeHtml(c.assigned_to || '') || '<span style="color:var(--status-amber);">Unassigned</span>'}</td>
-    `;
-    fragment.appendChild(tr);
+  const initialSlice = rows.slice(0, INITIAL_CHUNK);
+  const initialFragment = document.createDocumentFragment();
+  initialSlice.forEach(c => {
+    initialFragment.appendChild(buildTargetRow(c, isHistoricalKey));
   });
-  tbody.appendChild(fragment);
+  tbody.appendChild(initialFragment);
+  currentIndex = INITIAL_CHUNK;
   updateDualScrolls();
+
+  if (currentIndex < rows.length) {
+    window.drawerRenderTimer = setTimeout(renderNextDrawerChunk, 30);
+  }
+}
+
+function buildTargetRow(c, isHistoricalKey) {
+  const tr = document.createElement('tr');
+  tr.className = 'clickable-row';
+  const targetIdentifier = c.target_id || c.case_id;
+  tr.onclick = () => openDossier(targetIdentifier);
+
+  const sideBadge = (c.party_side || '').toLowerCase() === 'defense'
+    ? '<span class="tag-def">DEF</span>'
+    : '<span class="tag-pltf">PLTF</span>';
+
+  const isAwaitingAtty = !c.lead_attorney || c.lead_attorney === 'Awaiting Appearance' || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(c.lead_attorney);
+  const attyDisplay = isAwaitingAtty
+    ? '<span style="color:var(--text-muted);font-style:italic;">Awaiting Appearance</span>'
+    : escapeHtml(c.lead_attorney);
+
+  let firmDisplay = escapeHtml(c.firm || 'Law Firm');
+  if (!c.firm || c.firm === 'Awaiting Appearance' || /^(plaintiff|defense|unknown firm)$/i.test(c.firm)) {
+    firmDisplay = '<span style="color:var(--text-muted);font-style:italic;">Awaiting Appearance</span>';
+  } else if (!isAwaitingAtty && c.firm.replace(/\s*,?\s*esq\.?$/i, '').trim().toLowerCase() === c.lead_attorney.replace(/\s*,?\s*esq\.?$/i, '').trim().toLowerCase()) {
+    const properAtty = c.lead_attorney.replace(/\s*,?\s*esq\.?$/i, '').trim();
+    firmDisplay = escapeHtml(`Law Office of ${properAtty}`);
+  }
+
+  const isClient = Boolean(c.is_client) || c.hubspot_status === 'Booked' || c.hubspot_status === 'Won' || c.hubspot_status === 'Signed';
+  const clientBadge = isClient
+    ? `<span class="badge-client" title="QuickBooks Client: Active billing account with Lit&More">● CLIENT</span>`
+    : `<span class="badge-prospect" title="New Prospect: No prior billing account with Lit&More">PROSPECT</span>`;
+
+  const isBadAddr = !c.address || /^(cv-|div|section|[a-z]{1,2}:|central|open)/i.test(c.address);
+  const firmAddressDisplay = isBadAddr ? `${c.firm_city || c.trial_city || 'Miami'}, FL` : c.address;
+  const firmCityDisplay = c.firm_city || c.city || 'Miami';
+  const trialCityDisplay = c.trial_city || c.division || 'Miami';
+  const isMatch = firmCityDisplay.toLowerCase() === trialCityDisplay.toLowerCase();
+  const isOutOfState = c.is_oos || (c.state && c.state !== 'FL' && c.state !== 'Florida') || /, [A-Z]{2}$/.test(firmCityDisplay);
+
+  const localityPill = renderLocalityPill(c, firmCityDisplay, trialCityDisplay) || `<span class="tag-locality tag-local" title="Local Match: Counsel office in ${escapeHtml(firmCityDisplay)} is in the same metropolitan venue as the trial court.">LOCAL</span>`;
+
+  const isRehit = Boolean(c.is_rehit);
+  const rehitBadge = isRehit
+    ? `<span class="badge-rehit" title="Courier Re-Hit: Contacted ${c.rehit_date ? formatDate(c.rehit_date) : 'on prior matter'}${c.rehit_prior_matter ? ' (' + escapeHtml(c.rehit_prior_matter) + ')' : ''}"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>RE-HIT ${c.rehit_date ? `<span style="font-weight:500;opacity:0.95;">(${formatDate(c.rehit_date)})</span>` : ''}</span>`
+    : '';
+
+  const isWarRoom = Boolean(c.is_war_room) || (c.is_local === false && c.days_until !== undefined && c.days_until >= 0 && c.days_until <= 14);
+  const warRoomBadge = isWarRoom
+    ? `<span class="badge-warroom" title="Traveling Counsel War Room: Out-of-Town/Out-of-State counsel within 14 days of trial in ${escapeHtml(trialCityDisplay)}. Full Locality priority boost active.">⚡ WAR ROOM</span>`
+    : '';
+
+  let daysDisplay = '';
+  if (c.days_until !== undefined && c.days_until < 0) {
+    daysDisplay = `<span style="color:var(--text-muted);font-weight:600;">Concluded (${Math.abs(c.days_until)}d ago)</span>`;
+  } else {
+    const daysColor = (c.days_until || 0) <= 30 ? 'var(--status-crimson)' : 'var(--text-white)';
+    daysDisplay = `<strong style="color:${daysColor};">${c.days_until ?? 0}d</strong>`;
+  }
+
+  const phoneHtml = c.phone
+    ? `<a href="tel:${escapeHtml(c.phone)}" style="color:var(--text-platinum);text-decoration:none;display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation();">
+         <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+         <span>${escapeHtml(c.phone)}</span>
+       </a>`
+    : '<span style="color:var(--text-muted);font-size:10.5px;">No Phone</span>';
+
+  const emailHtml = c.email
+    ? `<a href="mailto:${escapeHtml(c.email)}" style="color:var(--text-platinum);text-decoration:none;display:flex;align-items:center;gap:4px;" title="${escapeHtml(c.email)}" onclick="event.stopPropagation();">
+         <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+         <span style="max-width:125px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(c.email)}</span>
+       </a>`
+    : '<span style="color:var(--text-muted);font-size:10.5px;">No Email</span>';
+
+  tr.innerHTML = `
+    <td>${sideBadge}</td>
+    ${isHistoricalKey ? `<td>${renderOutcomeBadge(c)}</td>` : ''}
+    <td>${renderPriorityBadge(c)}</td>
+    <td class="cell-bold">${attyDisplay}${rehitBadge}${warRoomBadge}</td>
+    <td>${firmDisplay}${clientBadge ? ' ' + clientBadge : ''}</td>
+    <td style="white-space:nowrap;">
+      <span style="font-weight:600;color:var(--text-white);">${escapeHtml(firmCityDisplay)}</span>${localityPill}
+    </td>
+    <td style="font-size:11.5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(firmAddressDisplay)}">
+      ${escapeHtml(firmAddressDisplay)}
+    </td>
+    <td>
+      <div style="font-weight:600;color:var(--text-white);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(c.caption || '')}">
+        ${escapeHtml(c.caption || '')}
+      </div>
+      <div class="cell-mono">${escapeHtml(c.case_id || '')}</div>
+    </td>
+    <td>
+      <div style="font-weight:500;color:var(--text-white);white-space:nowrap;">${escapeHtml(c.judge || 'Honorable Judge')}</div>
+      <div style="font-size:11px;color:var(--text-muted);">${escapeHtml(c.court || 'S.D. Fla.')}</div>
+    </td>
+    <td style="white-space:nowrap;color:var(--text-platinum);">${escapeHtml(trialCityDisplay)}</td>
+    <td>${daysDisplay}</td>
+    <td class="cell-mono" style="white-space:nowrap;">${formatDate(c.trial_date)}</td>
+    <td class="cell-mono" style="color:var(--status-emerald);font-weight:700;">${formatCurrency(c.ear || c.est_value)}</td>
+    <td><span class="status-pill clean">${escapeHtml(c.hubspot_status || 'Lead')}</span></td>
+    <td>
+      <div style="font-size:11px;display:flex;flex-direction:column;gap:2px;">
+        ${phoneHtml}
+        ${emailHtml}
+      </div>
+    </td>
+    <td>${escapeHtml(c.assigned_to || '') || '<span style="color:var(--status-amber);">Unassigned</span>'}</td>
+  `;
+  return tr;
 }
 
 function filterDrawerRows(query) {

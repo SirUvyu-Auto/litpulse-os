@@ -3408,5 +3408,45 @@
     "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
     "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
     "facility_source": "Commercial District Baseline"
+  },
+  "st augustine-2601 n ponce de leon blvd st augustine st augustine fl": {
+    "parking_notes": "Verified public commercial parking facilities within 150m of entrance.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "fort lauderdale-1608 e commercial blvd ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "fort lauderdale-800 e cypress creek rd ft lauderdale fort lauderdale fl": {
+    "parking_notes": "Commercial legal district: Paid multi-level parking garage or metered street parking adjacent to building.",
+    "security_notes": "Commercial legal building. Front desk or lobby security check-in required for elevator access.",
+    "facility_source": "Commercial District Baseline"
+  },
+  "st petersburg-360 central ave st petersburg st petersburg fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "st augustine-144 orchard ln st augustine st augustine fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "st augustine-4675 wolfe rd st augustine st augustine fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
+  },
+  "st petersburg-520 2nd ave s st petersburg st petersburg fl": {
+    "parking_notes": "Dedicated surface parking lot (On-site Surface Lot) within 75m. Visitor spaces available.",
+    "security_notes": "Multi-tenant commercial building. Front lobby check-in desk required for suite access.",
+    "facility_source": "OpenStreetMap Real Geospatial Data"
+  },
+  "st petersburg-801 3rd st s st petersburg st petersburg fl": {
+    "parking_notes": "On-site commercial parking lot with designated visitor spaces.",
+    "security_notes": "Standard office reception check-in required.",
+    "facility_source": "Suburban Office Baseline"
   }
 }

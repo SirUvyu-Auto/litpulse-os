@@ -509,8 +509,10 @@ app.post('/api/admin/upload', upload.single('file'), (req, res) => {
       });
     }
 
-    const insertedCount = db.addIngestedCases(parsedRows, req.file.originalname, ext === '.xlsx' || ext === '.xls' ? 'Excel Spreadsheet' : 'Court Docket CSV');
+    const targetWindow = req.query.target_window || req.body?.target_window || null;
+    const insertedCount = db.addIngestedCases(parsedRows, req.file.originalname, ext === '.xlsx' || ext === '.xls' ? 'Excel Spreadsheet' : 'Court Docket CSV', { target_window: targetWindow });
     const detectedStates = db.getLastIngestedStates ? db.getLastIngestedStates() : [];
+    const ingestionSummary = db.getLastIngestionSummary ? db.getLastIngestionSummary() : { addedCount: insertedCount, inWindowCount: insertedCount, outOfWindowCount: 0, targetWindow: null };
     if (global.gc) global.gc();
 
     res.json({
@@ -518,7 +520,10 @@ app.post('/api/admin/upload', upload.single('file'), (req, res) => {
       message: `Successfully ingested and normalized ${insertedCount} litigation cases.`,
       recordsCount: insertedCount,
       fileName: req.file.originalname,
-      detectedStates: detectedStates
+      detectedStates: detectedStates,
+      targetWindow: ingestionSummary.targetWindow,
+      inWindowCount: ingestionSummary.inWindowCount,
+      outOfWindowCount: ingestionSummary.outOfWindowCount
     });
   } catch (err) {
     if (filePath && fs.existsSync(filePath)) {
@@ -597,7 +602,7 @@ app.get('/api/states', (req, res) => {
 // Executive Dashboard Overview
 app.get('/api/dashboard/overview', (req, res) => {
   try {
-    const stateFilter = req.query.state || null;
+    const stateFilter = req.query.state || 'FL';
     const overview = db.getDashboardOverview(stateFilter);
     res.json({ success: true, ...overview });
   } catch (err) {
@@ -609,8 +614,12 @@ app.get('/api/dashboard/overview', (req, res) => {
 app.get('/api/drill/:key', (req, res) => {
   try {
     const key = req.params.key;
-    const stateFilter = req.query.state || null;
-    const drill = db.getDrillData(key, stateFilter);
+    const stateFilter = req.query.state || 'FL';
+    const filters = {
+      quarter: req.query.quarter || 'ALL',
+      minRevenue: req.query.minRevenue !== undefined ? parseFloat(req.query.minRevenue) : null
+    };
+    const drill = db.getDrillData(key, stateFilter, filters);
     res.json({ success: true, ...drill });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -914,7 +923,7 @@ app.post('/api/deliveries/geocode', async (req, res) => {
 app.get('/api/deliveries/walkable-clusters', (req, res) => {
   try {
     const city = req.query.city || null;
-    const state = req.query.state || null;
+    const state = req.query.state || 'FL';
     const clusters = db.getWalkableClusters(city, state);
     res.json({ success: true, clusters });
   } catch (err) {
@@ -944,7 +953,7 @@ app.post('/api/lead/status', (req, res) => {
 app.get('/api/behavior', (req, res) => {
   try {
     const minClosed = req.query.minClosed !== undefined ? parseInt(req.query.minClosed, 10) : 3;
-    const state = req.query.state || null;
+    const state = req.query.state || 'FL';
     const list = db.getTrialTendency(minClosed, state);
     res.json({ success: true, rows: list });
   } catch (err) {
@@ -966,7 +975,7 @@ app.post('/api/deliveries/geocode', async (req, res) => {
 // Judicial Calendar & Analytics
 app.get('/api/judges', (req, res) => {
   try {
-    const state = req.query.state || null;
+    const state = req.query.state || 'FL';
     const judges = db.getJudgeAnalytics(state);
     res.json({ success: true, count: judges.length, judges });
   } catch (err) {
@@ -977,7 +986,7 @@ app.get('/api/judges', (req, res) => {
 // Active Trial Cities Endpoint
 app.get('/api/cities/active', (req, res) => {
   try {
-    const state = req.query.state || null;
+    const state = req.query.state || 'FL';
     const result = db.getActiveCities(state);
     res.json({ success: true, ...result });
   } catch (err) {
@@ -990,10 +999,12 @@ app.get('/api/export/csv', (req, res) => {
   const key = req.query.drillKey || 'outreach';
   const q = req.query.q || '';
   const city = req.query.city || 'ALL';
-  const state = req.query.state || 'ALL';
+  const state = req.query.state || 'FL';
   const assignment = req.query.assignment || 'ALL';
   const partySide = req.query.partySide || 'ALL';
   const windowDays = req.query.window || 'ALL';
+  const quarter = req.query.quarter || 'ALL';
+  const minRevenue = req.query.minRevenue ? parseFloat(req.query.minRevenue) : null;
 
   const data = db.getDrillData(key, state);
   let rows = data.rows || [];
@@ -1035,6 +1046,17 @@ app.get('/api/export/csv', (req, res) => {
     if (!isNaN(maxDays)) {
       rows = rows.filter(r => r.days_until !== undefined && r.days_until > 0 && r.days_until <= maxDays);
     }
+  }
+
+  // 6. Target Campaign Quarter Filter
+  if (quarter && quarter !== 'ALL') {
+    const qTarget = String(quarter).trim().toUpperCase();
+    rows = rows.filter(r => (r.quarter || '').toUpperCase() === qTarget);
+  }
+
+  // 7. Minimum Revenue Filter
+  if (minRevenue !== null && !isNaN(minRevenue) && minRevenue > 0) {
+    rows = rows.filter(r => (r.ear || r.est_value || 0) >= minRevenue);
   }
 
   if (!rows.length) {

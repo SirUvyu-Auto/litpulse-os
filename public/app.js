@@ -1912,9 +1912,9 @@ async function renderOutreachQueue(forceRefresh = false) {
     const thead = document.getElementById('outreachThead');
     if (thead) {
       if (activeLifecycle === 'historical') {
-        thead.innerHTML = `<tr><th>Side</th><th>Case Outcome</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm Address</th><th>Firm City</th><th>Trial City</th><th>Concluded</th><th>Trial Date</th><th>Status</th><th>Owner</th><th>Docket</th><th>Phone</th><th>Email</th></tr>`;
+        thead.innerHTML = `<tr><th>Side</th><th>Case Outcome</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm Address</th><th>Firm City</th><th>Trial City</th><th>Concluded</th><th>Trial Date</th><th>Est. Revenue</th><th>Status</th><th>Owner</th><th>Docket</th><th>Phone</th><th>Email</th></tr>`;
       } else {
-        thead.innerHTML = `<tr><th>Side</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm Address</th><th>Firm City</th><th>Trial City</th><th>Days</th><th>Trial Date</th><th>Status</th><th>Owner</th><th>Docket</th><th>Phone</th><th>Email</th></tr>`;
+        thead.innerHTML = `<tr><th>Side</th><th>Priority</th><th>Lead Counsel</th><th>Law Firm</th><th>Firm Address</th><th>Firm City</th><th>Trial City</th><th>Days</th><th>Trial Date</th><th>Est. Revenue</th><th>Status</th><th>Owner</th><th>Docket</th><th>Phone</th><th>Email</th></tr>`;
       }
     }
 
@@ -2151,6 +2151,11 @@ async function renderOutreachQueue(forceRefresh = false) {
         ? `<span class="badge-client" title="QuickBooks Client: Active billing account with Lit&More">● CLIENT</span>`
         : `<span class="badge-prospect" title="New Prospect: No prior billing account with Lit&More">PROSPECT</span>`;
 
+      const revenueVal = Number(c.est_value || c.ear || 0);
+      const revenueDisplay = revenueVal > 0
+        ? `<strong style="color:var(--text-white);font-family:var(--font-mono);">${formatCurrency(revenueVal)}</strong>`
+        : `<span style="color:var(--text-muted);font-family:var(--font-mono);">$0</span>`;
+
       if (activeLifecycle === 'historical') {
         tr.innerHTML = `
           <td>${sideBadge}</td>
@@ -2166,6 +2171,7 @@ async function renderOutreachQueue(forceRefresh = false) {
           <td style="white-space:nowrap;color:var(--text-platinum);">${escapeHtml(trialCityDisplay)}</td>
           <td>${daysDisplay}</td>
           <td class="cell-mono">${formatDate(c.trial_date)}</td>
+          <td>${revenueDisplay}</td>
           <td><span class="status-pill clean">${c.hubspot_status || 'Concluded'}</span></td>
           <td>${c.assigned_to || '<span style="color:var(--status-amber);">Unassigned</span>'}</td>
           <td class="cell-mono" style="font-size:11px;">${escapeHtml(c.case_id)}</td>
@@ -2190,6 +2196,7 @@ async function renderOutreachQueue(forceRefresh = false) {
           <td style="white-space:nowrap;color:var(--text-platinum);">${escapeHtml(trialCityDisplay)}</td>
           <td>${daysDisplay}</td>
           <td class="cell-mono">${formatDate(c.trial_date)}</td>
+          <td>${revenueDisplay}</td>
           <td><span class="status-pill clean">${c.hubspot_status || 'New'}</span></td>
           <td>${c.assigned_to || '<span style="color:var(--status-amber);">Unassigned</span>'}</td>
           <td class="cell-mono" style="font-size:11px;">${escapeHtml(c.case_id)}</td>
@@ -3956,8 +3963,8 @@ function renderDrawerTable(rows, key) {
       <td style="white-space:nowrap;">
         <span style="font-weight:600;color:var(--text-white);">${escapeHtml(firmCityDisplay)}</span>${localityPill}
       </td>
-      <td style="font-size:11.5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(addrObj.text)}">
-        ${addrObj.html}
+      <td style="font-size:11.5px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(firmAddressDisplay)}">
+        ${escapeHtml(firmAddressDisplay)}
       </td>
       <td>
         <div style="font-weight:600;color:var(--text-white);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(c.caption || '')}">

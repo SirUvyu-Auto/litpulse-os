@@ -177,8 +177,9 @@ function getScaleMultiplier(attorneyCount) {
   return 0.7;
 }
 
-function calculateEAR(nosCode, daysUntil, attorneyCount = 2, side = 'Plaintiff', caseTypeStr = '') {
-  const unitPrice = 75000;
+function calculateEAR(nosCode, daysUntil, attorneyCount = 2, side = 'Plaintiff', caseTypeStr = '', customUnitPrice = null) {
+  // Realistic four-quarter historical average for $5k+ orders ($16,400) vs legacy theoretical placeholder
+  const unitPrice = (typeof customUnitPrice === 'number' && customUnitPrice > 0) ? customUnitPrice : 16400;
   let nosKey = String(nosCode || '').trim();
   if (!NOS_REF[nosKey]) {
     const t = (caseTypeStr || '').toLowerCase();
@@ -253,8 +254,41 @@ function parseTrialDate(dateVal) {
   return null;
 }
 
+// Derive calendar quarter string (e.g. "2026-Q4", "2027-Q1") for campaign targeting
+function deriveQuarter(dateVal) {
+  if (!dateVal) return null;
+  const iso = parseTrialDate(dateVal);
+  if (!iso) return null;
+  const parts = iso.split('-');
+  const y = parts[0];
+  const m = parseInt(parts[1], 10);
+  const q = m <= 3 ? 'Q1' : (m <= 6 ? 'Q2' : (m <= 9 ? 'Q3' : 'Q4'));
+  return `${y}-${q}`;
+}
+
+// Derive current calendar date and midnight UTC in America/New_York (Florida court time)
+function getNowEasternUtc() {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric'
+  });
+  const partsNow = formatter.formatToParts(new Date());
+  let curY = 2026, curM = 0, curD = 1;
+  partsNow.forEach(p => {
+    if (p.type === 'year') curY = parseInt(p.value, 10);
+    if (p.type === 'month') curM = parseInt(p.value, 10) - 1;
+    if (p.type === 'day') curD = parseInt(p.value, 10);
+  });
+  return {
+    utc: Date.UTC(curY, curM, curD),
+    dayKey: `${curY}-${curM + 1}-${curD}`
+  };
+}
+
 // Timezone-aware Eastern Time (Florida venue) calendar difference to prevent UTC rollover bug (Defect #1)
-function calculateDaysUntil(trialDateStr) {
+function calculateDaysUntil(trialDateStr, referenceEasternUtc = null) {
   if (!trialDateStr) return null;
   const isoDate = parseTrialDate(trialDateStr);
   if (!isoDate) return null;
@@ -265,22 +299,9 @@ function calculateDaysUntil(trialDateStr) {
   if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
 
   const targetUtc = Date.UTC(y, m, d);
-
-  // Derive current calendar date in America/New_York (Florida court time)
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/New_York',
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric'
-  });
-  const partsNow = formatter.formatToParts(new Date());
-  let curY, curM, curD;
-  partsNow.forEach(p => {
-    if (p.type === 'year') curY = parseInt(p.value, 10);
-    if (p.type === 'month') curM = parseInt(p.value, 10) - 1;
-    if (p.type === 'day') curD = parseInt(p.value, 10);
-  });
-  const nowEasternUtc = Date.UTC(curY, curM, curD);
+  const nowEasternUtc = (referenceEasternUtc !== null && referenceEasternUtc !== undefined)
+    ? referenceEasternUtc
+    : getNowEasternUtc().utc;
 
   const diffMs = targetUtc - nowEasternUtc;
   return Math.round(diffMs / (1000 * 60 * 60 * 24));
@@ -299,11 +320,15 @@ const DEFAULT_WEIGHTS = {
   revenue: 25,    // max 25 points
   locality: 20,   // max 20 points
   caseType: 15,   // max 15 points
-  engagement: 15  // max 15 points
+  engagement: 15, // max 15 points
+  unitPrice: 16400, // 4-quarter realistic average for $5k+ tier
+  revenueBenchmark: 35000 // scaling ceiling for revenue score
 };
 
-function calculatePriorityScore(trialDateStr, isLocal, nosCode, earValue, isHubSpotEngaged = true, customWeights = null, nosIntensity = 1.4) {
-  const daysUntil = calculateDaysUntil(trialDateStr);
+function calculatePriorityScore(trialDateStr, isLocal, nosCode, earValue, isHubSpotEngaged = true, customWeights = null, nosIntensity = 1.4, precomputedDaysUntil = null) {
+  const daysUntil = (precomputedDaysUntil !== null && precomputedDaysUntil !== undefined && !isNaN(precomputedDaysUntil))
+    ? precomputedDaysUntil
+    : calculateDaysUntil(trialDateStr);
   const isHistorical = daysUntil !== null && !isNaN(daysUntil) && daysUntil < 0;
 
   if (isHistorical) {
@@ -316,14 +341,15 @@ function calculatePriorityScore(trialDateStr, isLocal, nosCode, earValue, isHubS
   const maxLocality = w.locality !== undefined ? Number(w.locality) : 20;
   const maxCaseType = w.caseType !== undefined ? Number(w.caseType) : 15;
   const maxEngagement = w.engagement !== undefined ? Number(w.engagement) : 15;
+  const revenueBenchmark = (w.revenueBenchmark && Number(w.revenueBenchmark) > 0) ? Number(w.revenueBenchmark) : 35000;
 
   let urgency = 0;
   if (daysUntil !== null && !isNaN(daysUntil) && daysUntil >= 0 && daysUntil <= 90) {
     urgency = Math.round(maxUrgency * (1 - Math.sqrt(daysUntil / 90)));
   }
 
-  const ear = (typeof earValue === 'number' && !isNaN(earValue)) ? earValue : 45000;
-  const revenue = Math.min(maxRevenue, Math.round(maxRevenue * (ear / 500000)));
+  const ear = (typeof earValue === 'number' && !isNaN(earValue)) ? earValue : 16400;
+  const revenue = Math.min(maxRevenue, Math.round(maxRevenue * (ear / revenueBenchmark)));
 
   // Traveling War Room Mode:
   // When Out-of-Town (OOT) or Out-of-State (OOS) counsel are 1 to 14 days away from trial,
@@ -755,13 +781,16 @@ class DataStore {
     this.data = null;
     this.isGeocoding = false;
     this.saveTimer = null;
+    this._lastClockDay = null;
     this.load();
+    this.refreshDynamicClocks(true);
     this.recomputeScoresAndBuildings();
 
     // Initialize PostgreSQL primary store with Local JSON Backup synchronization
     pgStore.init((pgData, mode) => {
       if (mode === 'postgres' && pgData && Array.isArray(pgData.cases) && pgData.cases.length >= (this.data.cases || []).length) {
         this.data = pgData;
+        this.refreshDynamicClocks(true);
         this.recomputeScoresAndBuildings();
         this.rebuildBuildingIndex();
       }
@@ -1001,14 +1030,15 @@ class DataStore {
         c.building_id = null;
       } else {
         const attyCount = (c.counsel_matrix && c.counsel_matrix.length) ? c.counsel_matrix.length : 2;
-        const earInfo = calculateEAR(c.nos_code, c.days_until, attyCount, c.party_side, c.nos_label);
+        const currentUnitPrice = (this.data && this.data.weights && this.data.weights.unitPrice) ? this.data.weights.unitPrice : 16400;
+        const earInfo = calculateEAR(c.nos_code, c.days_until, attyCount, c.party_side, c.nos_label, currentUnitPrice);
         c.ear = earInfo.ear;
         c.trial_prob = earInfo.trial_prob;
         c.full_value = earInfo.full_value;
         c.print_likelihood = earInfo.print_likelihood;
         c.likelihood_bucket = earInfo.likelihood_bucket;
-        // Defect #4 fix: do not overwrite explicit 0 EAR with $75k fallback
-        c.est_value = (typeof c.ear === 'number' && !isNaN(c.ear)) ? c.ear : (typeof c.full_value === 'number' ? c.full_value : 75000);
+        c.est_value = (typeof c.ear === 'number' && !isNaN(c.ear)) ? c.ear : (typeof c.full_value === 'number' ? c.full_value : currentUnitPrice);
+        c.quarter = deriveQuarter(c.trial_date);
 
         const venueState = (c.venue_state || deriveVenueState(c.trial_city, c.court, c.division) || 'FL').toUpperCase();
         c.venue_state = venueState;
@@ -1271,7 +1301,78 @@ class DataStore {
     }, 300);
   }
 
+  // Dynamic Trial Clock & Scoring Synchronizer:
+  // Re-evaluates days_until, urgency scores, and historical statuses relative to America/New_York.
+  refreshDynamicClocks(force = false) {
+    if (!this.data || !Array.isArray(this.data.cases) || !this.data.cases.length) return;
+    const nowInfo = getNowEasternUtc();
+    if (!force && this._lastClockDay === nowInfo.dayKey) {
+      return;
+    }
+
+    const nowEasternUtc = nowInfo.utc;
+    const weights = this.data.weights || DEFAULT_WEIGHTS;
+    let expiredCount = 0;
+    let activeUpcomingCount = 0;
+
+    this.data.cases.forEach(c => {
+      if (!c.trial_date) return;
+      const days = calculateDaysUntil(c.trial_date, nowEasternUtc);
+      if (days === null || isNaN(days)) return;
+
+      c.days_until = days;
+
+      if (days < 0) {
+        c.status = 'Historical';
+        c.is_war_room = false;
+        c.urgency_score = 0;
+        c.priority_score = 0;
+        c.priority_tier = 'gray';
+        expiredCount++;
+      } else {
+        if (c.status === 'Historical' && !c.is_disposed_early && !c.disposition_date) {
+          c.status = 'Active';
+        }
+        activeUpcomingCount++;
+        c.quarter = deriveQuarter(c.trial_date);
+        const currentUnitPrice = (this.data && this.data.weights && this.data.weights.unitPrice) ? this.data.weights.unitPrice : 16400;
+        const attyCount = (c.counsel_matrix && c.counsel_matrix.length) ? c.counsel_matrix.length : 2;
+        const earInfo = calculateEAR(c.nos_code, days, attyCount, c.party_side, c.nos_label, currentUnitPrice);
+        c.ear = earInfo.ear;
+        c.trial_prob = earInfo.trial_prob;
+        c.full_value = earInfo.full_value;
+        c.print_likelihood = earInfo.print_likelihood;
+        c.likelihood_bucket = earInfo.likelihood_bucket;
+        c.est_value = earInfo.ear || currentUnitPrice;
+
+        const isAssigned = Boolean(c.assigned_to && c.assigned_to !== 'Unassigned' && c.hubspot_status !== 'Unassigned');
+        const hasEngagement = Boolean((c.email && c.email.includes('@')) || (c.phone && String(c.phone).trim().length >= 7) || isAssigned || c.has_cookie_conversion);
+        const nosIntensity = (NOS_REF[c.nos_code] || NOS_REF['default']).exhibit_intensity || 1.4;
+        const scores = calculatePriorityScore(c.trial_date, c.is_local, c.nos_code, c.ear, hasEngagement, weights, nosIntensity, days);
+
+        c.is_war_room = Boolean(scores.isWarRoom);
+        if (c.is_war_room) {
+          const venueState = (c.venue_state || 'FL').toUpperCase();
+          c.locality_badge = c.is_oos ? `War Room (${c.state || venueState})` : `War Room (${venueState})`;
+        }
+        c.priority_score = scores.total;
+        c.urgency_score = scores.urgency;
+        c.revenue_score = scores.revenue;
+        c.locality_score = scores.locality;
+        c.casetype_score = scores.caseType;
+        c.engagement_score = scores.engagement;
+        c.priority_tier = scores.tier;
+      }
+    });
+
+    this._lastClockDay = nowInfo.dayKey;
+    if (force || expiredCount > 0) {
+      this.save();
+    }
+  }
+
   getCases() {
+    this.refreshDynamicClocks();
     return this.data.cases || [];
   }
 
@@ -1353,14 +1454,17 @@ class DataStore {
   }
 
   parseStateFilter(stateFilter) {
-    if (!stateFilter || stateFilter === 'ALL') return null;
+    if (stateFilter === 'ALL') return null;
+    if (!stateFilter) return new Set(['FL']);
     if (Array.isArray(stateFilter)) {
+      if (stateFilter.includes('ALL')) return null;
       const arr = stateFilter.map(s => String(s).trim().toUpperCase()).filter(s => s && s !== 'ALL');
-      return arr.length ? new Set(arr) : null;
+      return arr.length ? new Set(arr) : new Set(['FL']);
     }
-    const raw = decodeURIComponent(String(stateFilter));
+    const raw = decodeURIComponent(String(stateFilter)).trim();
+    if (raw === 'ALL') return null;
     const parts = raw.split(',').map(s => s.trim().toUpperCase()).filter(s => s && s !== 'ALL');
-    return parts.length ? new Set(parts) : null;
+    return parts.length ? new Set(parts) : new Set(['FL']);
   }
 
   getDashboardOverview(stateFilter = null) {
@@ -1486,10 +1590,23 @@ class DataStore {
     };
   }
 
-  getDrillData(key, stateFilter = null) {
+  getDrillData(key, stateFilter = null, filters = {}) {
     const allTargets = this.getCases();
     const stateSet = this.parseStateFilter(stateFilter);
-    const scopedTargets = stateSet ? allTargets.filter(c => stateSet.has((c.venue_state || 'FL').toUpperCase())) : allTargets;
+    let scopedTargets = stateSet ? allTargets.filter(c => stateSet.has((c.venue_state || 'FL').toUpperCase())) : allTargets;
+
+    if (filters && filters.quarter && filters.quarter !== 'ALL') {
+      const qTarget = String(filters.quarter).trim().toUpperCase();
+      scopedTargets = scopedTargets.filter(c => (c.quarter || deriveQuarter(c.trial_date) || '').toUpperCase() === qTarget);
+    }
+
+    if (filters && filters.minRevenue !== undefined && filters.minRevenue !== null) {
+      const minRev = Number(filters.minRevenue);
+      if (!isNaN(minRev) && minRev > 0) {
+        scopedTargets = scopedTargets.filter(c => (c.ear || c.est_value || 0) >= minRev);
+      }
+    }
+
     const activeTargets = scopedTargets.filter(c => c.status !== 'Historical' && (c.days_until === undefined || c.days_until > 0) && !c.is_pro_se && !c.is_government && !c.is_excluded);
     const historicalTargets = scopedTargets.filter(c => c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0));
     
@@ -2041,11 +2158,17 @@ class DataStore {
     });
   }
 
-  addIngestedCases(newCases, fileName, fileType) {
+  addIngestedCases(newCases, fileName, fileType, campaignOptions = {}) {
     if (!Array.isArray(newCases) || !newCases.length) return 0;
     
     const logId = `log-${Date.now()}`;
     let addedCount = 0;
+    let inWindowCount = 0;
+    let outOfWindowCount = 0;
+
+    const targetWindow = (campaignOptions && campaignOptions.target_window) ? String(campaignOptions.target_window).trim().toUpperCase() : null;
+    const isQ1Target = targetWindow === '2027-Q1' || targetWindow === 'Q1-2027' || targetWindow === 'Q1 2027';
+
     const detectedStates = new Set();
     const caseIndex = new Map();
     const cases = this.data.cases;
@@ -2056,7 +2179,26 @@ class DataStore {
 
     newCases.forEach(nc => {
       const baseCaseId = nc.case_id || `case-${Date.now()}-${Math.floor(Math.random()*1000)}`;
-      const scores = calculatePriorityScore(nc.trial_date || '2026-12-01', nc.is_local !== false, nc.nos_label || 'General Litigation');
+      const rawTrialDate = nc.trial_date || '2026-12-01';
+      const trialQuarter = deriveQuarter(rawTrialDate);
+      let windowStatus = 'STANDARD';
+      let campaignWindow = trialQuarter;
+
+      if (isQ1Target) {
+        campaignWindow = '2027-Q1';
+        const iso = parseTrialDate(rawTrialDate);
+        if (iso && iso >= '2027-01-01' && iso <= '2027-03-31') {
+          windowStatus = 'VALID_TARGET_WINDOW';
+          inWindowCount++;
+        } else {
+          windowStatus = 'OUT_OF_WINDOW';
+          outOfWindowCount++;
+        }
+      } else {
+        inWindowCount++;
+      }
+
+      const scores = calculatePriorityScore(rawTrialDate, nc.is_local !== false, nc.nos_label || 'General Litigation');
       const isConcluded = scores.isHistorical;
 
       const cleanDiv = (nc.division || '').replace(/\s*\([^)]*\)/g, '').trim();
@@ -2113,10 +2255,13 @@ class DataStore {
         venue_state: venueState,
         judge: nc.judge || 'Presiding Judge',
         nos_label: nc.nos_label || 'Civil Action',
-        trial_date: nc.trial_date || '2026-12-01',
+        trial_date: rawTrialDate,
+        quarter: trialQuarter,
+        campaign_window: campaignWindow,
+        window_status: windowStatus,
         days_until: isDisposedEarly && scores.daysUntil >= 0 ? -1 : scores.daysUntil,
         status: isHistorical ? 'Historical' : 'Active',
-        est_value: Number(nc.est_value) || 250000,
+        est_value: Number(nc.est_value) || 16400,
         is_local: nc.is_local !== false,
         priority_score: isHistorical ? 0 : scores.total,
         urgency_score: isHistorical ? 0 : scores.urgency,
@@ -2430,19 +2575,26 @@ class DataStore {
     this.data.buildings = Array.from(bldgMap.values());
     this.rebuildBuildingIndex();
 
-    // Record Ingestion Log
+    // Record Ingestion Log with Campaign Window Metadata
     const log = {
       log_id: logId,
       file_name: fileName || 'manual_import.csv',
       imported_at: new Date().toISOString(),
       rows_total: newCases.length,
       rows_clean: addedCount,
-      rows_flagged: 0,
-      status: 'Clean',
-      source_type: fileType || 'Spreadsheet Upload'
+      rows_flagged: outOfWindowCount,
+      status: outOfWindowCount > 0 ? `Warning: ${outOfWindowCount} out-of-window records` : 'Clean',
+      source_type: fileType || 'Spreadsheet Upload',
+      campaign_window: targetWindow || 'All Quarters'
     };
     this.data.ingestion_logs.unshift(log);
     this._lastIngestedStates = Array.from(detectedStates);
+    this._lastIngestionSummary = {
+      addedCount,
+      inWindowCount,
+      outOfWindowCount,
+      targetWindow
+    };
 
     this.save();
 
@@ -2450,6 +2602,10 @@ class DataStore {
     this.startAutoGeocoding();
 
     return addedCount;
+  }
+
+  getLastIngestionSummary() {
+    return this._lastIngestionSummary || { addedCount: 0, inWindowCount: 0, outOfWindowCount: 0, targetWindow: null };
   }
 
   getLastIngestedStates() {

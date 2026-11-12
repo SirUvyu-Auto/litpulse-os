@@ -8853,5 +8853,68 @@
     "is_precise": true,
     "source": "photon",
     "geocoded_at": "2026-10-21T07:50:39.784Z"
+  },
+  "fort lauderdale-800 corporate dr ft lauderdale fort lauderdale fl": {
+    "lat": 26.205754,
+    "lng": -80.138655,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:54:39.328Z"
+  },
+  "st augustine-2601 n ponce de leon blvd st augustine st augustine fl": {
+    "lat": 29.907236,
+    "lng": -81.320797,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:54:40.321Z"
+  },
+  "fort lauderdale-1608 e commercial blvd ft lauderdale fort lauderdale fl": {
+    "lat": 26.187755,
+    "lng": -80.163924,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:55:08.010Z"
+  },
+  "fort lauderdale-800 e cypress creek rd ft lauderdale fort lauderdale fl": {
+    "lat": 26.202926,
+    "lng": -80.136893,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:55:38.078Z"
+  },
+  "st petersburg-360 central ave st petersburg st petersburg fl": {
+    "lat": 27.771817,
+    "lng": -82.629911,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:55:58.714Z"
+  },
+  "st augustine-144 orchard ln st augustine st augustine fl": {
+    "lat": 29.873228,
+    "lng": -81.283798,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:56:24.108Z"
+  },
+  "st augustine-4675 wolfe rd st augustine st augustine fl": {
+    "lat": 27.610472,
+    "lng": -80.431284,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:56:52.871Z"
+  },
+  "st petersburg-520 2nd ave s st petersburg st petersburg fl": {
+    "lat": 27.769199,
+    "lng": -82.640603,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:57:32.140Z"
+  },
+  "st petersburg-801 3rd st s st petersburg st petersburg fl": {
+    "lat": 27.89316,
+    "lng": -82.689295,
+    "is_precise": true,
+    "source": "photon",
+    "geocoded_at": "2026-11-11T08:58:07.445Z"
   }
 }

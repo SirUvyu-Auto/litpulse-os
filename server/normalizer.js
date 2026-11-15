@@ -758,6 +758,9 @@ function buildAttorneyEmail(attorneyName, firmName) {
 }
 
 function buildAttorneyPhone(firmName, city) {
+  if (!firmName || /^(awaiting|unknown|pro se|plaintiff|defense|n\/a|none)/i.test(firmName.trim())) {
+    return 'N/A';
+  }
   const cleanFirm = (firmName || '').toLowerCase().trim();
   if (cleanFirm) {
     for (const [fName, fPhone] of Object.entries(KNOWN_FIRM_PHONES)) {
@@ -969,8 +972,11 @@ function isGovernmentEntity(attorneyName, firmName, email = '', address = '', ca
 }
 
 function resolveFirmId(firmName) {
-  const norm = (firmName || '').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-  return norm ? `firm-${norm}` : 'firm-unknown';
+  if (!firmName || /^(awaiting appearance|unknown firm|unknown counsel|unknown|pro se \/ self-represented|plaintiff counsel|defense counsel|n\/a|none)$/i.test(firmName.trim())) {
+    return null;
+  }
+  const norm = firmName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  return norm ? `firm-${norm}` : null;
 }
 
 // 8. Florida Legal Venue Centroids for Fast Zero-Lag Map Visualizations

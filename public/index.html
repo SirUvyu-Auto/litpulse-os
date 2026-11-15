@@ -409,9 +409,9 @@
 
         <div class="kpi-grid">
           <div class="kpi" onclick="openDrill('outreach')">
-            <div class="kpi-label"><span>Attorney Contacts</span><span class="kpi-chevron">›</span></div>
+            <div class="kpi-label"><span>Counsel Outreach Targets</span><span class="kpi-chevron">›</span></div>
             <div class="kpi-value" id="kpiOverviewContacts">0</div>
-            <div class="kpi-sub" id="kpiOverviewContactsSub">Total tracked across all windows</div>
+            <div class="kpi-sub" id="kpiOverviewContactsSub">Actionable Plaintiff &amp; Defense counsel rows</div>
           </div>
           <div class="kpi" onclick="openDrill('trials')">
             <div class="kpi-label"><span>Trials This Week</span><span class="kpi-chevron">›</span></div>
@@ -666,7 +666,7 @@
           <div class="kpi" id="kpiCardLargeAll" onclick="clickLargeKpi('all')" title="View all large & complex matters">
             <div class="kpi-label"><span>Large Matters</span><span class="kpi-chevron">›</span></div>
             <div class="kpi-value" id="kpiLargeCount">0</div>
-            <div class="kpi-sub">≥ $100k full / complex</div>
+            <div class="kpi-sub">≥ $20k full / complex</div>
           </div>
           <div class="kpi" id="kpiCardLargePipeline" onclick="clickLargeKpi('pipeline')" title="Sort by highest cumulative case revenue">
             <div class="kpi-label"><span>Addressable Pipeline</span><span class="kpi-chevron">›</span></div>
@@ -771,9 +771,9 @@
             <p class="subtitle">Automated file parsing, FNS law firm standardization, and court docket intake.</p>
           </div>
           <div class="page-actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <span id="adminStorageBadge" style="font-size:11px;padding:6px 12px;border-radius:6px;background:rgba(16,185,129,0.12);color:#34D399;border:1px solid rgba(16,185,129,0.3);font-weight:600;display:inline-flex;align-items:center;gap:6px;" title="Database Persistence Engine">
-              <span style="width:7px;height:7px;border-radius:50%;background:#10B981;display:inline-block;"></span>
-              PostgreSQL Primary + Local Backup
+            <span id="adminStorageBadge" style="font-size:11px;padding:6px 12px;border-radius:6px;background:rgba(245,158,11,0.12);color:#FBBF24;border:1px solid rgba(245,158,11,0.3);font-weight:600;display:inline-flex;align-items:center;gap:6px;" title="Database Persistence Engine">
+              <span style="width:7px;height:7px;border-radius:50%;background:#F59E0B;display:inline-block;"></span>
+              Local JSON Storage (PostgreSQL Offline)
             </span>
             <button class="filter-chip" style="background:rgba(59,130,246,0.15);color:#93C5FD;border-color:rgba(59,130,246,0.35);cursor:pointer;padding:8px 16px;display:flex;align-items:center;gap:6px;font-weight:600;" onclick="openWeightsControlModal()" title="Configure Key Variables and Heat Map weighting engine">
               <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v18M3 9l9-6 9 6M6 14l-3 4h6l-3-4zM18 14l-3 4h6l-3-4z"/></svg>
@@ -897,7 +897,7 @@
         <div class="card" style="padding:0;overflow:hidden;">
           <div class="table-wrap">
             <table class="data-table">
-              <thead><tr><th>File Name</th><th>Import Date</th><th>Source Type</th><th>Total Rows</th><th>Clean Rows</th><th>Status</th><th style="text-align:right;">Action</th></tr></thead>
+              <thead><tr><th>File Name</th><th>Import Date</th><th>Source Type</th><th>Dockets Ingested</th><th>Targets Generated</th><th>Status</th><th style="text-align:right;">Action</th></tr></thead>
               <tbody id="adminLogsTbody"></tbody>
             </table>
           </div>

@@ -1634,10 +1634,11 @@ async function loadOverviewPage() {
     fullCasesCache = data.topPriorities || [];
 
     const totalCases = data.totalCases !== undefined ? data.totalCases : fullCasesCache.length;
+    const distinctMatters = data.distinctMatters || Math.round(totalCases / 2);
     const kpis = data.kpis || {};
 
     const contactsEl = document.getElementById('kpiOverviewContacts');
-    if (contactsEl) contactsEl.innerText = totalCases.toLocaleString();
+    if (contactsEl) contactsEl.innerText = `${totalCases.toLocaleString()} Targets (${distinctMatters.toLocaleString()} Matters)`;
 
     const trialsEl = document.getElementById('kpiOverviewTrials');
     if (trialsEl) trialsEl.innerText = (kpis.trials?.next7 || 0).toLocaleString();
@@ -2776,7 +2777,7 @@ function renderLargeMattersTable(rows) {
   });
 
   if (!activeRows.length) {
-    tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;padding:48px 16px;color:var(--text-muted);"><div style="font-size:14px;font-weight:600;color:var(--text-white);margin-bottom:6px;">No High-Value Matters In Queue</div><div>Litigation matters exceeding $100,000 estimated addressable revenue will appear here once docket data is imported.</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;padding:48px 16px;color:var(--text-muted);"><div style="font-size:14px;font-weight:600;color:var(--text-white);margin-bottom:6px;">No High-Value Matters In Queue</div><div>Litigation matters exceeding $20,000 full contract value or $3,000 EAR will appear here once docket data is imported.</div></td></tr>`;
     return;
   }
 
@@ -3345,8 +3346,8 @@ async function loadAdminStats() {
       const isPgReady = st.pgConnected;
       const dotColor = isPgReady ? '#10B981' : '#F59E0B';
       const label = isPgReady
-        ? 'PostgreSQL Primary (Active) + Local JSON Backup'
-        : 'PostgreSQL Primary (Local JSON Backup Active until Deploy)';
+        ? 'PostgreSQL Cloud Connected · Synchronized'
+        : 'Local JSON Storage Active (data/database.json) · PostgreSQL Offline';
       storageBadge.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${dotColor};display:inline-block;"></span> ${escapeHtml(label)}`;
     }
 
@@ -3361,15 +3362,17 @@ async function loadAdminStats() {
 
     data.recentLogs.forEach(log => {
       const tr = document.createElement('tr');
+      const docketsCount = log.dockets_total || log.rows_total || 0;
+      const targetsCount = log.targets_generated || log.rows_clean || 0;
       tr.innerHTML = `
         <td class="cell-bold">${log.file_name}</td>
         <td class="cell-mono">${formatDate(log.imported_at)}</td>
         <td>${log.source_type}</td>
-        <td class="cell-mono">${log.rows_total}</td>
-        <td class="cell-mono" style="color:var(--status-emerald);">${log.rows_clean}</td>
+        <td class="cell-mono">${docketsCount.toLocaleString()} dockets</td>
+        <td class="cell-mono" style="color:var(--status-emerald);font-weight:600;">${targetsCount.toLocaleString()} targets</td>
         <td><span class="status-pill clean">${log.status}</span></td>
         <td style="text-align:right;">
-          <button class="filter-chip" style="background:rgba(239,68,68,0.12);color:#FCA5A5;border-color:rgba(239,68,68,0.3);cursor:pointer;padding:4px 10px;font-size:11px;display:inline-flex;align-items:center;gap:4px;" onclick="deleteDocumentRecord(this, '${log.log_id}', '${escapeHtml(log.file_name)}', ${log.rows_clean})" title="Delete this document and all its ingested cases">
+          <button class="filter-chip" style="background:rgba(239,68,68,0.12);color:#FCA5A5;border-color:rgba(239,68,68,0.3);cursor:pointer;padding:4px 10px;font-size:11px;display:inline-flex;align-items:center;gap:4px;" onclick="deleteDocumentRecord(this, '${log.log_id}', '${escapeHtml(log.file_name)}', ${targetsCount})" title="Delete this document and all its ingested cases">
             <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             Delete
           </button>

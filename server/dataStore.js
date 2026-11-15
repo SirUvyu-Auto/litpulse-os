@@ -310,7 +310,7 @@ function calculateDaysUntil(trialDateStr, referenceEasternUtc = null) {
 // Firm-scoped unique attorney identifier to prevent name collisions across firms (Defect #6)
 function buildAttorneyId(attyName, firmName) {
   const cleanAtty = (attyName || '').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-  if (!cleanAtty || cleanAtty === 'awaiting-appearance') return 'atty-awaiting-appearance';
+  if (!cleanAtty || /^(awaiting-appearance|unknown-counsel|unknown|plaintiff|defense)$/i.test(cleanAtty)) return null;
   const cleanFirm = (firmName || '').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
   return cleanFirm ? `atty-${cleanAtty}-${cleanFirm.slice(0, 16)}` : `atty-${cleanAtty}`;
 }
@@ -325,7 +325,7 @@ const DEFAULT_WEIGHTS = {
   revenueBenchmark: 35000 // scaling ceiling for revenue score
 };
 
-function calculatePriorityScore(trialDateStr, isLocal, nosCode, earValue, isHubSpotEngaged = true, customWeights = null, nosIntensity = 1.4, precomputedDaysUntil = null) {
+function calculatePriorityScore(trialDateStr, isLocal, nosCode, earValue, isHubSpotEngaged = false, customWeights = null, nosIntensity = 1.4, precomputedDaysUntil = null) {
   const daysUntil = (precomputedDaysUntil !== null && precomputedDaysUntil !== undefined && !isNaN(precomputedDaysUntil))
     ? precomputedDaysUntil
     : calculateDaysUntil(trialDateStr);
@@ -783,6 +783,7 @@ class DataStore {
     this.saveTimer = null;
     this._lastClockDay = null;
     this.load();
+    this.sanitizeOrphanedContacts();
     this.refreshDynamicClocks(true);
     this.recomputeScoresAndBuildings();
 
@@ -818,6 +819,35 @@ class DataStore {
     } catch (err) {
       console.error('Failed to load database, resetting to clean empty state:', err.message);
       this.data = { cases: [], buildings: [], ingestion_logs: [], forecast_log: [], conversions: [], weights: { urgency: 30, revenue: 25, locality: 20, caseType: 15, engagement: 15 } };
+      this.save();
+    }
+  }
+
+  sanitizeOrphanedContacts() {
+    if (!this.data || !Array.isArray(this.data.cases)) return;
+    let scrubbed = 0;
+    this.data.cases.forEach(c => {
+      const isAwaitingAtty = !c.lead_attorney || c.lead_attorney === 'Awaiting Appearance' || /^(awaiting appearance|unknown counsel|plaintiff counsel|defense counsel)$/i.test(String(c.lead_attorney).trim());
+      const isAwaitingFirm = !c.firm || c.firm === 'Awaiting Appearance' || /^(awaiting appearance|unknown firm|unknown counsel)$/i.test(String(c.firm).trim());
+
+      if (isAwaitingFirm) {
+        if (c.firm_id) c.firm_id = null;
+      }
+      if (isAwaitingAtty) {
+        if (c.attorney_id) c.attorney_id = null;
+        if (c.email && c.email !== 'N/A') {
+          c.email = 'N/A';
+          scrubbed++;
+        }
+        if (c.phone && c.phone !== 'N/A') {
+          c.phone = 'N/A';
+          scrubbed++;
+        }
+      }
+    });
+
+    if (scrubbed > 0) {
+      console.log(`[TRIS Sanitation] Scrubbed ${scrubbed} orphaned contacts and fake firm IDs from unrepresented matters.`);
       this.save();
     }
   }
@@ -1051,7 +1081,11 @@ class DataStore {
         c.locality_badge = locality.is_local ? `Local ${venueState}` : (locality.is_oos ? `Out-of-State (${locality.state})` : `Out-of-Town ${venueState}`);
 
         const isAssigned = Boolean(c.assigned_to && c.assigned_to !== 'Unassigned' && c.hubspot_status !== 'Unassigned');
-        const hasEngagement = Boolean((c.email && c.email.includes('@')) || (c.phone && c.phone.trim().length >= 7) || isAssigned || c.has_cookie_conversion);
+        const hasEngagement = Boolean(
+          c.has_cookie_conversion === true ||
+          c.is_client === true ||
+          (c.hubspot_status && /^(booked|won|signed|responded|in discussion|discovery complete)$/i.test(c.hubspot_status))
+        );
         const nosIntensity = (NOS_REF[c.nos_code] || NOS_REF['default']).exhibit_intensity || 1.4;
         const scores = calculatePriorityScore(c.trial_date, c.is_local, c.nos_code, c.ear, hasEngagement, this.data.weights, nosIntensity);
         const isHistorical = c.status === 'Historical' || (c.days_until !== undefined && c.days_until <= 0);
@@ -1346,7 +1380,11 @@ class DataStore {
         c.est_value = earInfo.ear || currentUnitPrice;
 
         const isAssigned = Boolean(c.assigned_to && c.assigned_to !== 'Unassigned' && c.hubspot_status !== 'Unassigned');
-        const hasEngagement = Boolean((c.email && c.email.includes('@')) || (c.phone && String(c.phone).trim().length >= 7) || isAssigned || c.has_cookie_conversion);
+        const hasEngagement = Boolean(
+          c.has_cookie_conversion === true ||
+          c.is_client === true ||
+          (c.hubspot_status && /^(booked|won|signed|responded|in discussion|discovery complete)$/i.test(c.hubspot_status))
+        );
         const nosIntensity = (NOS_REF[c.nos_code] || NOS_REF['default']).exhibit_intensity || 1.4;
         const scores = calculatePriorityScore(c.trial_date, c.is_local, c.nos_code, c.ear, hasEngagement, weights, nosIntensity, days);
 
@@ -1510,8 +1548,11 @@ class DataStore {
       unassignedPct: totalActive > 0 ? ((unassigned.length / totalActive) * 100).toFixed(1) + '%' : '0%'
     };
 
-    // Large and Complex Matters count
-    const largeMattersCount = activeTargets.filter(c => (c.full_value || 0) >= 100000 || (c.ear || 0) >= 15000 || (c.counsel_matrix && c.counsel_matrix.length >= 4)).length;
+    // Distinct court matters count (to clarify cases vs counsel outreach targets)
+    const distinctMattersCount = new Set(activeTargets.map(c => c.case_id)).size;
+
+    // Large and Complex Matters count (calibrated to realistic $16,400 baseline: full value >= $20,000 or EAR >= $3,000)
+    const largeMattersCount = activeTargets.filter(c => (c.full_value || 0) >= 20000 || (c.ear || 0) >= 3000 || (c.counsel_matrix && c.counsel_matrix.length >= 4)).length;
 
     // Buildings ready for delivery
     const totalAttorneysInBuildings = buildings.reduce((acc, b) => acc + (b.attorneys_count || 0), 0);
@@ -1586,6 +1627,7 @@ class DataStore {
       topPriorities: sorted.slice(0, 6),
       forecast: forecastByMonth,
       largeMattersCount,
+      distinctMatters: distinctMattersCount,
       coverage
     };
   }
@@ -1665,7 +1707,7 @@ class DataStore {
         rows: enrichedBuildings
       };
     } else if (key === 'largematters') {
-      const largeRows = activeTargets.filter(c => (c.full_value || 0) >= 100000 || (c.ear || 0) >= 15000 || (c.counsel_matrix && c.counsel_matrix.length >= 4));
+      const largeRows = activeTargets.filter(c => (c.full_value || 0) >= 20000 || (c.ear || 0) >= 3000 || (c.counsel_matrix && c.counsel_matrix.length >= 4));
       return {
         title: 'Large & Complex Litigation Matters',
         sub: 'High-value litigation cases requiring demonstratives, warm white-glove field outreach, and hot-seat technicians.',
@@ -2304,6 +2346,12 @@ class DataStore {
           finalPltfEmail = buildAttorneyEmail(pltfAtty, resolvedPltfFirm);
         }
 
+        // Hard sanitation gate: unrepresented or awaiting-appearance targets cannot carry phone or email
+        if (!pltfAtty || pltfAtty === 'Awaiting Appearance' || /^(awaiting appearance|unknown counsel|unknown firm|pro se)/i.test(pltfAtty)) {
+          finalPltfPhone = 'N/A';
+          finalPltfEmail = 'N/A';
+        }
+
         const finalPltfAddr = pltfAddr || existingPltf?.address || '';
         const pltfFirmCity = extractFirmCity(rawPltfAddr, pltfCity);
         const finalPltfCity = pltfFirmCity || existingPltf?.firm_city || existingPltf?.city || pltfCity;
@@ -2421,6 +2469,12 @@ class DataStore {
         let finalDefEmail = defEmail || existingDef?.email || '';
         if (!finalDefEmail || /^(plaintiff@lawfirm\.com|defense@lawfirm\.com|.*@lawfirm\.com|.*@example\.com)$/i.test(finalDefEmail)) {
           finalDefEmail = buildAttorneyEmail(defAtty, resolvedDefFirm);
+        }
+
+        // Hard sanitation gate: unrepresented or awaiting-appearance targets cannot carry phone or email
+        if (!defAtty || defAtty === 'Awaiting Appearance' || /^(awaiting appearance|unknown counsel|unknown firm|pro se)/i.test(defAtty)) {
+          finalDefPhone = 'N/A';
+          finalDefEmail = 'N/A';
         }
         const finalDefAddr = defAddr || existingDef?.address || '';
         const defFirmCity = extractFirmCity(rawDefAddr, defCity);
@@ -2575,15 +2629,19 @@ class DataStore {
     this.data.buildings = Array.from(bldgMap.values());
     this.rebuildBuildingIndex();
 
-    // Record Ingestion Log with Campaign Window Metadata
+    // Record Ingestion Log with explicit Dockets vs Targets accounting
+    const cleanDocketsCount = Math.min(newCases.length, Math.max(0, newCases.length - outOfWindowCount));
     const log = {
       log_id: logId,
       file_name: fileName || 'manual_import.csv',
       imported_at: new Date().toISOString(),
+      dockets_total: newCases.length,
+      dockets_clean: cleanDocketsCount,
+      targets_generated: addedCount,
       rows_total: newCases.length,
-      rows_clean: addedCount,
+      rows_clean: cleanDocketsCount,
       rows_flagged: outOfWindowCount,
-      status: outOfWindowCount > 0 ? `Warning: ${outOfWindowCount} out-of-window records` : 'Clean',
+      status: outOfWindowCount > 0 ? `Warning: ${outOfWindowCount} out-of-window dockets` : 'Clean',
       source_type: fileType || 'Spreadsheet Upload',
       campaign_window: targetWindow || 'All Quarters'
     };

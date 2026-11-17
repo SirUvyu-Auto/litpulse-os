@@ -5,6 +5,10 @@ node_modules/
 .env
 .env.local
 .env.*.local
+*recovery*
+*.pem
+*.key
+*.cert
 
 # Build, Log & System Artifacts
 npm-debug.log*

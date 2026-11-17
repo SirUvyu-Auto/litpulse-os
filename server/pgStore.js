@@ -25,7 +25,7 @@ class PgStore {
       const isRemote = this.connectionString && !this.connectionString.includes('localhost') && !this.connectionString.includes('127.0.0.1');
       this.pool = new Pool({
         connectionString: this.connectionString,
-        connectionTimeoutMillis: 3500,
+        connectionTimeoutMillis: 15000,
         idleTimeoutMillis: 30000,
         max: 10,
         ssl: isRemote ? { rejectUnauthorized: false } : false

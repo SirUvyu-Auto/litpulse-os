@@ -732,20 +732,12 @@ function buildAttorneyEmail(attorneyName, firmName) {
 
   if (cleanFirm && FIRM_NAME_TO_DOMAIN_MAP[cleanFirm]) {
     domain = FIRM_NAME_TO_DOMAIN_MAP[cleanFirm];
-  } else if (cleanFirm) {
+  } else if (cleanFirm && cleanFirm.length >= 4 && !/^(awaiting|unknown|plaintiff|defense|n\/a|none)/i.test(cleanFirm)) {
     for (const [fName, fDom] of Object.entries(FIRM_NAME_TO_DOMAIN_MAP)) {
-      if (cleanFirm.includes(fName) || fName.includes(cleanFirm)) {
+      if (cleanFirm.includes(fName) || (cleanFirm.length >= 6 && fName.includes(cleanFirm))) {
         domain = fDom;
         break;
       }
-    }
-  }
-
-  if (!domain && cleanFirm && !/^(awaiting|unknown|plaintiff|defense|n\/a|none)/i.test(cleanFirm)) {
-    const words = cleanFirm.replace(/law office of|the|law|firm|group|offices|associates|partners|llp|pllc|pa|pc|chtd|chartered/gi, '').trim().split(/\s+/).filter(Boolean);
-    const slug = words.join('').replace(/[^a-z0-9]/g, '');
-    if (slug.length >= 3) {
-      domain = `${slug}law.com`;
     }
   }
 
@@ -762,9 +754,9 @@ function buildAttorneyPhone(firmName, city) {
     return 'N/A';
   }
   const cleanFirm = (firmName || '').toLowerCase().trim();
-  if (cleanFirm) {
+  if (cleanFirm && cleanFirm.length >= 4) {
     for (const [fName, fPhone] of Object.entries(KNOWN_FIRM_PHONES)) {
-      if (cleanFirm.includes(fName) || fName.includes(cleanFirm)) {
+      if (cleanFirm.includes(fName) || (cleanFirm.length >= 6 && fName.includes(cleanFirm))) {
         return fPhone;
       }
     }
@@ -831,14 +823,14 @@ function normalizeFirmName(rawName, email, attorneyName) {
     return 'Pro Se / Self-Represented';
   }
 
-  // Reject invalid firm names like "Plaintiff", "Defense", "Unknown Firm", "Unknown"
-  const isInvalidFirm = !clean || /^(plaintiff|defense|unknown firm|unknown|counsel|lead counsel|pro se|n\/a|none|pending)$/i.test(clean);
+  // Reject invalid firm names like "Plaintiff", "Defense", "Unknown Firm", "Unknown", "Awaiting Appearance"
+  const isInvalidFirm = !clean || /^(plaintiff|defense|unknown firm|unknown|counsel|lead counsel|pro se|n\/a|none|pending|awaiting appearance|defense law practice|plaintiff counsel|defense counsel)$/i.test(clean);
   if (isInvalidFirm) {
     if (attorneyName && !/^(plaintiff|defense|counsel|awaiting|pro\s*se|unknown|lead)/i.test(attorneyName)) {
       const attyClean = attorneyName.replace(/\s*,?\s*esq\.?$/i, '').trim().replace(/\s+/g, ' ');
       return `Law Office of ${attyClean}`;
     }
-    return 'Awaiting Appearance';
+    return null;
   }
 
   // If firm name is identical to attorney name (solo practitioner)
@@ -972,11 +964,12 @@ function isGovernmentEntity(attorneyName, firmName, email = '', address = '', ca
 }
 
 function resolveFirmId(firmName) {
-  if (!firmName || /^(awaiting appearance|unknown firm|unknown counsel|unknown|pro se \/ self-represented|plaintiff counsel|defense counsel|n\/a|none)$/i.test(firmName.trim())) {
+  if (!firmName || typeof firmName !== 'string' || /^(awaiting appearance|unknown firm|unknown counsel|unknown|pro se \/ self-represented|plaintiff counsel|defense counsel|defense law practice|plaintiff|defense|n\/a|none)$/i.test(firmName.trim())) {
     return null;
   }
   const norm = firmName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-  return norm ? `firm-${norm}` : null;
+  if (!norm || norm === 'awaiting-appearance') return null;
+  return `firm-${norm}`;
 }
 
 // 8. Florida Legal Venue Centroids for Fast Zero-Lag Map Visualizations
@@ -1020,6 +1013,10 @@ function resolveBuildingCoordinates(building, idx) {
 
 // Non-firm entity classifier (Pro Se, Government, Municipal, Corporate Defendants)
 const NON_FIRM_PATTERNS = [
+  /\bawaiting\s+appearance\b/i,
+  /\bunknown\s+(firm|counsel)\b/i,
+  /\bdefense\s+law\s+practice\b/i,
+  /\b(plaintiff|defense)\s+counsel\b/i,
   /\bpro\s*se\b/i,
   /\bself-represented\b/i,
   /\binmate\b/i,

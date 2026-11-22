@@ -1726,8 +1726,8 @@ function renderPriorityBadge(c) {
 
   const urg = c.urgency_score !== undefined ? c.urgency_score : 20;
   const loc = c.locality_score !== undefined ? c.locality_score : 20;
-  const eng = c.engagement_score !== undefined ? c.engagement_score : 15;
-  const ctype = c.casetype_score !== undefined ? c.casetype_score : 8;
+  const eng = c.engagement_score !== undefined ? c.engagement_score : 0;
+  const ctype = c.casetype_score !== undefined ? c.casetype_score : 5;
   const rev = c.revenue_score !== undefined ? c.revenue_score : 7;
   const isWarRoom = Boolean(c.is_war_room) || (c.is_local === false && c.days_until !== undefined && c.days_until >= 0 && c.days_until <= 14);
 
@@ -5209,7 +5209,7 @@ async function openWeightsControlModal() {
     if (data.success && data.weights) {
       const w = data.weights;
       if (document.getElementById('sliderWeightGeo')) document.getElementById('sliderWeightGeo').value = w.locality !== undefined ? w.locality : 20;
-      if (document.getElementById('sliderWeightNOS')) document.getElementById('sliderWeightNOS').value = w.caseType !== undefined ? w.caseType : 15;
+      if (document.getElementById('sliderWeightNOS')) document.getElementById('sliderWeightNOS').value = w.caseType !== undefined ? w.caseType : 10;
       if (document.getElementById('sliderWeightUrgency')) document.getElementById('sliderWeightUrgency').value = w.urgency !== undefined ? w.urgency : 30;
       if (document.getElementById('sliderWeightRevenue')) document.getElementById('sliderWeightRevenue').value = w.revenue !== undefined ? w.revenue : 25;
       if (document.getElementById('sliderWeightEngagement')) document.getElementById('sliderWeightEngagement').value = w.engagement !== undefined ? w.engagement : 15;
@@ -5231,7 +5231,7 @@ function closeWeightsControlModal(e) {
 
 function updateWeightsLive() {
   const geo = parseInt(document.getElementById('sliderWeightGeo')?.value || 20, 10);
-  const nos = parseInt(document.getElementById('sliderWeightNOS')?.value || 15, 10);
+  const nos = parseInt(document.getElementById('sliderWeightNOS')?.value || 10, 10);
   const urg = parseInt(document.getElementById('sliderWeightUrgency')?.value || 30, 10);
   const rev = parseInt(document.getElementById('sliderWeightRevenue')?.value || 25, 10);
   const eng = parseInt(document.getElementById('sliderWeightEngagement')?.value || 15, 10);
@@ -5250,19 +5250,19 @@ function updateWeightsLive() {
 function applyWeightsPreset(presetKey) {
   if (presetKey === 'courier') {
     document.getElementById('sliderWeightGeo').value = 40;
-    document.getElementById('sliderWeightNOS').value = 15;
+    document.getElementById('sliderWeightNOS').value = 10;
     document.getElementById('sliderWeightUrgency').value = 30;
-    document.getElementById('sliderWeightRevenue').value = 15;
-    document.getElementById('sliderWeightEngagement').value = 15;
+    document.getElementById('sliderWeightRevenue').value = 10;
+    document.getElementById('sliderWeightEngagement').value = 10;
   } else if (presetKey === 'binders') {
     document.getElementById('sliderWeightGeo').value = 15;
-    document.getElementById('sliderWeightNOS').value = 35;
+    document.getElementById('sliderWeightNOS').value = 30;
     document.getElementById('sliderWeightUrgency').value = 15;
-    document.getElementById('sliderWeightRevenue').value = 35;
-    document.getElementById('sliderWeightEngagement').value = 15;
+    document.getElementById('sliderWeightRevenue').value = 30;
+    document.getElementById('sliderWeightEngagement').value = 10;
   } else {
     document.getElementById('sliderWeightGeo').value = 20;
-    document.getElementById('sliderWeightNOS').value = 15;
+    document.getElementById('sliderWeightNOS').value = 10;
     document.getElementById('sliderWeightUrgency').value = 30;
     document.getElementById('sliderWeightRevenue').value = 25;
     document.getElementById('sliderWeightEngagement').value = 15;
@@ -5272,7 +5272,7 @@ function applyWeightsPreset(presetKey) {
 
 async function saveWeightsAndRecalculate() {
   const locality = parseInt(document.getElementById('sliderWeightGeo')?.value || 20, 10);
-  const caseType = parseInt(document.getElementById('sliderWeightNOS')?.value || 15, 10);
+  const caseType = parseInt(document.getElementById('sliderWeightNOS')?.value || 10, 10);
   const urgency = parseInt(document.getElementById('sliderWeightUrgency')?.value || 30, 10);
   const revenue = parseInt(document.getElementById('sliderWeightRevenue')?.value || 25, 10);
   const engagement = parseInt(document.getElementById('sliderWeightEngagement')?.value || 15, 10);

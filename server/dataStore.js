@@ -310,8 +310,11 @@ function calculateDaysUntil(trialDateStr, referenceEasternUtc = null) {
 // Firm-scoped unique attorney identifier to prevent name collisions across firms (Defect #6)
 function buildAttorneyId(attyName, firmName) {
   const cleanAtty = (attyName || '').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-  if (!cleanAtty || /^(awaiting-appearance|unknown-counsel|unknown|plaintiff|defense)$/i.test(cleanAtty)) return null;
-  const cleanFirm = (firmName || '').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  if (!cleanAtty || /^(awaiting-appearance|unknown-counsel|defense-counsel|plaintiff-counsel|unknown|plaintiff|defense|counsel|lead|n-a|none)$/i.test(cleanAtty)) return null;
+  let cleanFirm = (firmName || '').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  if (/^(awaiting-appearance|unknown-firm|unknown-counsel|defense-law-practice|plaintiff|defense|n-a|none)$/i.test(cleanFirm)) {
+    cleanFirm = '';
+  }
   return cleanFirm ? `atty-${cleanAtty}-${cleanFirm.slice(0, 16)}` : `atty-${cleanAtty}`;
 }
 
@@ -319,8 +322,8 @@ const DEFAULT_WEIGHTS = {
   urgency: 30,    // max 30 points
   revenue: 25,    // max 25 points
   locality: 20,   // max 20 points
-  caseType: 15,   // max 15 points
-  engagement: 15, // max 15 points
+  caseType: 10,   // max 10 points
+  engagement: 15, // max 15 points (total = 100)
   unitPrice: 16400, // 4-quarter realistic average for $5k+ tier
   revenueBenchmark: 35000 // scaling ceiling for revenue score
 };
@@ -339,7 +342,7 @@ function calculatePriorityScore(trialDateStr, isLocal, nosCode, earValue, isHubS
   const maxUrgency = w.urgency !== undefined ? Number(w.urgency) : 30;
   const maxRevenue = w.revenue !== undefined ? Number(w.revenue) : 25;
   const maxLocality = w.locality !== undefined ? Number(w.locality) : 20;
-  const maxCaseType = w.caseType !== undefined ? Number(w.caseType) : 15;
+  const maxCaseType = w.caseType !== undefined ? Number(w.caseType) : 10;
   const maxEngagement = w.engagement !== undefined ? Number(w.engagement) : 15;
   const revenueBenchmark = (w.revenueBenchmark && Number(w.revenueBenchmark) > 0) ? Number(w.revenueBenchmark) : 35000;
 
@@ -791,6 +794,7 @@ class DataStore {
     pgStore.init((pgData, mode) => {
       if (mode === 'postgres' && pgData && Array.isArray(pgData.cases) && pgData.cases.length >= (this.data.cases || []).length) {
         this.data = pgData;
+        this.sanitizeOrphanedContacts();
         this.refreshDynamicClocks(true);
         this.recomputeScoresAndBuildings();
         this.rebuildBuildingIndex();
@@ -826,15 +830,48 @@ class DataStore {
   sanitizeOrphanedContacts() {
     if (!this.data || !Array.isArray(this.data.cases)) return;
     let scrubbed = 0;
-    this.data.cases.forEach(c => {
-      const isAwaitingAtty = !c.lead_attorney || c.lead_attorney === 'Awaiting Appearance' || /^(awaiting appearance|unknown counsel|plaintiff counsel|defense counsel)$/i.test(String(c.lead_attorney).trim());
-      const isAwaitingFirm = !c.firm || c.firm === 'Awaiting Appearance' || /^(awaiting appearance|unknown firm|unknown counsel)$/i.test(String(c.firm).trim());
 
-      if (isAwaitingFirm) {
-        if (c.firm_id) c.firm_id = null;
+    // 1. Normalize stored weights so they strictly total 100 (30 + 25 + 20 + 10 + 15 = 100)
+    if (this.data.weights) {
+      const w = this.data.weights;
+      const sum = (Number(w.urgency) || 0) + (Number(w.revenue) || 0) + (Number(w.locality) || 0) + (Number(w.caseType) || 0) + (Number(w.engagement) || 0);
+      if (sum === 105 && Number(w.caseType) === 15) {
+        this.data.weights.caseType = 10;
+        scrubbed++;
       }
+    }
+
+    // 2. Scrub unrepresented rows, fake firm/attorney IDs, orphaned contacts, and unearned engagement scores
+    this.data.cases.forEach(c => {
+      const isAwaitingAtty = !c.lead_attorney || /^(awaiting appearance|unknown counsel|plaintiff counsel|defense counsel|plaintiff|defense|unknown|n\/a|none)$/i.test(String(c.lead_attorney).trim());
+      const isAwaitingFirm = !c.firm || /^(awaiting appearance|unknown firm|unknown counsel|defense law practice|plaintiff counsel|defense counsel|plaintiff|defense|unknown|n\/a|none)$/i.test(String(c.firm).trim());
+
+      if (isAwaitingFirm && !c.is_pro_se) {
+        if (c.firm !== null) {
+          c.firm = null;
+          scrubbed++;
+        }
+        if (c.firm_id !== null) {
+          c.firm_id = null;
+          scrubbed++;
+        }
+      } else if (!c.is_pro_se && c.firm && (!c.firm_id || /awaiting-appearance|unknown/i.test(String(c.firm_id)))) {
+        const resolvedId = resolveFirmId(c.firm);
+        if (c.firm_id !== resolvedId) {
+          c.firm_id = resolvedId;
+          scrubbed++;
+        }
+      }
+
       if (isAwaitingAtty) {
-        if (c.attorney_id) c.attorney_id = null;
+        if (c.lead_attorney !== null) {
+          c.lead_attorney = null;
+          scrubbed++;
+        }
+        if (c.attorney_id !== null) {
+          c.attorney_id = null;
+          scrubbed++;
+        }
         if (c.email && c.email !== 'N/A') {
           c.email = 'N/A';
           scrubbed++;
@@ -843,12 +880,51 @@ class DataStore {
           c.phone = 'N/A';
           scrubbed++;
         }
+      } else if (c.attorney_id && /awaiting-appearance|unknown-firm/i.test(String(c.attorney_id))) {
+        const cleanAttyId = buildAttorneyId(c.lead_attorney, c.firm);
+        if (c.attorney_id !== cleanAttyId) {
+          c.attorney_id = cleanAttyId;
+          scrubbed++;
+        }
+      }
+
+      // Ensure unearned or historical engagement scores are zeroed out
+      const hasEngagement = Boolean(
+        c.has_cookie_conversion === true ||
+        c.is_client === true ||
+        (c.hubspot_status && /^(booked|won|signed|responded|in discussion|discovery complete)$/i.test(c.hubspot_status))
+      );
+      const isHistorical = c.status === 'Historical' || (c.days_until !== undefined && c.days_until !== null && c.days_until < 0);
+      if ((!hasEngagement || isHistorical) && c.engagement_score) {
+        c.engagement_score = 0;
+        scrubbed++;
       }
     });
 
+    // 3. Normalize historical ingestion_logs so rows_clean (clean dockets) never exceeds rows_total (total dockets)
+    if (Array.isArray(this.data.ingestion_logs)) {
+      this.data.ingestion_logs.forEach(l => {
+        const totalDockets = Number(l.dockets_total || l.rows_total || 0);
+        const flaggedDockets = Number(l.rows_flagged || 0);
+        if (l.rows_clean > totalDockets) {
+          l.dockets_total = totalDockets;
+          l.targets_generated = l.targets_generated || l.rows_clean;
+          l.dockets_clean = Math.max(0, totalDockets - flaggedDockets);
+          l.rows_total = totalDockets;
+          l.rows_clean = l.dockets_clean;
+          scrubbed++;
+        } else if (l.dockets_total === undefined || l.targets_generated === undefined) {
+          l.dockets_total = totalDockets;
+          l.dockets_clean = l.rows_clean !== undefined ? Number(l.rows_clean) : totalDockets;
+          l.targets_generated = l.targets_generated || l.dockets_clean;
+          scrubbed++;
+        }
+      });
+    }
+
     if (scrubbed > 0) {
-      console.log(`[TRIS Sanitation] Scrubbed ${scrubbed} orphaned contacts and fake firm IDs from unrepresented matters.`);
-      this.save();
+      console.log(`[TRIS Sanitation] Scrubbed ${scrubbed} orphaned contacts, placeholder firm/attorney fields, and historical import log counters.`);
+      this.save(true);
     }
   }
 
@@ -942,7 +1018,7 @@ class DataStore {
       c.trial_city = normalizeCity(cleanDiv || c.division, '', cleanDiv || c.division, c.court, c.case_id);
 
       // Clean address if it was populated with court division artifacts
-      if (c.address && (/\([^)]*division[^)]*\)/i.test(c.address) || (!/\d+/.test(c.address) && c.lead_attorney === 'Awaiting Appearance'))) {
+      if (c.address && (/\([^)]*division[^)]*\)/i.test(c.address) || (!/\d+/.test(c.address) && (!c.lead_attorney || c.lead_attorney === 'Awaiting Appearance')))) {
         c.address = '';
       }
 
@@ -953,8 +1029,8 @@ class DataStore {
       c.city = c.firm_city;
 
       // Clean placeholder attorney & apply upstream fuzzy nickname resolution (Kris Directive 1)
-      if (!c.lead_attorney || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(c.lead_attorney)) {
-        c.lead_attorney = 'Awaiting Appearance';
+      if (!c.lead_attorney || /^(awaiting appearance|plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel|unknown|n\/a|none)$/i.test(String(c.lead_attorney).trim())) {
+        c.lead_attorney = null;
       } else {
         c.lead_attorney = normalizePersonName(c.lead_attorney);
       }
@@ -966,6 +1042,7 @@ class DataStore {
         c.firm_id = 'firm-pro-se-self-represented';
       } else {
         c.firm = normalizeFirmName(c.firm, c.email, c.lead_attorney);
+        c.firm_id = resolveFirmId(c.firm);
       }
 
       // Kris Directive 3: Target Case Coverage Preservation Gate
@@ -979,7 +1056,7 @@ class DataStore {
       }
 
       // Scrub and dynamically resolve email and phone if missing or generic placeholder
-      if (c.is_pro_se) {
+      if (c.is_pro_se || !c.lead_attorney) {
         c.email = 'N/A';
         c.phone = 'N/A';
       } else {
@@ -1302,7 +1379,7 @@ class DataStore {
         ws.write(JSON.stringify(bldgs[i]));
       }
       ws.write('],"ingestion_logs":' + JSON.stringify(data.ingestion_logs || []));
-      ws.write(',"weights":' + JSON.stringify(data.weights || { urgency: 30, revenue: 25, locality: 20, caseType: 15, engagement: 15 }));
+      ws.write(',"weights":' + JSON.stringify(data.weights || { urgency: 30, revenue: 25, locality: 20, caseType: 10, engagement: 15 }));
       ws.write(',"conversions":' + JSON.stringify(data.conversions || []));
       ws.write(',"forecast_log":' + JSON.stringify(data.forecast_log || []));
       ws.end('}');
@@ -1325,7 +1402,11 @@ class DataStore {
     if (this._saveTimer) clearTimeout(this._saveTimer);
 
     if (sync) {
-      this._saveStreaming(true);
+      try {
+        fs.writeFileSync(DB_FILE, JSON.stringify(this.data), 'utf8');
+      } catch (err) {
+        this._saveStreaming(true);
+      }
       return;
     }
 
@@ -1360,6 +1441,10 @@ class DataStore {
         c.status = 'Historical';
         c.is_war_room = false;
         c.urgency_score = 0;
+        c.revenue_score = 0;
+        c.locality_score = 0;
+        c.casetype_score = 0;
+        c.engagement_score = 0;
         c.priority_score = 0;
         c.priority_tier = 'gray';
         expiredCount++;
@@ -1425,12 +1510,16 @@ class DataStore {
   getAdminStats() {
     const cases = this.getCases();
     const logs = this.getLogs();
-    const totalRows = logs.reduce((acc, l) => acc + (l.rows_total || 0), 0);
-    const cleanRows = logs.reduce((acc, l) => acc + (l.rows_clean || 0), 0);
-    const quality = totalRows > 0 ? Math.min(100.0, ((cleanRows / (totalRows * 2)) * 100)).toFixed(1) : '100.0';
+    const totalRows = logs.reduce((acc, l) => acc + Number(l.dockets_total || l.rows_total || 0), 0);
+    const cleanRows = logs.reduce((acc, l) => {
+      const tot = Number(l.dockets_total || l.rows_total || 0);
+      const cln = l.dockets_clean !== undefined ? Number(l.dockets_clean) : Number(l.rows_clean || 0);
+      return acc + Math.min(tot, cln);
+    }, 0);
+    const quality = totalRows > 0 ? Math.min(100.0, ((cleanRows / totalRows) * 100)).toFixed(1) : '100.0';
 
-    const uniqueFirms = new Set(cases.map(c => c.firm)).size;
-    const uniqueAttorneys = new Set(cases.map(c => c.lead_attorney)).size;
+    const uniqueFirms = new Set(cases.filter(c => c.firm && c.firm_id && !c.is_pro_se).map(c => c.firm_id)).size;
+    const uniqueAttorneys = new Set(cases.filter(c => c.lead_attorney && c.attorney_id && !c.is_pro_se).map(c => c.attorney_id)).size;
 
     return {
       activeFiles: logs.length,
@@ -2255,7 +2344,7 @@ class DataStore {
       const pltfAddr = rawPltfAddr ? standardizeAddress(rawPltfAddr) : '';
       const pltfEmail = nc.plaintiff_email || nc.email || '';
       const rawPltfAtty = nc.plaintiff_attorney || nc.lead_attorney || '';
-      const pltfAtty = !rawPltfAtty || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(rawPltfAtty) ? 'Awaiting Appearance' : normalizePersonName(rawPltfAtty);
+      const pltfAtty = !rawPltfAtty || /^(awaiting appearance|plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel|unknown|n\/a|none)$/i.test(String(rawPltfAtty).trim()) ? null : normalizePersonName(rawPltfAtty);
       const pltfFirm = normalizeFirmName(nc.plaintiff_firm || nc.firm || '', pltfEmail, pltfAtty);
       const pltfPhone = nc.plaintiff_phone || nc.phone || '';
 
@@ -2266,7 +2355,7 @@ class DataStore {
       const defAddr = rawDefAddr ? standardizeAddress(rawDefAddr) : '';
       const defEmail = nc.defense_email || nc.opposing_email || '';
       const rawDefAtty = nc.defense_attorney || nc.opposing_attorney || '';
-      const defAtty = !rawDefAtty || /^(plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel)$/i.test(rawDefAtty) ? 'Awaiting Appearance' : normalizePersonName(rawDefAtty);
+      const defAtty = !rawDefAtty || /^(awaiting appearance|plaintiff counsel|defense counsel|plaintiff|defense|unknown counsel|unknown|n\/a|none)$/i.test(String(rawDefAtty).trim()) ? null : normalizePersonName(rawDefAtty);
       const defFirm = normalizeFirmName(nc.defense_firm || nc.opposing_firm || '', defEmail, defAtty);
       const defPhone = nc.defense_phone || nc.opposing_phone || '';
 
@@ -2408,12 +2497,12 @@ class DataStore {
           target_id: pltfTargetId,
           party_side: 'Plaintiff',
           party_badge: 'PLTF',
-          lead_attorney: pltfAtty,
+          lead_attorney: pltfAtty || null,
           attorney_id: buildAttorneyId(pltfAtty, resolvedPltfFirm),
-          firm: resolvedPltfFirm,
+          firm: resolvedPltfFirm || null,
           firm_id: resolveFirmId(resolvedPltfFirm),
-          opposing_firm: resolvedDefFirm || 'Defense Counsel',
-          opposing_attorney: defAtty || 'Defense Lead',
+          opposing_firm: resolvedDefFirm || null,
+          opposing_attorney: defAtty || null,
           opposing_is_pro_se: defIsProSe,
           address: finalPltfAddr,
           city: finalPltfCity,
@@ -2532,12 +2621,12 @@ class DataStore {
           target_id: defTargetId,
           party_side: 'Defense',
           party_badge: 'DEF',
-          lead_attorney: defAtty || 'Defense Counsel',
-          attorney_id: buildAttorneyId(defAtty || 'Defense Counsel', resolvedDefFirm || 'Defense Law Practice'),
-          firm: resolvedDefFirm || 'Defense Law Practice',
-          firm_id: resolveFirmId(resolvedDefFirm || 'Defense Law Practice'),
-          opposing_firm: resolvedPltfFirm,
-          opposing_attorney: pltfAtty,
+          lead_attorney: defAtty || null,
+          attorney_id: buildAttorneyId(defAtty, resolvedDefFirm),
+          firm: resolvedDefFirm || null,
+          firm_id: resolveFirmId(resolvedDefFirm),
+          opposing_firm: resolvedPltfFirm || null,
+          opposing_attorney: pltfAtty || null,
           opposing_is_pro_se: pltfIsProSe,
           address: finalDefAddr,
           city: finalDefCity,
@@ -2693,7 +2782,7 @@ class DataStore {
 
     cases.forEach(c => {
       const rawFirm = c.firm;
-      if (!rawFirm || rawFirm === 'Unknown Firm' || isNonFirmEntity(rawFirm)) return;
+      if (!rawFirm || !c.firm_id || rawFirm === 'Unknown Firm' || rawFirm === 'Awaiting Appearance' || isNonFirmEntity(rawFirm)) return;
       const firm = cleanFirmDisplay(rawFirm);
       if (!firm || firm.length < 3) return;
 
@@ -3009,7 +3098,7 @@ class DataStore {
   }
 
   getWeights() {
-    return this.data.weights || { urgency: 30, revenue: 25, locality: 20, caseType: 15, engagement: 15 };
+    return this.data.weights || { urgency: 30, revenue: 25, locality: 20, caseType: 10, engagement: 15 };
   }
 
   setWeights(newWeights) {
@@ -3018,7 +3107,7 @@ class DataStore {
       urgency: newWeights.urgency !== undefined ? Number(newWeights.urgency) : 30,
       revenue: newWeights.revenue !== undefined ? Number(newWeights.revenue) : 25,
       locality: newWeights.locality !== undefined ? Number(newWeights.locality) : 20,
-      caseType: newWeights.caseType !== undefined ? Number(newWeights.caseType) : 15,
+      caseType: newWeights.caseType !== undefined ? Number(newWeights.caseType) : 10,
       engagement: newWeights.engagement !== undefined ? Number(newWeights.engagement) : 15
     };
     this.recomputeScoresAndBuildings(true);

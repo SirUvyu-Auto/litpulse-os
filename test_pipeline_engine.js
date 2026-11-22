@@ -13,7 +13,7 @@ function runTests() {
   console.log('======================================================================\n');
 
   let passed = 0;
-  let total = 7;
+  let total = 12;
 
   // Test 1: Category 1 Government Exclusion (DOJ/USAO)
   console.log('TEST 1: Category 1 Government Exclusion (DOJ Civil Division)');
@@ -122,6 +122,62 @@ function runTests() {
     passed++;
   } else {
     console.error('  [FAIL] Expected SECURED_TARGET_CASE, got:', res7);
+  }
+
+  // Test 8: Unrepresented / Placeholder Firm ("Plaintiff", "Defense", "Unknown") carries null firm & firm_id
+  console.log('\nTEST 8: Placeholder Firm Disassociation (No firm-awaiting-appearance Entity)');
+  const normPltf = normalizer.normalizeFirmName('Plaintiff', '', '');
+  const normUnk = normalizer.normalizeFirmName('Unknown', '', 'Awaiting Appearance');
+  const resolvedAwaitingId = normalizer.resolveFirmId('Awaiting Appearance');
+  if (normPltf === null && normUnk === null && resolvedAwaitingId === null) {
+    console.log('  [PASS] Placeholder firm names resolve to null with no synthetic firm_id');
+    passed++;
+  } else {
+    console.error('  [FAIL] Expected null for placeholder firms, got:', { normPltf, normUnk, resolvedAwaitingId });
+  }
+
+  // Test 9: Engagement Score Default (0 when last_contact_date empty and is_rehit false)
+  console.log('\nTEST 9: Engagement Score Zero Baseline (No Unearned +15 Bonus)');
+  const uncontactedCases = db.getCases().filter(c => !c.has_cookie_conversion && !c.is_client && (!c.hubspot_status || c.hubspot_status === 'Unassigned'));
+  const hasUnearnedBonus = uncontactedCases.some(c => (c.engagement_score || 0) > 0);
+  if (!hasUnearnedBonus) {
+    console.log(`  [PASS] All ${uncontactedCases.length} unengaged records verified at engagement_score = 0`);
+    passed++;
+  } else {
+    console.error('  [FAIL] Found unengaged records with non-zero engagement_score');
+  }
+
+  // Test 10: Contact Sanitization on Unrepresented Rows
+  console.log('\nTEST 10: Unrepresented Matter Contact Isolation (No Orphaned Phone/Email)');
+  const unrepCases = db.getCases().filter(c => !c.lead_attorney || c.lead_attorney === 'Awaiting Appearance');
+  const leakedContact = unrepCases.find(c => (c.phone && c.phone !== 'N/A') || (c.email && c.email !== 'N/A'));
+  if (!leakedContact) {
+    console.log(`  [PASS] All ${unrepCases.length} unrepresented targets carry strictly sanitized N/A contacts`);
+    passed++;
+  } else {
+    console.error('  [FAIL] Found leaked contact on unrepresented case:', leakedContact.case_id, leakedContact.phone, leakedContact.email);
+  }
+
+  // Test 11: Import Log Accounting (rows_clean <= rows_total across all logs)
+  console.log('\nTEST 11: Import Log 1:1 Docket Accounting & Quality Ratio');
+  const logs = db.getLogs();
+  const invalidLog = logs.find(l => Number(l.rows_clean) > Number(l.rows_total));
+  if (!invalidLog) {
+    console.log(`  [PASS] All ${logs.length} import logs maintain rows_clean <= rows_total with separate targets_generated`);
+    passed++;
+  } else {
+    console.error('  [FAIL] Found import log with rows_clean > rows_total:', invalidLog);
+  }
+
+  // Test 12: Live Scoring Weights Sum to 100
+  console.log('\nTEST 12: Live Scoring Weights Normalization (Sum = 100)');
+  const w = db.getWeights();
+  const weightSum = Number(w.urgency) + Number(w.revenue) + Number(w.locality) + Number(w.caseType) + Number(w.engagement);
+  if (weightSum === 100) {
+    console.log(`  [PASS] Live scoring weights total ${weightSum} (urgency ${w.urgency}, revenue ${w.revenue}, locality ${w.locality}, caseType ${w.caseType}, engagement ${w.engagement})`);
+    passed++;
+  } else {
+    console.error('  [FAIL] Expected weights sum 100, got:', weightSum, w);
   }
 
   console.log('\n----------------------------------------------------------------------');

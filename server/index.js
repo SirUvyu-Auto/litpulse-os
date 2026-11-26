@@ -1182,19 +1182,30 @@ app.get('/api/export/csv', (req, res) => {
 // Start Server
 app.listen(PORT, async () => {
   console.log(`LitPulse OS running on http://localhost:${PORT}`);
-  // Automatically start background geocoding sweep for any un-geocoded buildings
-  db.startAutoGeocoding();
+  if (global.gc) global.gc();
 
-  // Automatically synchronize live HubSpot CRM assigned contacts on startup
-  if (hubspotService.isConfigured()) {
+  // Defer background geocoding sweep so server cold boot stays lean (<250MB)
+  setTimeout(() => {
     try {
-      console.log('[HubSpot] Initiating background CRM contact sync on startup...');
-      const result = await hubspotService.syncHubSpotWithCases(db.getCases());
-      db.recomputeScoresAndBuildings(false);
-      db.save();
-      console.log(`[HubSpot] Startup sync complete: matched ${result.matched} cases with ${result.assigned} assigned reps.`);
-    } catch (err) {
-      console.error('[HubSpot] Background startup sync error:', err.message);
+      db.startAutoGeocoding();
+    } catch (e) {
+      console.error('[TRIS Auto-Geocoder] Deferred sweep error:', e.message);
     }
+  }, 30000);
+
+  // Defer background CRM sync to prevent memory spike on container boot
+  if (hubspotService.isConfigured()) {
+    setTimeout(async () => {
+      try {
+        console.log('[HubSpot] Initiating deferred background CRM contact sync...');
+        const result = await hubspotService.syncHubSpotWithCases(db.getCases());
+        db.recomputeScoresAndBuildings(false);
+        db.save();
+        if (global.gc) global.gc();
+        console.log(`[HubSpot] Startup sync complete: matched ${result.matched} cases with ${result.assigned} assigned reps.`);
+      } catch (err) {
+        console.error('[HubSpot] Background startup sync error:', err.message);
+      }
+    }, 60000);
   }
 });

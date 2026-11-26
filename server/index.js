@@ -28,6 +28,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use(express.json());
+
+// Microsoft 365 Single-Tenant SSO Gate & 30-Day Session Management
+const auth = require('./auth');
+app.use(auth.router);
+app.use(auth.protect);
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Robust multi-format date parser for incoming Excel and CSV dates
